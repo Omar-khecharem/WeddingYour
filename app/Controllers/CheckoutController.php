@@ -1,0 +1,277 @@
+<?php
+/**
+ * Checkout Controller
+ * 
+ * Manages the checkout process: display checkout form,
+ * process orders, handle payment integration, and
+ * show order confirmation.
+ *
+ * @package App\Controllers
+ */
+
+namespace App\Controllers;
+
+use App\Core\Controller;
+use App\Core\Request;
+use App\Core\Response;
+use App\Core\Database;
+use App\Services\CartService;
+use App\Services\OrderService;
+use App\Services\PaymentService;
+use App\Services\InvoiceService;
+use App\Helpers\Security;
+use App\Helpers\Session;
+
+class CheckoutController extends Controller
+{
+    private CartService $cartService;
+    private OrderService $orderService;
+    private PaymentService $paymentService;
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->cartService = new CartService();
+        $this->orderService = new OrderService();
+        $this->paymentService = new PaymentService();
+    }
+
+    /**
+     * Display checkout page
+     */
+    public function index(Request $request, Response $response): string
+    {
+        $cart = $this->cartService->getCart();
+
+        if (empty($cart['items'])) {
+            $this->flash('warning', 'Your cart is empty.');
+            $this->redirect(url('cart'));
+        }
+
+        $this->setMeta('Checkout');
+        $this->setBreadcrumb([
+            ['label' => 'Home', 'url' => url('')],
+            ['label' => 'Cart', 'url' => url('cart')],
+            ['label' => 'Checkout'],
+        ]);
+
+        $user = $this->viewData['authUser'];
+        $paymentMethods = $this->paymentService->getPaymentMethods();
+        $shippingMethods = $this->getShippingMethods();
+
+        return $this->view('checkout.index', [
+            'cart' => $cart,
+            'user' => $user,
+            'paymentMethods' => $paymentMethods,
+            'shippingMethods' => $shippingMethods,
+        ]);
+    }
+
+    /**
+     * Process order placement
+     */
+    public function placeOrder(Request $request, Response $response): void
+    {
+        $cart = $this->cartService->getCart();
+
+        if (empty($cart['items'])) {
+            $this->json(['success' => false, 'message' => 'Cart is empty.']);
+        }
+
+        // Validate required fields
+        $required = ['billing_name', 'billing_address', 'billing_city', 'billing_state', 'billing_pincode', 'billing_phone', 'billing_email'];
+        foreach ($required as $field) {
+            if (empty($request->input($field))) {
+                $this->json(['success' => false, 'message' => 'Please fill in all required billing fields.']);
+            }
+        }
+
+        $billing = [
+            'name' => Security::sanitize($request->input('billing_name', '')),
+            'email' => Security::sanitizeEmail($request->input('billing_email', '')),
+            'phone' => $request->input('billing_phone', ''),
+            'address' => Security::sanitize($request->input('billing_address', '')),
+            'address2' => Security::sanitize($request->input('billing_address2', '')),
+            'city' => Security::sanitize($request->input('billing_city', '')),
+            'state' => Security::sanitize($request->input('billing_state', '')),
+            'pincode' => Security::sanitize($request->input('billing_pincode', '')),
+        ];
+
+        // Use billing for shipping if same
+        $useDifferentShipping = (bool)$request->input('different_shipping');
+        if ($useDifferentShipping) {
+            $shipping = [
+                'name' => Security::sanitize($request->input('shipping_name', $billing['name'])),
+                'address' => Security::sanitize($request->input('shipping_address', $billing['address'])),
+                'address2' => Security::sanitize($request->input('shipping_address2', '')),
+                'city' => Security::sanitize($request->input('shipping_city', $billing['city'])),
+                'state' => Security::sanitize($request->input('shipping_state', $billing['state'])),
+                'pincode' => Security::sanitize($request->input('shipping_pincode', $billing['pincode'])),
+            ];
+        } else {
+            $shipping = $billing;
+        }
+
+        $paymentMethod = $request->input('payment_method', 'cod');
+        $shippingMethodId = (int)$request->input('shipping_method', 0);
+
+        // Calculate TVA (French VAT at 20%)
+        $subtotal = $cart['subtotal'] ?? 0;
+        $discount = $cart['discount'] ?? 0;
+        $tvaBase = $subtotal - $discount;
+        $tva = round($tvaBase * 0.20, 2);
+        $cart['tax'] = $tva;
+
+        // Get selected shipping cost
+        $shippingCost = $this->getShippingCost($shippingMethodId, $subtotal);
+        $cart['shipping'] = $shippingCost;
+        $cart['total'] = $tvaBase + $tva + $shippingCost;
+
+        // Generate invoice number
+        $invoiceNumber = generateInvoiceNumber();
+
+        // Create the order
+        $result = $this->orderService->createOrder($billing, $shipping, $paymentMethod);
+
+        if ($result['success']) {
+            // Update order with TVA and shipping method
+            $pdo = Database::getInstance()->getConnection();
+            $pdo->prepare("UPDATE sg_orders SET tax = :tax, shipping_cost = :shipping, shipping_method = :ship_meth, invoice_number = :inv WHERE id = :id")->execute([
+                ':tax' => $tva,
+                ':shipping' => $shippingCost,
+                ':ship_meth' => $shippingMethodId,
+                ':inv' => $invoiceNumber,
+                ':id' => $result['order_id'],
+            ]);
+
+            // Process payment
+            if ($paymentMethod === 'cod') {
+                $this->paymentService->processCOD($result['order_id']);
+            }
+
+            // Set WhatsApp order link in session
+            $orderNumber = $result['order_number'];
+            $waMessage = "New order: {$orderNumber} - Total: " . APP_CURRENCY . ' ' . number_format($cart['total'], 2);
+            $waLink = "https://wa.me/" . WHATSAPP_NUMBER . "?text=" . urlencode($waMessage);
+            Session::set('whatsapp_order_link', $waLink);
+
+            // Send confirmation email
+            try {
+                $emailService = new \App\Services\EmailService();
+                $order = $this->orderService->getOrder($result['order_id']);
+                if ($order) {
+                    $order['tax'] = $tva;
+                    $order['shipping_cost'] = $shippingCost;
+                    $order['invoice_number'] = $invoiceNumber;
+                    $emailService->sendOrderConfirmation($billing['email'], $order);
+                }
+            } catch (\Exception $e) {
+                error_log('Failed to send confirmation email: ' . $e->getMessage());
+            }
+
+            $this->json([
+                'success' => true,
+                'order_id' => $result['order_id'],
+                'order_number' => $orderNumber,
+                'redirect' => url('order/confirmation/' . $orderNumber),
+            ]);
+        } else {
+            $this->json($result);
+        }
+    }
+
+    /**
+     * Order confirmation page
+     */
+    public function confirmation(Request $request, Response $response): string
+    {
+        $orderNumber = $request->param('order_number');
+        $order = $this->orderService->getOrderByNumber($orderNumber);
+
+        if (!$order) {
+            $this->notFound('Order not found.');
+        }
+
+        $this->setMeta('Order Confirmation - ' . $orderNumber);
+        return $this->view('checkout.confirmation', ['order' => $order]);
+    }
+
+    /**
+     * Get available shipping methods from DB
+     */
+    private function getShippingMethods(): array
+    {
+        try {
+            $pdo = Database::getInstance()->getConnection();
+            $stmt = $pdo->query("SELECT * FROM shipping_methods WHERE status = 1 ORDER BY sort_order ASC");
+            $methods = $stmt->fetchAll();
+
+            if (empty($methods)) {
+                return $this->getDefaultShippingMethods();
+            }
+
+            return $methods;
+        } catch (\Exception $e) {
+            return $this->getDefaultShippingMethods();
+        }
+    }
+
+    /**
+     * Fallback shipping methods when DB table is empty
+     */
+    private function getDefaultShippingMethods(): array
+    {
+        return [
+            [
+                'id' => 0,
+                'name' => 'Standard Shipping',
+                'slug' => 'standard',
+                'description' => 'Estimated delivery in 5-7 business days.',
+                'base_rate' => STANDARD_SHIPPING,
+                'free_above' => FREE_SHIPPING_MIN,
+                'estimated_days_min' => 5,
+                'estimated_days_max' => 7,
+                'has_tracking' => 0,
+            ],
+            [
+                'id' => 0,
+                'name' => 'Express Shipping',
+                'slug' => 'express',
+                'description' => 'Estimated delivery in 2-3 business days.',
+                'base_rate' => EXPRESS_SHIPPING,
+                'free_above' => null,
+                'estimated_days_min' => 2,
+                'estimated_days_max' => 3,
+                'has_tracking' => 1,
+            ],
+        ];
+    }
+
+    /**
+     * Calculate shipping cost for selected method
+     */
+    private function getShippingCost(int $methodId, float $subtotal): float
+    {
+        try {
+            $pdo = Database::getInstance()->getConnection();
+            $stmt = $pdo->prepare("SELECT * FROM shipping_methods WHERE id = :id AND status = 1 LIMIT 1");
+            $stmt->execute([':id' => $methodId]);
+            $method = $stmt->fetch();
+
+            if ($method) {
+                $freeAbove = (float)($method['free_above'] ?? 0);
+                if ($freeAbove > 0 && $subtotal >= $freeAbove) {
+                    return 0;
+                }
+                return (float)($method['base_rate'] ?? 0);
+            }
+        } catch (\Exception $e) {
+        }
+
+        if ($subtotal >= FREE_SHIPPING_MIN) {
+            return 0;
+        }
+
+        return (float)STANDARD_SHIPPING;
+    }
+}

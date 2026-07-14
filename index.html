@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shola Ghar - Premium Wedding Mukut, Topor & Wedding Accessories</title>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'montserrat': ['Montserrat', 'sans-serif'],
+                        'playfair': ['Playfair Display', 'serif'],
+                    },
+                    colors: {
+                        'maroon': '#800020',
+                        'primary-red': '#b30d1b',
+                        'accent-orange': '#e65100',
+                        'dark-red': '#5c0017',
+                        'light-pink': '#fcc2d7',
+                        'soft-pink': '#fff0f5',
+                        'gold': '#d4af37',
+                        'dark-gray': '#2d2d2d',
+                        'medium-gray': '#666666',
+                        'light-gray': '#f9f9f9',
+                        'border-color': '#e0d0c0',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Montserrat', sans-serif; line-height: 1.6; background: #fafafa; }
+        
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f9f9f9; }
+        ::-webkit-scrollbar-thumb { background: #b30d1b; border-radius: 4px; }
+
+        /* Header Styles */
+        .header-top-bar { background: #fce4ec; color: #111; font-size: 13px; font-weight: 700; text-align: center; padding: 10px 15px; border-bottom: 2px solid #f8a5c2; letter-spacing: 0.5px; }
+        .header-top-bar span { color: #b30d1b; }
+
+        .logo-text { font-size: 28px; font-weight: 800; color: #b30000; letter-spacing: 1px; text-transform: uppercase; line-height: 1.2; }
+        .logo-sub { font-size: 9px; text-transform: uppercase; letter-spacing: 1px; color: #888; font-weight: 600; }
+
+        .search-container { border: 2px solid #91005a; border-radius: 30px; padding: 2px 4px 2px 18px; background: white; transition: all 0.3s; }
+        .search-container:focus-within { border-color: #b30d1b; box-shadow: 0 0 8px rgba(179, 13, 27, 0.15); }
+        .search-container input { border: none; outline: none; width: 100%; padding: 8px 0; font-size: 14px; background: transparent; }
+        .search-btn { background: #91005a; color: white; width: 38px; height: 38px; border-radius: 50%; border: none; cursor: pointer; transition: transform 0.3s; }
+        .search-btn:hover { transform: scale(1.05); }
+
+        .nav-categories { background: #990011; color: white; font-weight: 700; padding: 12px 24px; display: flex; align-items: center; gap: 16px; cursor: pointer; transition: background 0.3s; border-radius: 4px 0 0 4px; }
+        .nav-categories:hover { background: #7a000d; }
+
+        .nav-links { background: #83868c; border-bottom: 1px solid #6a6d73; }
+        .nav-links a { color: #e8e8e8; font-weight: 600; font-size: 13px; padding: 12px 0; transition: color 0.3s; }
+        .nav-links a:hover { color: white; }
+        .nav-links .active { border-bottom: 2px solid #990011; }
+
+        .icon-btn { width: 40px; height: 40px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #444; font-size: 18px; border: 1px solid #ddd; transition: background 0.3s; }
+        .icon-btn:hover { background: #f0f0f0; }
+
+        .cart-badge { position: absolute; top: -4px; right: -6px; background: #990011; color: white; font-size: 10px; font-weight: 700; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid white; }
+
+        /* Category Circles */
+        .category-circle { text-align: center; cursor: pointer; min-width: 100px; }
+        .category-circle .circle-img { width: 110px; height: 110px; border-radius: 40% 40% 40% 40%; overflow: hidden; border: 3px solid #e2e2e2; transition: all 0.3s; margin: 0 auto 10px; }
+        .category-circle:hover .circle-img { transform: translateY(-5px); border-color: #b30d1b; box-shadow: 0 6px 15px rgba(179, 13, 27, 0.15); }
+        .category-circle .circle-img img { width: 100%; height: 100%; object-fit: cover; }
+        .category-circle p { font-size: 11px; font-weight: 800; text-transform: uppercase; color: #333; letter-spacing: 0.3px; }
+
+        /* Hero Section */
+        .hero-video-card { background: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.4)), url('https://images.unsplash.com/photo-1519741497674-611481863552?w=1200'); background-size: cover; background-position: center; border-radius: 16px; overflow: hidden; height: 280px; display: flex; align-items: center; justify-content: center; position: relative; }
+        .play-btn { width: 70px; height: 70px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; color: #b30d1b; cursor: pointer; box-shadow: 0 4px 20px rgba(0,0,0,0.25); transition: all 0.3s; animation: pulse-ring 2s infinite; }
+        .play-btn:hover { transform: scale(1.1); background: #b30d1b; color: white; }
+        @keyframes pulse-ring { 0% { box-shadow: 0 0 0 0 rgba(255,255,255,0.4); } 70% { box-shadow: 0 0 0 20px rgba(255,255,255,0); } 100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); } }
+
+        .hero-banner-card { background: linear-gradient(135deg, #f57c00, #e65100); border-radius: 16px; overflow: hidden; height: 280px; padding: 30px; display: flex; flex-direction: column; justify-content: center; color: white; position: relative; }
+        .hero-banner-card .banner-img { position: absolute; right: 20px; top: 50%; transform: translateY(-50%); width: 35%; opacity: 0.85; }
+        .hero-banner-card .banner-img img { border-radius: 50%; box-shadow: 0 8px 25px rgba(0,0,0,0.2); }
+
+        /* Section Titles */
+        .section-title { font-family: 'Playfair Display', serif; font-size: 30px; font-weight: 700; color: #5c0017; }
+        .section-subtitle { font-size: 13px; color: #666; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; }
+
+        /* Quick Grid Cards */
+        .quick-grid-card { background: white; border: 1px solid #e8e8e8; border-radius: 8px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
+        .quick-grid-card h3 { font-size: 17px; font-weight: 700; color: #222; margin-bottom: 15px; padding-bottom: 8px; position: relative; }
+        .quick-grid-card h3::after { content: ''; position: absolute; bottom: 0; left: 0; width: 40px; height: 2px; background: #b30d1b; }
+        .grid-img-item { height: 100px; border-radius: 6px; overflow: hidden; background: #f5f5f5; }
+        .grid-img-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s; }
+        .grid-img-item:hover img { transform: scale(1.08); }
+
+        /* Trending Cards */
+        .trending-card { background: white; border-radius: 40px; border: 3px solid #ffdde1; padding: 15px; text-align: center; box-shadow: 0 8px 24px rgba(0,0,0,0.04); transition: all 0.3s; }
+        .trending-card:hover { transform: translateY(-5px); border-color: #b30d1b; box-shadow: 0 12px 30px rgba(179,13,27,0.08); }
+        .trending-card .trending-img { height: 200px; border-radius: 30px; overflow: hidden; margin-bottom: 18px; }
+        .trending-card .trending-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s; }
+        .trending-card:hover .trending-img img { transform: scale(1.06); }
+        .trending-btn { display: inline-block; background: linear-gradient(135deg, #f57c00, #e65100); color: white; padding: 10px 30px; border-radius: 25px; font-weight: 700; font-size: 13px; box-shadow: 0 4px 12px rgba(230,81,0,0.3); transition: all 0.3s; width: 85%; }
+        .trending-btn:hover { background: linear-gradient(135deg, #e65100, #bf360c); box-shadow: 0 6px 18px rgba(230,81,0,0.45); transform: scale(1.03); }
+
+        /* Product Cards */
+        .product-card { background: white; border: 1px solid #e6e6e6; border-radius: 12px; padding: 15px; text-align: center; transition: all 0.3s; position: relative; }
+        .product-card:hover { transform: translateY(-5px); border-color: #b30d1b; box-shadow: 0 8px 25px rgba(0,0,0,0.08); }
+        .product-card .discount-badge { position: absolute; top: 12px; left: 12px; background: #b30d1b; color: white; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; z-index: 2; }
+        .product-card .prod-img { height: 160px; border-radius: 8px; overflow: hidden; margin-bottom: 12px; background: #fafafa; }
+        .product-card .prod-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s; }
+        .product-card:hover .prod-img img { transform: scale(1.06); }
+        .product-card .prod-name { font-size: 13.5px; font-weight: 700; color: #222; margin-bottom: 4px; text-transform: capitalize; }
+        .product-card .prod-category { font-size: 10px; font-weight: 600; color: #666; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 8px; }
+        .product-card .stock-status { color: #2e7d32; font-size: 11px; font-weight: 700; margin-bottom: 6px; }
+        .product-card .stars { color: #ffd54f; font-size: 12px; margin-bottom: 10px; }
+        .product-card .old-price { text-decoration: line-through; color: #999; font-size: 12px; margin-right: 6px; }
+        .product-card .new-price { color: #b30d1b; font-size: 14px; font-weight: 700; }
+
+        .maroon-btn { display: inline-block; background: linear-gradient(135deg, #b30d1b, #800000); color: white; padding: 14px 45px; border-radius: 30px; font-weight: 700; font-size: 13.5px; text-transform: uppercase; box-shadow: 0 5px 15px rgba(179,13,27,0.3); transition: all 0.3s; }
+        .maroon-btn:hover { transform: scale(1.05); box-shadow: 0 8px 22px rgba(179,13,27,0.45); }
+
+        /* Reviews */
+        .review-card { background: white; border: 1px solid #e2e2e2; border-radius: 12px; padding: 25px; transition: all 0.3s; }
+        .review-card:hover { box-shadow: 0 6px 20px rgba(0,0,0,0.05); }
+        .review-card .avatar { width: 46px; height: 46px; border-radius: 50%; overflow: hidden; background: #eaeaea; }
+        .review-card .avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* Footer */
+        footer { background: #1a1a1a; color: #ccc; padding: 60px 5% 30px; font-size: 13.5px; }
+        .footer-col h3 { color: white; font-size: 15px; font-weight: 700; text-transform: uppercase; margin-bottom: 20px; padding-bottom: 8px; position: relative; }
+        .footer-col h3::after { content: ''; position: absolute; bottom: 0; left: 0; width: 35px; height: 2px; background: #b30d1b; }
+        .footer-col ul li { margin-bottom: 12px; }
+        .footer-col ul li a { transition: all 0.3s; }
+        .footer-col ul li a:hover { color: white; padding-left: 5px; }
+
+        .security-banner { background: #2b2b2b; border-left: 4px solid #b30d1b; padding: 15px 25px; border-radius: 4px; }
+        .security-banner h4 { color: white; font-size: 14px; font-weight: 700; margin-bottom: 5px; }
+        .security-banner p { font-size: 12px; color: #aaa; line-height: 1.5; }
+
+        .payment-methods img { height: 22px; filter: grayscale(100%); opacity: 0.6; transition: all 0.3s; }
+        .payment-methods img:hover { filter: grayscale(0%); opacity: 1; }
+
+        .whatsapp-float { position: fixed; bottom: 25px; right: 25px; background: #25d366; color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 1000; transition: all 0.3s; }
+        .whatsapp-float:hover { transform: scale(1.1); background: #1ebea5; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .logo-text { font-size: 20px; }
+            .hero-video-card, .hero-banner-card { height: 200px; }
+            .hero-banner-card .banner-img { display: none; }
+            .nav-links { overflow-x: auto; padding: 0 15px; }
+            .nav-links a { font-size: 11px; padding: 10px 12px; white-space: nowrap; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ============================================ -->
+    <!-- TOP TICKER BANNER -->
+    <!-- ============================================ -->
+    <div class="header-top-bar">
+        Get FLAT 20% OFF On Topor Mukut set. To Redeem This Offer Use The Code - <span>SGTM20</span>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- HEADER -->
+    <!-- ============================================ -->
+    <header class="bg-white py-3 px-[5%] border-b border-gray-200 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-[1300px] mx-auto flex items-center justify-between gap-4 flex-wrap lg:flex-nowrap">
+
+            <!-- Logo -->
+            <a href="#" class="flex items-center gap-3 flex-shrink-0">
+                <div class="w-12 h-12 rounded-full border-2 border-red-500 flex items-center justify-center font-bold text-red-600 text-xl bg-white">SG</div>
+                <div>
+                    <div class="logo-text">Shola Ghar</div>
+                    <div class="logo-sub">It's your day you are the celebrity...</div>
+                </div>
+            </a>
+
+            <!-- Search -->
+            <div class="search-container flex-1 max-w-[650px] flex items-center">
+                <input type="text" placeholder="Search for products">
+                <button class="search-btn"><i class="fa-solid fa-magnifying-glass"></i></button>
+            </div>
+
+            <!-- Header Icons -->
+            <div class="flex items-center gap-2">
+                <a href="#" class="icon-btn"><i class="fa-solid fa-location-dot text-red-500"></i></a>
+                <a href="#" class="icon-btn bg-[#3b5998] text-white hover:opacity-90"><i class="fa-brands fa-facebook-f"></i></a>
+                <a href="#" class="icon-btn bg-[#7c5135] text-white hover:opacity-90"><i class="fa-brands fa-instagram"></i></a>
+                <a href="#" class="icon-btn bg-[#cc181e] text-white hover:opacity-90"><i class="fa-brands fa-youtube"></i></a>
+            </div>
+
+        </div>
+    </header>
+
+    <!-- ============================================ -->
+    <!-- NAVIGATION -->
+    <!-- ============================================ -->
+    <nav class="nav-links">
+        <div class="max-w-[1300px] mx-auto flex items-center justify-between px-[5%]">
+
+            <div class="nav-categories">
+                <i class="fa-solid fa-bars"></i>
+                <span class="uppercase tracking-wide text-sm">Browse Categories</span>
+                <i class="fa-solid fa-chevron-down text-xs ml-4"></i>
+            </div>
+
+            <div class="flex items-center gap-6 overflow-x-auto py-2">
+                <a href="#" class="active"><i class="fa-solid fa-house text-xs mr-1"></i> HOME</a>
+                <a href="#"><i class="fa-solid fa-shop text-xs mr-1"></i> OUR OUTLETS <i class="fa-solid fa-chevron-down text-[10px]"></i></a>
+                <a href="#"><i class="fa-solid fa-address-card text-xs mr-1"></i> ABOUT US</a>
+                <a href="#"><i class="fa-solid fa-address-book text-xs mr-1"></i> CONTACT US</a>
+                <a href="#">BLOGS</a>
+            </div>
+
+            <div class="flex items-center gap-3 py-2">
+                <a href="#" class="icon-btn"><i class="fa-regular fa-user"></i></a>
+                <a href="#" class="icon-btn relative"><i class="fa-solid fa-arrows-rotate"></i><span class="cart-badge">0</span></a>
+                <a href="#" class="icon-btn relative"><i class="fa-regular fa-heart"></i><span class="cart-badge">0</span></a>
+                <div class="flex items-center gap-2">
+                    <a href="#" class="icon-btn bg-[#990011] text-white relative"><i class="fa-solid fa-cart-shopping"></i><span class="cart-badge">0</span></a>
+                    <span class="text-sm font-bold text-white">₹0.00</span>
+                </div>
+            </div>
+
+        </div>
+    </nav>
+
+    <!-- ============================================ -->
+    <!-- CATEGORY CIRCLES -->
+    <!-- ============================================ -->
+    <section class="py-8 px-[5%] bg-white border-b border-gray-200 overflow-x-auto flex justify-center gap-8">
+        <div class="category-circle"><div class="circle-img"><img src="https://images.unsplash.com/photo-1583939003579-730e3918a45a?w=150" alt="Baby Mukut"></div><p>Baby Mukut</p></div>
+        <div class="category-circle"><div class="circle-img"><img src="https://images.unsplash.com/photo-1583939003579-730e3918a45a?w=150" alt="Baby Mukut"></div><p>Baby Mukut</p></div>
+        <div class="category-circle"><div class="circle-img"><img src="https://images.unsplash.com/photo-1583939003579-730e3918a45a?w=150" alt="Baby Mukut"></div><p>Baby Mukut</p></div>
+        <div class="category-circle"><div class="circle-img"><img src="https://images.unsplash.com/photo-1583939003579-730e3918a45a?w=150" alt="Baby Mukut"></div><p>Baby Mukut</p></div>
+        <div class="category-circle"><div class="circle-img"><img src="https://images.unsplash.com/photo-1583939003579-730e3918a45a?w=150" alt="Baby Mukut"></div><p>Baby Mukut</p></div>
+        <div class="category-circle"><div class="circle-img"><img src="https://images.unsplash.com/photo-1583939003579-730e3918a45a?w=150" alt="Baby Mukut"></div><p>Baby Mukut</p></div>
+        <div class="category-circle"><div class="circle-img"><img src="https://images.unsplash.com/photo-1583939003579-730e3918a45a?w=150" alt="Baby Mukut"></div><p>Baby Mukut</p></div>
+        <div class="category-circle"><div class="circle-img"><img src="https://images.unsplash.com/photo-1583939003579-730e3918a45a?w=150" alt="Baby Mukut"></div><p>Baby Mukut</p></div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- HERO SECTION -->
+    <!-- ============================================ -->
+    <section class="max-w-[1200px] mx-auto my-6 px-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Video Card -->
+        <div class="hero-video-card">
+            <div class="play-btn"><i class="fa-solid fa-play"></i></div>
+            <span class="absolute top-3 right-3 bg-black/60 text-white text-xs px-3 py-1 rounded-full">Order <i class="fa-brands fa-whatsapp text-green-400"></i></span>
+        </div>
+
+        <!-- Flash Sale Banner -->
+        <div class="hero-banner-card">
+            <div class="banner-img"><img src="https://images.unsplash.com/photo-1583939003579-730e3918a45a?w=150" alt="Topor Set"></div>
+            <span class="bg-yellow-400 text-gray-900 font-bold text-[10px] uppercase px-2 py-1 rounded inline-block w-fit">Flash Sale</span>
+            <h2 class="text-3xl md:text-4xl font-extrabold leading-tight mt-2">FLAT 20% OFF</h2>
+            <p class="text-sm text-orange-100 mt-1">On Handcrafted Traditional Topor Mukut Sets</p>
+            <a href="#" class="inline-block mt-4 bg-white text-orange-600 font-bold text-xs px-5 py-2 rounded-full shadow hover:bg-orange-50 transition-all w-fit">Buy Now</a>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- QUICK GRID CATEGORIES -->
+    <!-- ============================================ -->
+    <section class="max-w-[1200px] mx-auto my-10 px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <!-- Card 1 -->
+        <div class="quick-grid-card">
+            <h3>Mukut & Topor</h3>
+            <div class="grid grid-cols-2 gap-2.5 mb-4">
+                <div class="grid-img-item"><img src="https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?w=150" alt=""></div>
+                <div class="grid-img-item"><img src="https://images.unsplash.com/photo-1519741497674-611481863552?w=150" alt=""></div>
+                <div class="grid-img-item"><img src="https://images.unsplash.com/photo-1583939003579-730e3918a45a?w=150" alt=""></div>
+                <div class="grid-img-item"><img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150" alt=""></div>
+            </div>
+            <a href="#" class="text-[12.5px] font-bold text-gray-600 hover:text-primary-red flex items-center gap-1">See more <i class="fa-solid fa-angle-right"></i></a>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="quick-grid-card">
+            <h3>Wedding Items For All</h3>
+            <div class="grid grid-cols-2 gap-2.5 mb-4">
+                <div class="grid-img-item"><img src="https://images.unsplash.com/photo-1607344645866-009c320c5ab8?w=150" alt=""></div>
+                <div class="grid-img-item"><img src="https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=150" alt=""></div>
+                <div class="grid-img-item"><img src="https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?w=150" alt=""></div>
+                <div class="grid-img-item"><img src="https://images.unsplash.com/photo-1595152772835-219674b2a8a6?w=150" alt=""></div>
+            </div>
+            <a href="#" class="text-[12.5px] font-bold text-gray-600 hover:text-primary-red flex items-center gap-1">See more <i class="fa-solid fa-angle-right"></i></a>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="quick-grid-card">
+            <h3>Gachhkouto & Dorpon</h3>
+            <div class="grid grid-cols-2 gap-2.5 mb-4">
+                <div class="grid-img-item"><img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150" alt=""></div>
+                <div class="grid-img-item"><img src="https://images.unsplash.com/photo-1583939003579-730e3918a45a?w=150" alt=""></div>
+                <div class="grid-img-item"><img src="https://images.unsplash.com/photo-1607344645866-009c320c5ab8?w=150" alt=""></div>
+                <div class="grid-img-item"><img src="https://images.unsplash.com/photo-1519741497674-611481863552?w=150" alt=""></div>
+            </div>
+            <a href="#" class="text-[12.5px] font-bold text-gray-600 hover:text-primary-red flex items-center gap-1">See more <i class="fa-solid fa-angle-right"></i></a>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- VIDEO SHOWCASE -->
+    <!-- ============================================ -->
+    <section class="max-w-[1200px] mx-auto my-10 px-4">
+        <div class="rounded-2xl overflow-hidden shadow-xl relative h-[380px] bg-[linear-gradient(rgba(0,0,0,0.15),rgba(0,0,0,0.4)),url('https://images.unsplash.com/photo-1519741497674-611481863552?w=1200')] bg-cover bg-center flex items-center justify-center">
+            <div class="play-btn w-20 h-20 text-3xl"><i class="fa-solid fa-play"></i></div>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- TOP TRENDING CATEGORIES -->
+    <!-- ============================================ -->
+    <section class="py-10">
+        <div class="text-center max-w-[600px] mx-auto mb-10">
+            <h2 class="section-title">Top Trending Categories</h2>
+            <p class="section-subtitle">Exquisite Handcrafted Wedding Masterpieces</p>
+        </div>
+
+        <div class="max-w-[1200px] mx-auto px-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- Category 1 -->
+            <div class="trending-card">
+                <div class="trending-img"><img src="https://images.unsplash.com/photo-1595152772835-219674b2a8a6?w=300" alt="Wedding Items"></div>
+                <a href="#" class="trending-btn">Wedding Items</a>
+            </div>
+            <!-- Category 2 -->
+            <div class="trending-card">
+                <div class="trending-img"><img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=300" alt="Bride"></div>
+                <a href="#" class="trending-btn">Bride Mukut</a>
+            </div>
+            <!-- Category 3 -->
+            <div class="trending-card">
+                <div class="trending-img"><img src="https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=300" alt="Groom"></div>
+                <a href="#" class="trending-btn">Groom Topor</a>
+            </div>
+            <!-- Category 4 -->
+            <div class="trending-card">
+                <div class="trending-img"><img src="https://images.unsplash.com/photo-1583939003579-730e3918a45a?w=300" alt="Baby"></div>
+                <a href="#" class="trending-btn">Baby Mukut</a>
+            </div>
+        </div>
+
+        <div class="text-center mt-8">
+            <a href="#" class="maroon-btn">View All Categories <i class="fa-solid fa-angles-right ml-1.5"></i></a>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- RECENT PRODUCTS -->
+    <!-- ============================================ -->
+    <section class="max-w-[1200px] mx-auto my-12 p-6 border-2 border-primary-red rounded-xl bg-white">
+        <h2 class="text-center font-playfair text-2xl md:text-3xl text-primary-red font-bold mb-6">Checkout Our Recent Products</h2>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+            <!-- Product 1 -->
+            <div class="product-card">
+                <span class="discount-badge">-47%</span>
+                <div class="prod-img"><img src="https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?w=200" alt="Noyoni Mukut"></div>
+                <h4 class="prod-name">noyoni mukut</h4>
+                <p class="prod-category">Bride, Bridal Patashi, Exclusive</p>
+                <div class="stock-status"><i class="fa-solid fa-circle-check"></i> In stock</div>
+                <div class="stars"><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i></div>
+                <div><span class="old-price">₹1,499.00</span><span class="new-price">₹799.00</span></div>
+            </div>
+
+            <!-- Product 2 -->
+            <div class="product-card">
+                <span class="discount-badge">-47%</span>
+                <div class="prod-img"><img src="https://images.unsplash.com/photo-1519741497674-611481863552?w=200" alt="Poddosree Mukut"></div>
+                <h4 class="prod-name">poddosree mukut</h4>
+                <p class="prod-category">Bride, Bridal Patashi, Exclusive</p>
+                <div class="stock-status"><i class="fa-solid fa-circle-check"></i> In stock</div>
+                <div class="stars"><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i></div>
+                <div><span class="old-price">₹1,499.00</span><span class="new-price">₹799.00</span></div>
+            </div>
+
+            <!-- Product 3 -->
+            <div class="product-card">
+                <span class="discount-badge">-38%</span>
+                <div class="prod-img"><img src="https://images.unsplash.com/photo-1583939003579-730e3918a45a?w=200" alt="Purna Mukut"></div>
+                <h4 class="prod-name">purna mukut</h4>
+                <p class="prod-category">Bride, Bridal Patashi, Exclusive</p>
+                <div class="stock-status"><i class="fa-solid fa-circle-check"></i> In stock</div>
+                <div class="stars"><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i></div>
+                <div><span class="old-price">₹1,299.00</span><span class="new-price">₹799.00</span></div>
+            </div>
+
+            <!-- Product 4 -->
+            <div class="product-card">
+                <span class="discount-badge">-43%</span>
+                <div class="prod-img"><img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200" alt="Lili Mukut"></div>
+                <h4 class="prod-name">lili mukut</h4>
+                <p class="prod-category">Bride, Bridal Patashi, Exclusive</p>
+                <div class="stock-status"><i class="fa-solid fa-circle-check"></i> In stock</div>
+                <div class="stars"><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i></div>
+                <div><span class="old-price">₹1,399.00</span><span class="new-price">₹799.00</span></div>
+            </div>
+        </div>
+
+        <div class="text-center mt-8">
+            <a href="#" class="maroon-btn">View All Products <i class="fa-solid fa-angles-right ml-1.5"></i></a>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- GOOGLE REVIEWS -->
+    <!-- ============================================ -->
+    <section class="bg-gray-50 py-14 px-4 border-y border-gray-200">
+        <div class="max-w-[1200px] mx-auto">
+            <div class="text-center max-w-[600px] mx-auto mb-8">
+                <h2 class="section-title">Reviews On Google By Our Clients</h2>
+                <p class="section-subtitle">Real feedback from real weddings</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Review 1 -->
+                <div class="review-card">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="avatar"><img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100" alt="Sayantani Sarkar"></div>
+                        <div>
+                            <h5 class="font-bold text-sm text-gray-800">Sayantani Sarkar</h5>
+                            <div class="stars text-[#ffd54f] text-xs"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                        </div>
+                    </div>
+                    <div class="text-[11px] text-gray-400 mb-3">2 weeks ago</div>
+                    <p class="text-[12.5px] text-gray-600 leading-relaxed">The collections they have are simply beautiful! The staff was extremely helpful, took their time to help me pick the perfect bridal mukut for my big day. Highly recommended!</p>
+                </div>
+
+                <!-- Review 2 -->
+                <div class="review-card">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="avatar"><img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100" alt="Sudha Mishra"></div>
+                        <div>
+                            <h5 class="font-bold text-sm text-gray-800">Sudha Mishra</h5>
+                            <div class="stars text-[#ffd54f] text-xs"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                        </div>
+                    </div>
+                    <div class="text-[11px] text-gray-400 mb-3">2 weeks ago</div>
+                    <p class="text-[12.5px] text-gray-600 leading-relaxed">Lovely experience. They are absolute professionals. The traditional shola art is preserved perfectly here. Thank you Shola Ghar for making our memories so beautiful.</p>
+                </div>
+
+                <!-- Review 3 -->
+                <div class="review-card">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="avatar"><img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100" alt="Subham Roy Chowdhury"></div>
+                        <div>
+                            <h5 class="font-bold text-sm text-gray-800">Subham Roy Chowdhury</h5>
+                            <div class="stars text-[#ffd54f] text-xs"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                        </div>
+                    </div>
+                    <div class="text-[11px] text-gray-400 mb-3">5 months ago</div>
+                    <p class="text-[12.5px] text-gray-600 leading-relaxed">Best place to buy genuine Topor and wedding items in Kolkata. Excellent finishing and very reasonable prices compared to other boutique stores.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- MEMORIES BAR -->
+    <!-- ============================================ -->
+    <div class="bg-primary-red text-white text-center py-6 px-4 text-2xl md:text-3xl font-extrabold uppercase tracking-wider font-playfair">
+        Have Some Memories!
+    </div>
+
+    <!-- ============================================ -->
+    <!-- FOOTER -->
+    <!-- ============================================ -->
+    <footer>
+        <div class="max-w-[1200px] mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 mb-10">
+            <!-- About -->
+            <div class="footer-col">
+                <h3>About Shola Ghar</h3>
+                <p class="leading-relaxed mb-4">Shola Ghar is India's leading designer and online marketplace for premium handmade Sholapith wedding items, bridal accessories, and traditional religious items. Handcrafting memories since decades.</p>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Google Play" class="h-10 cursor-pointer">
+            </div>
+
+            <!-- Links -->
+            <div class="footer-col">
+                <h3>Important Links</h3>
+                <ul>
+                    <li><a href="#">My Account</a></li>
+                    <li><a href="#">Track Orders</a></li>
+                    <li><a href="#">Shipping & Returns</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms & Conditions</a></li>
+                </ul>
+            </div>
+
+            <!-- Contact -->
+            <div class="footer-col">
+                <h3>Contact Us</h3>
+                <ul>
+                    <li class="flex items-start gap-3 mb-4">
+                        <i class="fa-solid fa-location-dot text-primary-red text-base mt-0.5"></i>
+                        <span>Shobhabazar, Kalighat, Barrackpore, Chinar Park, Siliguri, Kolkata, India.</span>
+                    </li>
+                    <li class="flex items-start gap-3 mb-4">
+                        <i class="fa-solid fa-phone text-primary-red text-base mt-0.5"></i>
+                        <span>+91 89616 86776</span>
+                    </li>
+                    <li class="flex items-start gap-3 mb-4">
+                        <i class="fa-solid fa-envelope text-primary-red text-base mt-0.5"></i>
+                        <span>support@sholaghar.com</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Security Banner -->
+        <div class="security-banner max-w-[1200px] mx-auto mb-8">
+            <h4><i class="fa-solid fa-shield-halved text-primary-red mr-2"></i> Security Warning / Disclaimer</h4>
+            <p>Please note that Shola Ghar representatives will never ask you for OTPs, credit/debit card numbers, PINs, or bank account credentials. Beware of spam phone calls or messages pretending to be our support team. Report any suspicious activities immediately.</p>
+        </div>
+
+        <!-- Bottom -->
+        <div class="max-w-[1200px] mx-auto pt-6 border-t border-gray-800 flex justify-between items-center flex-wrap gap-4 text-xs text-gray-500">
+            <p>&copy; 2026 Shola Ghar. Handcrafted in India. All Rights Reserved.</p>
+            <div class="payment-methods flex gap-3">
+                <img src="https://cdn-icons-png.flaticon.com/512/196/196070.png" alt="Visa">
+                <img src="https://cdn-icons-png.flaticon.com/512/196/196081.png" alt="MasterCard">
+                <img src="https://cdn-icons-png.flaticon.com/512/196/196091.png" alt="UPI">
+                <img src="https://cdn-icons-png.flaticon.com/512/196/196076.png" alt="Net Banking">
+            </div>
+        </div>
+    </footer>
+
+    <!-- ============================================ -->
+    <!-- FLOATING WHATSAPP BUTTON -->
+    <!-- ============================================ -->
+    <a href="https://wa.me/918961686776" class="whatsapp-float" target="_blank">
+        <i class="fa-brands fa-whatsapp"></i>
+    </a>
+
+</body>
+</html>
