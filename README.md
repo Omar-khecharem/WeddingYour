@@ -265,19 +265,6 @@ open http://localhost:8080
 | `config/constants.php` | Directory paths (`UPLOADS_DIR`, `VIEWS_DIR`, etc.), status constants |
 | `config/autoload.php` | Session configuration (SameSite, save path, GC lifetime), PHP limits, error handler |
 
----
-
-## 🎨 Screenshots
-
-> *(Replace with actual screenshots from your deployed site)*
-
-| Page | Preview |
-|------|---------|
-| **Homepage** | `docs/screenshots/home.png` |
-| **Product Catalog** | `docs/screenshots/products.png` |
-| **Product Detail** | `docs/screenshots/detail.png` |
-| **Cart & Checkout** | `docs/screenshots/cart.png` |
-| **Admin Dashboard** | `docs/screenshots/admin.png` |
 
 ---
 
