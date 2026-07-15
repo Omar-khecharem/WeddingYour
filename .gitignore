@@ -1,51 +1,62 @@
-# Environment
-.env
-.env.local
-.env.*.local
+# ──────────────────────────────────────────────
+#  WeddingYour — .gitignore
+# ──────────────────────────────────────────────
 
-# Dependencies
-vendor/
-node_modules/
-
-# Cache
-cache/data/*
-cache/views/*
-!cache/data/.gitkeep
-!cache/views/.gitkeep
-
-# Logs
-logs/*
-!logs/.gitkeep
-
-# Uploaded files (not committed)
-public/uploads/*
-!public/uploads/.gitkeep
-
-# Generated invoices
-invoices/*
-!invoices/.gitkeep
-
-# OS files
+# ── OS files ──
 .DS_Store
 Thumbs.db
-Desktop.ini
+desktop.ini
 *.swp
 *.swo
 *~
 
-# IDE
+# ── IDE / Editor ──
 .idea/
 .vscode/
 *.sublime-project
 *.sublime-workspace
-*.code-workspace
 .netbeans/
 nbproject/
 
-# PHP
+# ── PHP ──
 *.log
 *.cache
 
-# Temp
-temp/
+# ── Application runtime ──
+/storage/sessions/*
+!/storage/sessions/.gitkeep
+/cache/views/*
+!/cache/views/.gitkeep
+/cache/data/*
+!/cache/data/.gitkeep
+/logs/*
+!/logs/.gitkeep
+/invoices/*
+!/invoices/.gitkeep
+
+# ── Uploaded files (user content, not committed) ──
+/public/uploads/*
+!/public/uploads/.gitkeep
+
+# ── Composer ──
+/vendor/
+composer.lock
+
+# ── Node (if ever used) ──
+node_modules/
+package-lock.json
+yarn.lock
+
+# ── Environment ──
+.env
+.env.local
+.env.production
+
+# ── Temp / generated ──
 tmp/
+temp/
+*.tmp
+php_errorlog
+_*.php
+_check*
+_fix*

@@ -82,6 +82,11 @@ abstract class Model
     public function __construct(array $attributes = [])
     {
         $this->fill($attributes);
+        foreach ($attributes as $key => $value) {
+            if (in_array($key, static::$guarded)) {
+                $this->attributes[$key] = $value;
+            }
+        }
         $this->original = $this->attributes;
     }
 
@@ -110,7 +115,11 @@ abstract class Model
     public static function getTable(): string
     {
         if (static::$table) {
-            return DB_PREFIX . static::$table;
+            $table = static::$table;
+            if (strpos($table, DB_PREFIX) !== 0) {
+                $table = DB_PREFIX . $table;
+            }
+            return $table;
         }
         $class = (new \ReflectionClass(static::class))->getShortName();
         return DB_PREFIX . strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $class)) . 's';

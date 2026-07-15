@@ -1,10 +1,10 @@
 <?php
-$products = $products ?? [];
-$productList = $products['products'] ?? [];
-$total = $products['total'] ?? 0;
-$page = $products['page'] ?? 1;
-$perPage = $products['perPage'] ?? 12;
-$totalPages = $products['totalPages'] ?? 1;
+$result = $products ?? [];
+$productList = $result['products'] ?? [];
+$total = $result['total'] ?? 0;
+$page = $result['page'] ?? 1;
+$perPage = $result['perPage'] ?? 12;
+$totalPages = $result['totalPages'] ?? 1;
 
 $filterOptions = $filterOptions ?? [];
 $categories = $categories ?? $filterOptions['categories'] ?? [];
@@ -31,23 +31,33 @@ $end = min($page * $perPage, $total);
 </div>
 
 <?php $catList = $categories;
-$chunks = array_chunk($catList, 8); ?>
+$chunks = array_chunk($catList, 7); ?>
 <?php if (!empty($chunks)): ?>
-<!-- CATEGORIES STEP CAROUSEL (8 per slide) -->
+<!-- CATEGORIES STEP CAROUSEL (7 per slide) -->
 <section class="bg-white border-b border-slate-200 overflow-hidden">
   <div class="max-w-[1400px] mx-auto px-4 py-5">
-    <h2 class="text-lg font-black text-slate-800 tracking-tight mb-4">Catégories</h2>
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-lg font-black text-slate-800 tracking-tight">Catégories</h2>
+      <div class="flex gap-2">
+        <button id="catPrevBtn" class="w-8 h-8 rounded-full border border-slate-300 flex items-center justify-center text-slate-500 hover:bg-red-600 hover:text-white hover:border-red-600 transition-colors">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+        </button>
+        <button id="catNextBtn" class="w-8 h-8 rounded-full border border-slate-300 flex items-center justify-center text-slate-500 hover:bg-red-600 hover:text-white hover:border-red-600 transition-colors">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
     <div class="relative overflow-hidden">
       <div id="catTrackProd" class="flex transition-transform duration-500 ease-in-out" style="width:<?= count($chunks) * 100 ?>%">
         <?php foreach ($chunks as $chunk): ?>
-        <div class="flex gap-5 px-2" style="width:<?= 100 / count($chunks) ?>%">
+        <div class="flex flex-wrap justify-center gap-3 px-2" style="width:<?= 100 / count($chunks) ?>%">
           <?php foreach ($chunk as $cat): ?>
           <?php $catSlug = is_array($cat) ? $cat['slug'] : $cat; ?>
           <?php $catName = is_array($cat) ? $cat['name'] : $cat; ?>
           <?php $catImg = is_array($cat) ? ($cat['image'] ?? 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=200') : 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=200'; ?>
-          <a href="<?= url('category/' . e($catSlug)) ?>" class="flex flex-col items-center text-center space-y-2 w-[130px] shrink-0 group">
+          <a href="<?= url('category/' . e($catSlug)) ?>" class="flex flex-col items-center text-center space-y-2 w-[calc(14.285%-0.75rem)] min-w-[90px] max-w-[140px] shrink-0 group">
             <div class="w-full aspect-square rounded-2xl overflow-hidden border-2 border-slate-100 group-hover:border-red-600 group-hover:scale-105 transition-all duration-300 shadow-sm group-hover:shadow-md">
-              <img src="<?= e($catImg) ?>" alt="<?= e($catName) ?>" class="w-full h-full object-cover" loading="lazy">
+              <img src="<?= uploadUrl($catImg, 'categories') ?>" alt="<?= e($catName) ?>" class="w-full h-full object-cover" loading="lazy">
             </div>
             <span class="text-[11px] font-bold uppercase tracking-wider text-slate-700 group-hover:text-red-600 transition-colors"><?= e($catName) ?></span>
           </a>
@@ -193,7 +203,7 @@ $chunks = array_chunk($catList, 8); ?>
             <?php if ($pDiscount > 0): ?>
             <span class="absolute top-2 left-2 bg-red-600 text-white text-[10px] font-black px-2 py-0.5 rounded-md z-10">-<?= $pDiscount ?>%</span>
             <?php endif; ?>
-            <a href="<?= url('products/' . e($pSlug)) ?>" class="block aspect-square">
+            <a href="<?= url('product/' . e($pSlug)) ?>" class="block aspect-square">
               <img src="<?= e($pImg) ?>" alt="<?= e($pName) ?>" class="w-full h-full object-cover group-hover/card:scale-105 transition-transform duration-500" loading="lazy">
             </a>
             <!-- Hover overlay buttons -->
@@ -288,18 +298,32 @@ $chunks = array_chunk($catList, 8); ?>
   document.addEventListener('keydown', function(e) { if (e.key === 'Escape') close(); });
 })();
 
-/* Category step carousel (8 per slide) */
+/* Category step carousel */
 (function() {
   var track = document.getElementById('catTrackProd');
+  var prevBtn = document.getElementById('catPrevBtn');
+  var nextBtn = document.getElementById('catNextBtn');
   if (!track) return;
   var slides = track.children;
   if (slides.length < 2) return;
   var cur = 0;
-  setInterval(function() {
-    cur = (cur + 1) % slides.length;
+
+  function goTo(idx) {
+    cur = ((idx % slides.length) + slides.length) % slides.length;
     track.style.transform = 'translateX(-' + (cur * 100 / slides.length) + '%)';
     track.style.transition = 'transform 0.5s ease-in-out';
-  }, 3000);
+  }
+
+  if (prevBtn) prevBtn.addEventListener('click', function() { goTo(cur - 1); });
+  if (nextBtn) nextBtn.addEventListener('click', function() { goTo(cur + 1); });
+
+  var interval = setInterval(function() { goTo(cur + 1); }, 4000);
+
+  track.addEventListener('mouseenter', function() { clearInterval(interval); });
+  track.addEventListener('mouseleave', function() {
+    clearInterval(interval);
+    interval = setInterval(function() { goTo(cur + 1); }, 4000);
+  });
 })();
 
 /* Price range slider sync */

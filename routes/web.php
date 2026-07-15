@@ -30,7 +30,7 @@ Router::get('/login', [AuthController::class, 'loginForm'])->name('login.form');
 Router::post('/login', [AuthController::class, 'login'])->name('login');
 Router::get('/register', [AuthController::class, 'registerForm'])->name('register.form');
 Router::post('/register', [AuthController::class, 'register'])->name('register');
-Router::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Router::get('/logout', [AuthController::class, 'logout'])->name('logout');
 Router::get('/forgot-password', [AuthController::class, 'forgotForm'])->name('forgot.form');
 Router::post('/forgot-password', [AuthController::class, 'forgot'])->name('forgot');
 Router::get('/reset-password/{token}', [AuthController::class, 'resetForm'])->name('reset.form');
@@ -39,8 +39,10 @@ Router::post('/reset-password', [AuthController::class, 'reset'])->name('reset')
 // ---- Products ----
 Router::get('/products', [ProductController::class, 'index'])->name('products');
 Router::get('/product/{slug}', [ProductController::class, 'show'])->name('product.show');
+Router::get('/products/{slug}', [ProductController::class, 'show'])->name('products.show');
 Router::get('/search', [ProductController::class, 'search'])->name('search');
 Router::get('/api/product', [ProductController::class, 'getProduct'])->name('api.product');
+Router::get('/api/check-pincode', [ProductController::class, 'checkPincode'])->name('api.pincode');
 
 // ---- Cart ----
 Router::get('/cart', [CartController::class, 'index'])->name('cart');
@@ -110,9 +112,9 @@ Router::get('/categories', function () {
 
 Router::get('/category/{slug}', function ($params) {
     $controller = new \App\Controllers\ProductController();
+    $_GET['category'] = $params['slug'];
     $request = new \App\Core\Request($params);
     $response = new \App\Core\Response();
-    $_GET['category'] = $params['slug'];
     return $controller->index($request, $response);
 })->name('category');
 

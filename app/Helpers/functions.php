@@ -28,9 +28,18 @@ function asset(string $path): string
 /**
  * Generate upload URL
  */
-function uploadUrl(string $path): string
+function uploadUrl(string $path, string $subdir = ''): string
 {
-    return url('uploads/' . ltrim($path, '/'));
+    if (empty($path)) return '';
+    $subdir = trim($subdir, '/');
+    if ($subdir && str_starts_with($path, $subdir . '/')) {
+        return url('uploads/' . ltrim($path, '/'));
+    }
+    $prefix = 'uploads';
+    if ($subdir) {
+        $prefix .= '/' . $subdir;
+    }
+    return url($prefix . '/' . ltrim($path, '/'));
 }
 
 /**
@@ -73,8 +82,24 @@ function truncate(string $text, int $length = 100, string $ending = '...'): stri
  */
 function slugify(string $string): string
 {
-    $string = transliterator_transliterate('Any-Latin; Latin-ASCII', $string);
-    $string = preg_replace('/[^a-zA-Z0-9\s-]/', '', $string);
+    $map = [
+        'à'=>'a','á'=>'a','â'=>'a','ã'=>'a','ä'=>'a','å'=>'a','æ'=>'ae',
+        'è'=>'e','é'=>'e','ê'=>'e','ë'=>'e',
+        'ì'=>'i','í'=>'i','î'=>'i','ï'=>'i',
+        'ò'=>'o','ó'=>'o','ô'=>'o','õ'=>'o','ö'=>'o','ø'=>'o',
+        'ù'=>'u','ú'=>'u','û'=>'u','ü'=>'u',
+        'ý'=>'y','ÿ'=>'y',
+        'ñ'=>'n','ç'=>'c','š'=>'s','ž'=>'z',
+        'À'=>'A','Á'=>'A','Â'=>'A','Ã'=>'A','Ä'=>'A','Å'=>'A','Æ'=>'AE',
+        'È'=>'E','É'=>'E','Ê'=>'E','Ë'=>'E',
+        'Ì'=>'I','Í'=>'I','Î'=>'I','Ï'=>'I',
+        'Ò'=>'O','Ó'=>'O','Ô'=>'O','Õ'=>'O','Ö'=>'O','Ø'=>'O',
+        'Ù'=>'U','Ú'=>'U','Û'=>'U','Ü'=>'U',
+        'Ý'=>'Y','Ÿ'=>'Y',
+        'Ñ'=>'N','Ç'=>'C','Š'=>'S','Ž'=>'Z',
+    ];
+    $string = strtr($string, $map);
+    $string = preg_replace('/[^a-zA-Z0-9\s_-]/', '', $string);
     $string = preg_replace('/[\s-]+/', '-', $string);
     $string = preg_replace('/^-+|-+$/', '', $string);
     return strtolower($string);
@@ -268,6 +293,16 @@ function component(string $component, array $props = []): string
 }
 
 /**
+ * Clear the entire site cache (view cache + cache service)
+ */
+function clearSiteCache(): void
+{
+    $cacheService = new \App\Services\CacheService();
+    $cacheService->clear();
+    array_map('unlink', glob(VIEW_CACHE_DIR . DS . '*'));
+}
+
+/**
  * Start a content section (for layouts)
  */
 function startSection(string $name): void
@@ -281,6 +316,22 @@ function startSection(string $name): void
 function section(string $name, string $default = ''): string
 {
     return View::section($name, $default);
+}
+
+/**
+ * End the current section
+ */
+function endSection(): void
+{
+    View::endSection();
+}
+
+/**
+ * Extend a layout (delegates to View::render)
+ */
+function extend(string $layout): void
+{
+    // placeholder — actual layout extension handled by View::render
 }
 
 /**

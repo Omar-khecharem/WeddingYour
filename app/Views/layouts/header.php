@@ -17,7 +17,7 @@
     <meta property="og:description" content="<?= e($metaDescription ?? DEFAULT_META_DESCRIPTION) ?>">
     <meta property="og:url" content="<?= e(APP_URL . $_SERVER['REQUEST_URI']) ?>">
     <meta property="og:type" content="website">
-    <meta property="og:site_name" content="<?= e(APP_NAME) ?>">
+    <meta property="og:site_name" content="<?= e(\App\Models\Setting::get('site_name', APP_NAME)) ?>">
     <meta property="og:locale" content="en_IN">
     
     <!-- Twitter Card -->
@@ -26,7 +26,12 @@
     <meta name="twitter:description" content="<?= e($metaDescription ?? DEFAULT_META_DESCRIPTION) ?>">
     
     <!-- Favicon -->
+    <?php $siteFavicon = \App\Models\Setting::get('site_favicon', ''); if (empty($siteFavicon) && file_exists(PUBLIC_DIR . DS . 'uploads' . DS . 'site_favicon.png')) $siteFavicon = 'site_favicon.png'; ?>
+    <?php if ($siteFavicon): ?>
+    <link rel="icon" href="<?= uploadUrl($siteFavicon) ?>">
+    <?php else: ?>
     <link rel="icon" type="image/svg+xml" href="<?= asset('images/favicon.svg') ?>">
+    <?php endif; ?>
     
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">

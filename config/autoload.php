@@ -77,16 +77,28 @@ set_exception_handler(function (Throwable $exception): void {
  * Initialize session
  */
 if (session_status() === PHP_SESSION_NONE) {
+    $sessPath = ROOT_DIR . DS . 'storage' . DS . 'sessions';
+    if (!is_dir($sessPath)) { @mkdir($sessPath, 0755, true); }
+    session_save_path($sessPath);
+    ini_set('session.gc_maxlifetime', SESSION_LIFETIME * 60);
+    ini_set('session.gc_probability', 1);
+    ini_set('session.gc_divisor', 100);
     session_set_cookie_params([
         'lifetime' => SESSION_LIFETIME * 60,
         'path' => '/',
         'domain' => '',
         'secure' => APP_ENV === 'production',
         'httponly' => true,
-        'samesite' => 'Strict'
+        'samesite' => 'Lax'
     ]);
     session_start();
 }
+
+// Increase PHP limits for large uploads
+ini_set('upload_max_filesize', '50M');
+ini_set('post_max_size', '55M');
+ini_set('max_execution_time', '300');
+ini_set('memory_limit', '256M');
 
 /**
  * Set timezone

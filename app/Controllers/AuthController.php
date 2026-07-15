@@ -32,7 +32,8 @@ class AuthController extends Controller
     public function loginForm(Request $request, Response $response): string
     {
         if ($this->viewData['isLoggedIn']) {
-            $this->redirect(url('account'));
+            $role = $_SESSION['user']['role'] ?? '';
+            $this->redirect($role === 'admin' ? url('admin') : url('account'));
         }
 
         $this->setMeta('Login');
@@ -49,8 +50,10 @@ class AuthController extends Controller
         $remember = (bool)$request->input('remember');
 
         if (empty($email) || empty($password)) {
+            \App\Helpers\Session::set('old', ['email' => $email]);
             $this->flash('error', 'Please enter email and password.');
             $this->redirectBack();
+            return;
         }
 
         $result = $this->authService->login($email, $password);
@@ -62,7 +65,7 @@ class AuthController extends Controller
             $cartService = new \App\Services\CartService();
             $cartService->mergeCartOnLogin($result['user']['id']);
 
-            $redirect = $_SESSION['redirect_after_login'] ?? url('account');
+            $redirect = $_SESSION['redirect_after_login'] ?? (($result['user']['role'] ?? '') === 'admin' ? url('admin') : url('account'));
             unset($_SESSION['redirect_after_login']);
             $this->redirect($redirect);
         } else {
@@ -77,7 +80,8 @@ class AuthController extends Controller
     public function registerForm(Request $request, Response $response): string
     {
         if ($this->viewData['isLoggedIn']) {
-            $this->redirect(url('account'));
+            $role = $_SESSION['user']['role'] ?? '';
+            $this->redirect($role === 'admin' ? url('admin') : url('account'));
         }
 
         $this->setMeta('Create Account');

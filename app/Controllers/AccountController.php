@@ -33,6 +33,14 @@ class AccountController extends Controller
     }
 
     /**
+     * Render a view with the account layout
+     */
+    protected function view(string $view, array $data = [], string $layout = 'account'): string
+    {
+        return parent::view($view, $data, $layout);
+    }
+
+    /**
      * Account dashboard
      */
     public function index(Request $request, Response $response): string

@@ -23,9 +23,9 @@ class Request
     {
         $this->params = $routeParams;
         $this->query = $_GET;
-        $this->body = $this->parseBody();
+        $this->server = $_SERVER;  // must be set before parseBody() — method() reads it
         $this->files = $_FILES;
-        $this->server = $_SERVER;
+        $this->body = $this->parseBody();
         $this->headers = $this->parseHeaders();
     }
 
@@ -170,8 +170,9 @@ class Request
         $method = strtoupper($this->server['REQUEST_METHOD'] ?? 'GET');
 
         // Support method spoofing via _method field
-        if ($method === 'POST' && $this->body['_method'] ?? null) {
-            return strtoupper($this->body['_method']);
+        // Use $_POST directly to avoid circular dependency (body not yet initialized)
+        if ($method === 'POST' && !empty($_POST['_method'])) {
+            return strtoupper($_POST['_method']);
         }
         return $method;
     }

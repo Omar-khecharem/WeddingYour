@@ -1,17 +1,7 @@
 <?php
-/**
- * Admin Product Controller
- * 
- * CRUD management for products in the admin panel.
- * Handles product creation, editing, image uploads,
- * stock management, and bulk operations.
- *
- * @package App\Controllers\Admin
- */
 
 namespace App\Controllers\Admin;
 
-use App\Core\Controller;
 use App\Core\Request;
 use App\Core\Response;
 use App\Models\Product;
@@ -19,26 +9,90 @@ use App\Models\Category;
 use App\Helpers\Security;
 use App\Helpers\Image;
 
-class ProductController extends Controller
+class ProductController extends BaseAdminController
 {
-    /**
-     * Product list (admin)
-     */
     public function index(Request $request, Response $response): string
     {
         $this->setMeta('Manage Products');
         $page = $this->getPage();
+        $search = $request->query('search', '');
+        $categoryId = (int)$request->query('category', 0);
+        $statusFilter = $request->query('status', '');
 
-        $products = Product::paginate($page, PAGINATION_ADMIN_PER_PAGE);
+        $conditions = [];
+        if ($categoryId > 0) {
+            $conditions['category_id'] = $categoryId;
+        }
+        if ($statusFilter !== '') {
+            $conditions['status'] = (int)$statusFilter;
+        }
+
+        if (!empty($search)) {
+            $pdo = \App\Core\Database::getInstance()->getConnection();
+            $like = '%' . $search . '%';
+            $where = ' WHERE (p.name LIKE :search OR p.sku LIKE :sku)';
+            $params = [':search' => $like, ':sku' => $like];
+            if ($categoryId > 0) {
+                $where .= ' AND p.category_id = :cat';
+                $params[':cat'] = $categoryId;
+            }
+            if ($statusFilter !== '') {
+                $where .= ' AND p.status = :st';
+                $params[':st'] = (int)$statusFilter;
+            }
+            $countStmt = $pdo->prepare("SELECT COUNT(*) FROM sg_products p{$where}");
+            $countStmt->execute($params);
+            $total = (int)$countStmt->fetchColumn();
+            $totalPages = max(1, ceil($total / PAGINATION_ADMIN_PER_PAGE));
+            $page = max(1, min($page, $totalPages));
+            $offset = ($page - 1) * PAGINATION_ADMIN_PER_PAGE;
+            $stmt = $pdo->prepare("SELECT p.*, c.name AS category_name FROM sg_products p LEFT JOIN sg_categories c ON c.id = p.category_id{$where} ORDER BY p.created_at DESC LIMIT :lim OFFSET :off");
+            $stmt->bindValue(':lim', PAGINATION_ADMIN_PER_PAGE, \PDO::PARAM_INT);
+            $stmt->bindValue(':off', $offset, \PDO::PARAM_INT);
+            foreach ($params as $k => $v) $stmt->bindValue($k, $v);
+            $stmt->execute();
+            $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            $items = [];
+            foreach ($rows as $r) {
+                $p = new \App\Models\Product($r);
+                $p->category_name = $r['category_name'] ?? '-';
+                $items[] = $p;
+            }
+            $products = [
+                'items' => $items,
+                'total' => $total,
+                'perPage' => PAGINATION_ADMIN_PER_PAGE,
+                'currentPage' => $page,
+                'totalPages' => $totalPages,
+                'hasPrev' => $page > 1,
+                'hasNext' => $page < $totalPages,
+                'prevPage' => $page - 1,
+                'nextPage' => $page + 1,
+            ];
+        } else {
+            $products = Product::paginate($page, PAGINATION_ADMIN_PER_PAGE, $conditions);
+            // Attach category names
+            $pdo = \App\Core\Database::getInstance()->getConnection();
+            $ids = array_map(fn($p) => $p->id, $products['items']);
+            if (!empty($ids)) {
+                $ph = implode(',', array_fill(0, count($ids), '?'));
+                $stmt = $pdo->prepare("SELECT p.id, c.name AS category_name FROM sg_products p LEFT JOIN sg_categories c ON c.id = p.category_id WHERE p.id IN ($ph)");
+                $stmt->execute($ids);
+                $catNames = $stmt->fetchAll(\PDO::FETCH_KEY_PAIR);
+                foreach ($products['items'] as $p) {
+                    $p->category_name = $catNames[$p->id] ?? '-';
+                }
+            }
+        }
+
+        $categories = Category::getActive();
 
         return $this->view('admin.products.index', [
             'products' => $products,
+            'categories' => $categories,
         ]);
     }
 
-    /**
-     * Create product form
-     */
     public function create(Request $request, Response $response): string
     {
         $this->setMeta('Add Product');
@@ -50,9 +104,6 @@ class ProductController extends Controller
         ]);
     }
 
-    /**
-     * Store new product
-     */
     public function store(Request $request, Response $response): void
     {
         $data = [
@@ -74,34 +125,22 @@ class ProductController extends Controller
             'meta_description' => Security::sanitize($request->input('meta_description', '')),
         ];
 
-        // Calculate discount percent
         if ($data['sale_price'] && $data['regular_price'] > 0) {
             $data['discount_percent'] = round((($data['regular_price'] - $data['sale_price']) / $data['regular_price']) * 100);
         }
 
         $product = Product::create($data);
 
-        // Handle image upload
-        if ($request->hasFile('image')) {
-            $file = $request->file('image');
-            $errors = Image::validate($file);
-            if (empty($errors)) {
-                $filename = Image::upload($file, PRODUCT_IMAGES_DIR, $data['name']);
-                if ($filename) {
-                    $pdo = \App\Core\Database::getInstance()->getConnection();
-                    $pdo->prepare("INSERT INTO sg_product_images (product_id, image, is_primary) VALUES (:pid, :img, 1)")
-                        ->execute([':pid' => $product->id, ':img' => $filename]);
-                }
-            }
+        $this->handleImages($product->id, $request, true);
+
+        $pincodes = $request->input('pincodes', []);
+        if (is_array($pincodes) && !empty(array_filter($pincodes))) {
+            Product::savePincodes($product->id, $pincodes);
         }
 
-        $this->flash('success', 'Product created successfully.');
-        $this->redirect(url('admin/products'));
+        $this->success('Product created successfully.', url('admin/products'));
     }
 
-    /**
-     * Edit product form
-     */
     public function edit(Request $request, Response $response): string
     {
         $id = (int)$request->param('id');
@@ -120,9 +159,6 @@ class ProductController extends Controller
         ]);
     }
 
-    /**
-     * Update product
-     */
     public function update(Request $request, Response $response): void
     {
         $id = (int)$request->param('id');
@@ -135,6 +171,7 @@ class ProductController extends Controller
         $data = [
             'category_id' => (int)$request->input('category_id'),
             'name' => Security::sanitize($request->input('name', '')),
+            'slug' => slugify($request->input('slug', $request->input('name', ''))),
             'short_description' => Security::sanitize($request->input('short_description', '')),
             'description' => $request->input('description', ''),
             'regular_price' => (float)$request->input('regular_price', 0),
@@ -145,6 +182,8 @@ class ProductController extends Controller
             'is_new' => (int)(bool)$request->input('is_new'),
             'is_trending' => (int)(bool)$request->input('is_trending'),
             'status' => (int)$request->input('status', 1),
+            'meta_title' => Security::sanitize($request->input('meta_title', '')),
+            'meta_description' => Security::sanitize($request->input('meta_description', '')),
         ];
 
         if ($data['sale_price'] && $data['regular_price'] > 0) {
@@ -154,13 +193,66 @@ class ProductController extends Controller
         $product->fill($data);
         $product->save();
 
-        $this->flash('success', 'Product updated successfully.');
-        $this->redirect(url('admin/products'));
+        $this->handleImages($id, $request);
+
+        $pincodes = $request->input('pincodes', []);
+        if (is_array($pincodes)) {
+            Product::savePincodes($id, $pincodes);
+        }
+
+        $this->success('Product updated successfully.', url('admin/products'));
     }
 
-    /**
-     * Delete product
-     */
+    private function handleImages(int $productId, Request $request, bool $isNew = false): void
+    {
+        if (empty($_FILES['images']) || !is_array($_FILES['images']['name'])) return;
+
+        $pdo = \App\Core\Database::getInstance()->getConnection();
+
+        $nameCount = count($_FILES['images']['name']);
+        for ($i = 0; $i < $nameCount; $i++) {
+            if ($_FILES['images']['error'][$i] !== UPLOAD_ERR_OK) continue;
+
+            $file = [
+                'name' => $_FILES['images']['name'][$i],
+                'type' => $_FILES['images']['type'][$i],
+                'tmp_name' => $_FILES['images']['tmp_name'][$i],
+                'error' => $_FILES['images']['error'][$i],
+                'size' => $_FILES['images']['size'][$i],
+            ];
+
+            $errors = Image::validate($file);
+            if (!empty($errors)) continue;
+
+            $filename = Image::upload($file, PRODUCT_IMAGES_DIR, 'product_' . $productId);
+            if (!$filename) continue;
+
+            $isPrimary = $isNew && $i === 0 ? 1 : 0;
+            $pdo->prepare("INSERT INTO sg_product_images (product_id, image, is_primary) VALUES (:pid, :img, :prim)")
+                ->execute([':pid' => $productId, ':img' => $filename, ':prim' => $isPrimary]);
+
+            if ($isNew && $i === 0) {
+                $pdo->prepare("UPDATE sg_product_images SET is_primary = 0 WHERE product_id = :pid AND id != LAST_INSERT_ID()")
+                    ->execute([':pid' => $productId]);
+            }
+        }
+    }
+
+    public function deleteImage(Request $request, Response $response): void
+    {
+        $id = (int)$request->input('id');
+        $pdo = \App\Core\Database::getInstance()->getConnection();
+        $stmt = $pdo->prepare("SELECT image FROM sg_product_images WHERE id = :id");
+        $stmt->execute([':id' => $id]);
+        $img = $stmt->fetchColumn();
+        if ($img) {
+            $path = UPLOADS_DIR . DS . $img;
+            if (file_exists($path)) @unlink($path);
+        }
+        $pdo->prepare("DELETE FROM sg_product_images WHERE id = :id")->execute([':id' => $id]);
+        $this->success('Image deleted.', url('admin/products/edit/' . $request->input('product_id')));
+    }
+
     public function destroy(Request $request, Response $response): void
     {
         $id = (int)$request->input('id');
@@ -168,6 +260,7 @@ class ProductController extends Controller
 
         if ($product) {
             $product->delete();
+            clearSiteCache();
             $this->flash('success', 'Product deleted successfully.');
         } else {
             $this->flash('error', 'Product not found.');

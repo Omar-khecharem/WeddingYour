@@ -27,7 +27,7 @@ class AdminMiddleware
             exit;
         }
 
-        if (!in_array($user['role'] ?? '', ['admin', 'manager'])) {
+        if (!in_array($user['role'] ?? '', ['admin'])) {
             http_response_code(403);
             require VIEWS_DIR . DS . 'errors' . DS . '403.php';
             exit;

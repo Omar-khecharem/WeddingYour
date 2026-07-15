@@ -117,4 +117,20 @@ class ProductController extends Controller
         }
         $this->json(['product' => $product->toArray()]);
     }
+
+    public function checkPincode(Request $request, Response $response): void
+    {
+        $productId = (int)$request->query('product_id');
+        $pincode = trim($request->query('pincode', ''));
+        if (!$productId || !$pincode) {
+            $this->json(['available' => false, 'message' => 'Invalid request.']);
+            return;
+        }
+        $available = Product::checkPincode($productId, $pincode);
+        if ($available) {
+            $this->json(['available' => true, 'message' => '✓ Available for delivery at ' . e($pincode)]);
+        } else {
+            $this->json(['available' => false, 'message' => '✗ We do not deliver to ' . e($pincode) . ' yet.']);
+        }
+    }
 }

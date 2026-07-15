@@ -12,10 +12,11 @@ $currentYear = $currentYear ?? date('Y');
 
       <!-- Logo + Brand -->
       <div class="flex flex-col items-start gap-3">
+        <?php $footerName = \App\Models\Setting::get('site_name', 'Shola Ghar'); ?>
         <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center border border-white/30">
-          <span class="text-white font-black text-2xl tracking-tighter">SG</span>
+          <span class="text-white font-black text-2xl tracking-tighter"><?= e(substr($footerName, 0, 2)) ?></span>
         </div>
-        <p class="text-sm text-white/80 leading-relaxed">The one and only destination of the Bengali wedding Topor Mukut is Shola Ghar. All the efficient Karigars of Shola Ghar are constantly trying their best to make the best quality and the most...</p>
+        <p class="text-sm text-white/80 leading-relaxed">The one and only destination of the Bengali wedding Topor Mukut is <?= e($footerName) ?>. All the efficient Karigars of <?= e($footerName) ?> are constantly trying their best to make the best quality and the most...</p>
       </div>
 
       <!-- Important Links -->
@@ -86,12 +87,12 @@ $currentYear = $currentYear ?? date('Y');
     <!-- Security Warning -->
     <div class="bg-white/10 rounded-xl p-5 border border-white/20 max-w-5xl mx-auto text-center">
       <h4 class="text-sm font-bold text-white mb-2">BEWARE OF SPURIOUS PHONE CALLS AND FICTITIOUS/FRAUDULENT OFFERS</h4>
-      <p class="text-xs text-white/70 leading-relaxed">Please be advised that Shola Ghar does not run any promotions or offers involving electronics or high-value products outside of our business. We will never ask for personal information, payments, or banking details over the phone. Any such messages are not authorized by Shola Ghar and should be ignored to protect yourself from potential scams.</p>
+      <p class="text-xs text-white/70 leading-relaxed">Please be advised that <?= e($footerName) ?> does not run any promotions or offers involving electronics or high-value products outside of our business. We will never ask for personal information, payments, or banking details over the phone. Any such messages are not authorized by <?= e($footerName) ?> and should be ignored to protect yourself from potential scams.</p>
     </div>
 
     <!-- Copyright -->
     <div class="text-center pt-4">
-      <p class="text-xs text-white/60">Copyright &copy; <?= $currentYear ?> Shola Ghar | Powered by Archtech Design</p>
+      <p class="text-xs text-white/60">Copyright &copy; <?= $currentYear ?> <?= e($footerName) ?> | Powered by Archtech Design</p>
     </div>
 
   </div>

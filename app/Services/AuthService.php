@@ -42,20 +42,27 @@ class AuthService
             return ['success' => false, 'errors' => $validator->errors()];
         }
 
+        $pdo = $this->db->getConnection();
+
+        // Lookup the User role ID
+        $roleStmt = $pdo->prepare("SELECT id FROM sg_roles WHERE slug = 'user' LIMIT 1");
+        $roleStmt->execute();
+        $customerRole = $roleStmt->fetch();
+        $roleId = $customerRole ? (int)$customerRole['id'] : null;
+
         $userData = [
             'name' => Security::sanitize($data['name']),
             'email' => Security::sanitizeEmail($data['email']),
             'phone' => $data['phone'] ?? null,
             'password' => Security::hashPassword($data['password']),
-            'role' => 'customer',
+            'role_id' => $roleId,
             'status' => STATUS_ACTIVE,
             'created_at' => date('Y-m-d H:i:s')
         ];
 
-        $pdo = $this->db->getConnection();
         $stmt = $pdo->prepare("
-            INSERT INTO sg_users (name, email, phone, password, role, status, created_at)
-            VALUES (:name, :email, :phone, :password, :role, :status, :created_at)
+            INSERT INTO sg_users (name, email, phone, password, role_id, status, created_at)
+            VALUES (:name, :email, :phone, :password, :role_id, :status, :created_at)
         ");
         $stmt->execute($userData);
 
@@ -75,7 +82,7 @@ class AuthService
     public function login(string $email, string $password): array
     {
         // Check rate limiting
-        $rateKey = 'login_' . $_SERVER['REMOTE_ADDR'];
+        $rateKey = 'login_' . ($_SERVER['REMOTE_ADDR'] ?? '127.0.0.1');
         if (!Security::checkRateLimit($rateKey, MAX_LOGIN_ATTEMPTS, LOGIN_LOCKOUT_TIME * 60)) {
             return ['success' => false, 'message' => 'Too many login attempts. Please try again after ' . LOGIN_LOCKOUT_TIME . ' minutes.'];
         }
@@ -129,7 +136,12 @@ class AuthService
     private function loginUser(int $userId): void
     {
         $pdo = $this->db->getConnection();
-        $stmt = $pdo->prepare("SELECT id, name, email, phone, role, avatar FROM sg_users WHERE id = :id");
+        $stmt = $pdo->prepare("
+            SELECT u.id, u.name, u.email, u.phone, r.slug AS role, u.avatar
+            FROM sg_users u
+            LEFT JOIN sg_roles r ON r.id = u.role_id
+            WHERE u.id = :id
+        ");
         $stmt->execute([':id' => $userId]);
         $user = $stmt->fetch();
 
@@ -308,6 +320,6 @@ class AuthService
     public function isAdmin(): bool
     {
         $user = Session::get('user');
-        return $user && in_array($user['role'] ?? '', ['admin', 'manager']);
+        return $user && in_array($user['role'] ?? '', ['admin']);
     }
 }

@@ -40,7 +40,7 @@ class CsrfMiddleware
                 echo json_encode(['error' => 'CSRF token mismatch', 'status' => 419]);
             } else {
                 Session::flash('error', 'Security token expired. Please try again.');
-                header('Location: ' . $_SERVER['HTTP_REFERER'] ?? APP_URL);
+                header('Location: ' . ($_SERVER['HTTP_REFERER'] ?? APP_URL), true, 302);
             }
             exit;
         }

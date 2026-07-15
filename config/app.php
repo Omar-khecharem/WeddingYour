@@ -30,14 +30,14 @@ define('SOCIAL_YOUTUBE', '#');
 
 // Security
 define('CSRF_TOKEN_NAME', '_csrf_token');
-define('SESSION_LIFETIME', 120); // minutes
+define('SESSION_LIFETIME', 480); // 8 hours (was 120 min)
 define('PASSWORD_ALGO', PASSWORD_BCRYPT);
 define('PASSWORD_COST', 12);
 define('MAX_LOGIN_ATTEMPTS', 5);
 define('LOGIN_LOCKOUT_TIME', 15); // minutes
 
 // Upload
-define('MAX_UPLOAD_SIZE', 5 * 1024 * 1024); // 5MB
+define('MAX_UPLOAD_SIZE', 50 * 1024 * 1024); // 50MB (was 5MB)
 define('ALLOWED_IMAGE_TYPES', ['jpg', 'jpeg', 'png', 'webp', 'gif']);
 define('IMAGE_QUALITY', 80);
 // Pagination

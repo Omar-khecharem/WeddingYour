@@ -36,7 +36,7 @@ class Product extends Model
             $imgStmt = $pdo->prepare("SELECT image FROM sg_product_images WHERE product_id = :pid ORDER BY is_primary DESC, sort_order ASC LIMIT 1");
             $imgStmt->execute([':pid' => $product['id']]);
             $img = $imgStmt->fetch();
-            $product['image'] = $img ? uploadUrl('products/' . $img['image']) : asset('images/placeholder.png');
+            $product['image'] = $img ? self::resolveImageUrl($img['image'], 'products') : asset('images/placeholder.png');
             $product['images'] = self::getImages($product['id']);
             $product['variants'] = self::getVariants($product['id']);
             $product['tags'] = self::getTags($product['id']);
@@ -51,7 +51,7 @@ class Product extends Model
         $stmt->execute([':pid' => $productId]);
         $images = $stmt->fetchAll();
         foreach ($images as &$img) {
-            $img['url'] = uploadUrl('products/' . $img['image']);
+            $img['url'] = self::resolveImageUrl($img['image'], 'products');
         }
         return $images;
     }
@@ -173,7 +173,7 @@ class Product extends Model
         $stmt->execute();
         $results = $stmt->fetchAll();
         foreach ($results as &$r) {
-            $r['image_url'] = $r['primary_image'] ? uploadUrl('products/' . $r['primary_image']) : asset('images/placeholder.png');
+            $r['image_url'] = $r['primary_image'] ? self::resolveImageUrl($r['primary_image'], 'products') : asset('images/placeholder.png');
             $r['price'] = $r['sale_price'] ?: $r['regular_price'];
             $r['url'] = url('product/' . $r['slug']);
         }
@@ -277,7 +277,7 @@ class Product extends Model
     {
         $pdo = Database::getInstance()->getConnection();
 
-        $stmt = $pdo->query("SELECT id, name, slug FROM sg_categories WHERE status = 1 ORDER BY sort_order ASC");
+        $stmt = $pdo->query("SELECT id, name, slug, image FROM sg_categories WHERE status = 1 ORDER BY sort_order ASC");
         $categories = $stmt->fetchAll();
 
         $stmt = $pdo->query("SELECT id, name, slug FROM sg_brands WHERE status = 1 ORDER BY name ASC");
@@ -327,6 +327,13 @@ class Product extends Model
         return $stmt->fetchAll();
     }
 
+    private static function resolveImageUrl(string $path, string $subdir = 'products'): string
+    {
+        if (empty($path)) return asset('images/placeholder.png');
+        if (!file_exists(UPLOADS_DIR . DS . $path)) return asset('images/placeholder.png');
+        return uploadUrl($path, $subdir);
+    }
+
     private static function attachImages(array $products): array
     {
         if (empty($products)) return [];
@@ -338,8 +345,37 @@ class Product extends Model
         $images = $stmt->fetchAll(\PDO::FETCH_KEY_PAIR);
         foreach ($products as &$product) {
             $img = $images[$product['id']] ?? '';
-            $product['image'] = $img ? uploadUrl('products/' . $img) : asset('images/placeholder.png');
+            $product['image'] = self::resolveImageUrl($img, 'products');
         }
         return $products;
+    }
+
+    public static function getPincodes(int $productId): array
+    {
+        $pdo = Database::getInstance()->getConnection();
+        $stmt = $pdo->prepare("SELECT pincode FROM sg_product_pincodes WHERE product_id = :pid ORDER BY pincode ASC");
+        $stmt->execute([':pid' => $productId]);
+        return $stmt->fetchAll(\PDO::FETCH_COLUMN);
+    }
+
+    public static function savePincodes(int $productId, array $pincodes): void
+    {
+        $pdo = Database::getInstance()->getConnection();
+        $pdo->prepare("DELETE FROM sg_product_pincodes WHERE product_id = :pid")->execute([':pid' => $productId]);
+        $stmt = $pdo->prepare("INSERT INTO sg_product_pincodes (product_id, pincode) VALUES (:pid, :pc)");
+        foreach ($pincodes as $pc) {
+            $pc = trim($pc);
+            if ($pc !== '') {
+                $stmt->execute([':pid' => $productId, ':pc' => $pc]);
+            }
+        }
+    }
+
+    public static function checkPincode(int $productId, string $pincode): bool
+    {
+        $pdo = Database::getInstance()->getConnection();
+        $stmt = $pdo->prepare("SELECT COUNT(*) FROM sg_product_pincodes WHERE product_id = :pid AND pincode = :pc");
+        $stmt->execute([':pid' => $productId, ':pc' => trim($pincode)]);
+        return (int)$stmt->fetchColumn() > 0;
     }
 }

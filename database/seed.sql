@@ -39,10 +39,8 @@ INSERT INTO `sg_languages` (`id`, `name`, `code`, `locale`, `direction`, `is_def
 -- 4. ROLES
 -- +----------------------------------------------------------------------------
 INSERT INTO `sg_roles` (`id`, `name`, `slug`, `description`, `is_system`) VALUES
-(1, 'Super Admin',  'super-admin',  'Full system access', 1),
-(2, 'Admin',        'admin',        'Backend administrator', 1),
-(3, 'Manager',      'manager',      'Store manager', 1),
-(4, 'Customer',     'customer',     'Registered customer', 1);
+(1, 'Admin',  'admin',  'Administrator – full backend access', 1),
+(2, 'User',   'user',   'Registered customer – frontend access only', 1);
 
 -- +----------------------------------------------------------------------------
 -- 5. PERMISSIONS
@@ -71,16 +69,14 @@ INSERT INTO `sg_permissions` (`id`, `name`, `slug`, `group`) VALUES
 -- 6. ROLE-PERMISSION
 -- +----------------------------------------------------------------------------
 INSERT INTO `sg_role_permission` (`role_id`, `permission_id`) VALUES
-(1,1),(1,2),(1,3),(1,4),(1,5),(1,6),(1,7),(1,8),(1,9),(1,10),(1,11),(1,12),(1,13),(1,14),(1,15),(1,16),(1,17),(1,18),
-(2,1),(2,2),(2,3),(2,4),(2,6),(2,7),(2,8),(2,9),(2,10),(2,11),(2,13),(2,14),(2,15),(2,16),
-(3,1),(3,2),(3,3),(3,4),(3,7),(3,8),(3,10),(3,14),(3,16);
+(1,1),(1,2),(1,3),(1,4),(1,5),(1,6),(1,7),(1,8),(1,9),(1,10),(1,11),(1,12),(1,13),(1,14),(1,15),(1,16),(1,17),(1,18);
 
 -- +----------------------------------------------------------------------------
--- 7. USERS (passwords: admin123 / customer123)
+-- 7. USERS (passwords: admin123 / user123)
 -- +----------------------------------------------------------------------------
 INSERT INTO `sg_users` (`id`, `role_id`, `name`, `email`, `phone`, `password`, `status`, `locale`) VALUES
-(1, 1, 'Admin',     'admin@sholaghar.com',   '+33 6 12 34 56 78', '$2y$12$LJ3m4ys3Lk0TSwHnbfOMiOXPm1Qlq5GzVxY0y8Jqh1kR7f5dKz9uS', 1, 'fr'),
-(2, 4, 'Sophie Martin', 'sophie@example.com','+33 6 98 76 54 32', '$2y$12$LJ3m4ys3Lk0TSwHnbfOMiOXPm1Qlq5GzVxY0y8Jqh1kR7f5dKz9uS', 1, 'fr');
+(1, 1, 'Admin',     'admin@sholaghar.com',   '+33 6 12 34 56 78', '$2y$12$QKeit8Z1Rfxy2ijYUmFc6Ohx0S9J3EnxJ.ylznTLws0mowWDpKt2m', 1, 'fr'),
+(2, 2, 'Sophie Martin', 'sophie@example.com','+33 6 98 76 54 32', '$2y$12$7sP5g6o539hKbs6C./63Geky24/28kB7PrBLMh/KTM3.e5dUd/9/e', 1, 'fr');
 
 -- +----------------------------------------------------------------------------
 -- 8. CUSTOMERS
@@ -109,7 +105,7 @@ INSERT INTO `sg_subcategories` (`id`, `category_id`, `name`, `slug`, `sort_order
 (5, 3, 'Topor Royal',  'topor-royal',  2, 1);
 
 -- +----------------------------------------------------------------------------
--- 11. BRANDS
+-- 11b. BRANDS
 -- +----------------------------------------------------------------------------
 INSERT INTO `sg_brands` (`id`, `name`, `slug`, `description`, `featured`, `status`) VALUES
 (1, 'Shola Ghar',    'shola-ghar',    'Marque premium Shola Ghar',    1, 1),
@@ -130,6 +126,14 @@ INSERT INTO `sg_products` (`id`, `category_id`, `subcategory_id`, `brand_id`, `n
 (8, 1, NULL, 3, 'Mukut Bébé Premium', 'mukut-bebe-premium',  'Mukut bébé premium avec accents dorés',                  '<p>Mukut bébé premium avec travail complexe en shola et détails dorés.</p>',                                                               'BM-002', 1299.00, 799.00, 38, 20, 'in_stock', 0, 0, 0, 0, 4.40, 9,  1),
 (9, 4, NULL, 1, 'Ensemble Mariage Mukut & Topor','ensemble-mariage-mukut-topor','Ensemble complet mariage mukut et topor','<p>Ensemble complet incluant mukut de mariée et topor de marié. Ensemble assorti parfait pour le couple.</p>',                            'WM-001', 2499.00, 1499.00, 40, 15, 'in_stock', 1, 1, 1, 1, 4.80, 16, 1),
 (10,5, NULL, 2, 'Ensemble Gachhkouto','ensemble-gachhkouto', 'Ensemble Gachhkouto traditionnel',                       '<p>Ensemble Gachhkouto traditionnel fabriqué à la main en matériaux premium.</p>',                                                          'GS-001', 1799.00, 999.00, 44, 10, 'in_stock', 0, 0, 0, 0, 4.20, 5,  1);
+
+-- +----------------------------------------------------------------------------
+-- 12b. BEST DEALS
+-- +----------------------------------------------------------------------------
+INSERT INTO `sg_deals` (`id`, `image`) VALUES
+(1, ''),
+(2, ''),
+(3, '');
 
 -- +----------------------------------------------------------------------------
 -- 13. PRODUCT IMAGES
@@ -228,19 +232,13 @@ INSERT INTO `sg_pages` (`id`, `title`, `slug`, `content`, `status`, `sort_order`
 (4, 'CGV',               'cgv',             '<h2>Conditions générales de vente</h2>', 1, 4);
 
 -- +----------------------------------------------------------------------------
--- 24. SLIDERS
--- +----------------------------------------------------------------------------
-INSERT INTO `sg_sliders` (`id`, `title`, `subtitle`, `description`, `image`, `sort_order`, `is_active`) VALUES
-(1, 'Collection Mariage 2026', 'L\'élégance traditionnelle',   'Découvrez notre nouvelle collection de mukut et topor',  'slide-mariage-2026.jpg', 1, 1),
-(2, 'Mukut de Mariée',         'Parfait pour votre jour J',   'Mukut faits main par nos artisans',                     'slide-mukut.jpg',        2, 1),
-(3, 'Topor pour Marié',        'Soyez élégant',               'Topor traditionnel et moderne',                          'slide-topor.jpg',        3, 1);
-
--- +----------------------------------------------------------------------------
 -- 25. BANNERS
 -- +----------------------------------------------------------------------------
-INSERT INTO `sg_banners` (`id`, `name`, `title`, `description`, `image`, `position`, `is_active`) VALUES
-(1, 'Bannière été',       'Promo été – 20%',     'Réduction sur tous les mukut', 'banner-ete.jpg',   'home_top', 1),
-(2, 'Bannière livraison', 'Livraison offerte',   'Dès 49€ d\'achat',             'banner-livraison.jpg','sidebar', 1);
+INSERT INTO `sg_banners` (`id`, `name`, `title`, `description`, `image`, `link`, `position`, `is_active`) VALUES
+(1, 'Bannière été',       'Promo été - 20%',     'Réduction sur tous les mukut', 'banner-ete.jpg',   '/products?on_sale=1', 'home_top', 1),
+(2, 'Bannière livraison', 'Livraison offerte',   'Dès 49€ d\'achat',             'banner-livraison.jpg','', 'sidebar', 1),
+(3, 'Hero Left Wedding',  'Mukut Collection',    '', '', '/products?category=bride-mukut', 'hero_left', 1),
+(4, 'Hero Right Topor',   'Topor Sets',          '', '', '/products?category=groom-topor', 'hero_right', 1);
 
 -- +----------------------------------------------------------------------------
 -- 26. FAQ CATEGORIES
@@ -330,8 +328,17 @@ INSERT INTO `sg_settings` (`key`, `value`, `group`, `type`, `sort_order`, `is_pu
 ('meta_keywords',         'shola ghar, mukut mariage, topor marié, sholapith, accessoires mariage', 'seo', 'text', 18,1),
 ('currency',              '€',                                                            'general',  'text',     19,1),
 ('currency_code',         'EUR',                                                          'general',  'text',     20,1),
-('maintenance_mode',      '0',                                                            'system',   'boolean',  21,0),
-('store_open',            '1',                                                            'system',   'boolean',  22,0);
+('site_logo',             'site_logo.png',                                                 'general',  'image',    21,1),
+('site_favicon',          'site_favicon.png',                                              'general',  'image',    22,1),
+('header_coupon_code',    'SGTM20',                                                       'general',  'text',     30,1),
+('header_coupon_text',    'Get FLAT 20% OFF On Topor Mukut set. Use Code -',              'general',  'text',     31,1),
+('hero_title',            'Premium Wedding Mukut',                                        'general',  'text',     23,1),
+('hero_subtitle',         'New Collection 2026',                                          'general',  'text',     24,1),
+('hero_description',      'Discover our handcrafted bridal mukut collection',            'general',  'textarea', 25,1),
+('hero_button_text',      'Shop Now',                                                     'general',  'text',     26,1),
+('hero_button_link',      '/products',                                                    'general',  'url',      27,1),
+('maintenance_mode',      '0',                                                            'system',   'boolean',  28,0),
+('store_open',            '1',                                                            'system',   'boolean',  29,0);
 
 -- +----------------------------------------------------------------------------
 -- 34. PASSWORD RESETS (none by default)

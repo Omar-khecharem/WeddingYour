@@ -34,7 +34,10 @@ class Image
 
         if (move_uploaded_file($file['tmp_name'], $filepath)) {
             self::optimize($filepath);
-            return $filename;
+            $uploadsDir = rtrim(UPLOADS_DIR, DS) . DS;
+            return str_starts_with($directory, $uploadsDir)
+                ? substr($directory, strlen($uploadsDir)) . '/' . $filename
+                : $filename;
         }
 
         return false;

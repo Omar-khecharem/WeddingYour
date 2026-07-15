@@ -391,7 +391,7 @@ class CartService
         $stmt = $pdo->prepare("SELECT image FROM sg_product_images WHERE product_id = :id AND is_primary = 1 LIMIT 1");
         $stmt->execute([':id' => $productId]);
         $result = $stmt->fetch();
-        return $result ? uploadUrl('products/' . $result['image']) : asset('images/placeholder.png');
+        return $result ? uploadUrl($result['image'], 'products') : asset('images/placeholder.png');
     }
 
     /**

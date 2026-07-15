@@ -96,17 +96,20 @@ class Review extends Model
     /**
      * Get review statistics
      */
-    public static function getStats(): array
+    public static function getStats(?int $productId = null): array
     {
         $pdo = Database::getInstance()->getConnection();
+        $where = $productId ? ' WHERE product_id = ' . (int)$productId : '';
+        $whereApproved = ($where ? $where . ' AND' : ' WHERE') . ' is_approved = 1';
         $stats = [];
-        $stats['total'] = (int)$pdo->query("SELECT COUNT(*) FROM sg_reviews")->fetchColumn();
-        $stats['approved'] = (int)$pdo->query("SELECT COUNT(*) FROM sg_reviews WHERE is_approved = 1")->fetchColumn();
-        $stats['pending'] = (int)$pdo->query("SELECT COUNT(*) FROM sg_reviews WHERE is_approved = 0")->fetchColumn();
-        $stats['average_rating'] = (float)$pdo->query("SELECT AVG(rating) FROM sg_reviews WHERE is_approved = 1")->fetchColumn();
+        $stats['total'] = (int)$pdo->query("SELECT COUNT(*) FROM sg_reviews{$where}")->fetchColumn();
+        $stats['approved'] = (int)$pdo->query("SELECT COUNT(*) FROM sg_reviews{$whereApproved}")->fetchColumn();
+        $stats['pending'] = (int)$pdo->query("SELECT COUNT(*) FROM sg_reviews{$where} AND is_approved = 0")->fetchColumn();
+        $avg = (float)$pdo->query("SELECT AVG(rating) FROM sg_reviews{$whereApproved}")->fetchColumn();
+        $stats['average_rating'] = $avg;
+        $stats['average'] = $avg;
 
-        // Rating distribution
-        $distStmt = $pdo->query("SELECT rating, COUNT(*) as count FROM sg_reviews WHERE is_approved = 1 GROUP BY rating ORDER BY rating DESC");
+        $distStmt = $pdo->query("SELECT rating, COUNT(*) as count FROM sg_reviews{$whereApproved} GROUP BY rating ORDER BY rating DESC");
         $distribution = [5 => 0, 4 => 0, 3 => 0, 2 => 0, 1 => 0];
         foreach ($distStmt->fetchAll() as $row) {
             $distribution[(int)$row['rating']] = (int)$row['count'];

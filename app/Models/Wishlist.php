@@ -59,7 +59,7 @@ class Wishlist extends Model
         $items = $stmt->fetchAll();
         foreach ($items as &$item) {
             $item['image'] = $item['image']
-                ? uploadUrl('products/' . $item['image'])
+                ? uploadUrl($item['image'], 'products')
                 : asset('images/placeholder.png');
         }
 
