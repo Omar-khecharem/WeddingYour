@@ -76,9 +76,10 @@ class Product extends Model
     {
         $pdo = Database::getInstance()->getConnection();
         $stmt = $pdo->prepare("
-            SELECT p.*, c.name AS category_name
+            SELECT p.*, c.name AS category_name, sc.name AS subcategory_name
             FROM sg_products p
             LEFT JOIN sg_categories c ON c.id = p.category_id
+            LEFT JOIN sg_subcategories sc ON sc.id = p.subcategory_id
             WHERE p.status = 1
             ORDER BY p.created_at DESC LIMIT :limit
         ");
@@ -91,9 +92,10 @@ class Product extends Model
     {
         $pdo = Database::getInstance()->getConnection();
         $stmt = $pdo->prepare("
-            SELECT p.*, c.name AS category_name
+            SELECT p.*, c.name AS category_name, sc.name AS subcategory_name
             FROM sg_products p
             LEFT JOIN sg_categories c ON c.id = p.category_id
+            LEFT JOIN sg_subcategories sc ON sc.id = p.subcategory_id
             WHERE p.is_featured = 1 AND p.status = 1
             ORDER BY p.created_at DESC LIMIT :limit
         ");
@@ -106,9 +108,10 @@ class Product extends Model
     {
         $pdo = Database::getInstance()->getConnection();
         $stmt = $pdo->prepare("
-            SELECT p.*, c.name AS category_name
+            SELECT p.*, c.name AS category_name, sc.name AS subcategory_name
             FROM sg_products p
             LEFT JOIN sg_categories c ON c.id = p.category_id
+            LEFT JOIN sg_subcategories sc ON sc.id = p.subcategory_id
             WHERE p.is_trending = 1 AND p.status = 1
             ORDER BY p.created_at DESC LIMIT :limit
         ");
@@ -121,9 +124,10 @@ class Product extends Model
     {
         $pdo = Database::getInstance()->getConnection();
         $stmt = $pdo->prepare("
-            SELECT p.*, c.name AS category_name
+            SELECT p.*, c.name AS category_name, sc.name AS subcategory_name
             FROM sg_products p
             LEFT JOIN sg_categories c ON c.id = p.category_id
+            LEFT JOIN sg_subcategories sc ON sc.id = p.subcategory_id
             WHERE p.category_id = :cat_id AND p.id != :prod_id AND p.status = 1
             ORDER BY RAND() LIMIT :limit
         ");
@@ -253,6 +257,7 @@ class Product extends Model
 
         $offset = ($page - 1) * $perPage;
         $sql = "SELECT p.*, c.name AS category_name, c.slug AS category_slug,
+                       sc.name AS subcategory_name, sc.slug AS subcategory_slug,
                        b.name AS brand_name, b.slug AS brand_slug
                 FROM sg_products p
                 LEFT JOIN sg_categories c ON p.category_id = c.id
@@ -340,9 +345,15 @@ class Product extends Model
         $ids = array_column($products, 'id');
         $ph = implode(',', array_fill(0, count($ids), '?'));
         $pdo = Database::getInstance()->getConnection();
-        $stmt = $pdo->prepare("SELECT product_id, image FROM sg_product_images WHERE product_id IN ($ph) AND is_primary = 1");
+        $stmt = $pdo->prepare("SELECT id, product_id, image FROM sg_product_images WHERE product_id IN ($ph) ORDER BY is_primary DESC, sort_order ASC");
         $stmt->execute($ids);
-        $images = $stmt->fetchAll(\PDO::FETCH_KEY_PAIR);
+        $allRows = $stmt->fetchAll();
+        $images = [];
+        foreach ($allRows as $row) {
+            if (!isset($images[$row['product_id']])) {
+                $images[$row['product_id']] = $row['image'];
+            }
+        }
         foreach ($products as &$product) {
             $img = $images[$product['id']] ?? '';
             $product['image'] = self::resolveImageUrl($img, 'products');

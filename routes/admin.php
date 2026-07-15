@@ -10,6 +10,7 @@ use App\Controllers\Admin\GalleryController;
 use App\Controllers\Admin\OutletController;
 use App\Controllers\Admin\DealController;
 use App\Controllers\Admin\CategoryCardController;
+use App\Controllers\Admin\SubcategoryController;
 use App\Middleware\AdminMiddleware;
 
 Router::group('/admin', ['middleware' => [AdminMiddleware::class]], function () {
@@ -127,4 +128,12 @@ Router::group('/admin', ['middleware' => [AdminMiddleware::class]], function () 
     Router::get('/category-cards/edit/{id}', [CategoryCardController::class, 'edit'])->name('admin.category-cards.edit');
     Router::post('/category-cards/update/{id}', [CategoryCardController::class, 'update'])->name('admin.category-cards.update');
     Router::post('/category-cards/delete', [CategoryCardController::class, 'destroy'])->name('admin.category-cards.delete');
+
+    // Subcategories (with image support)
+    Router::get('/subcategories', [SubcategoryController::class, 'index'])->name('admin.subcategories');
+    Router::get('/subcategories/create/{category_id}', [SubcategoryController::class, 'create'])->name('admin.subcategories.create');
+    Router::post('/subcategories', [SubcategoryController::class, 'store'])->name('admin.subcategories.store');
+    Router::get('/subcategories/edit/{id}', [SubcategoryController::class, 'edit'])->name('admin.subcategories.edit');
+    Router::post('/subcategories/update/{id}', [SubcategoryController::class, 'update'])->name('admin.subcategories.update');
+    Router::post('/subcategories/delete', [SubcategoryController::class, 'destroy'])->name('admin.subcategories.delete');
 });

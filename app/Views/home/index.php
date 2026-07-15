@@ -16,34 +16,25 @@ $videoShowcaseBg = $videoShowcaseBg ?? '';
 
   <main class="max-w-7xl mx-auto px-4 py-6 space-y-8">
 
-    <?php $catList = $categories; if (empty($catList)): $catList = [['slug'=>'bebe-mukut','name'=>'BABY MUKUT'],['slug'=>'mukut-mariee','name'=>'BRIDE MUKUT'],['slug'=>'topor-marie','name'=>'GROOM TOPOR'],['slug'=>'articles-mariage','name'=>'WEDDING ITEMS'],['slug'=>'gachhkouto-dorpon','name'=>'GACHHKOUTO']]; endif; ?>
-    <?php $chunks = array_chunk($catList, 8); ?>
-    <section class="overflow-hidden -mx-4 px-4 py-1">
-      <div class="flex items-center justify-between mb-6 px-4">
-        <h2 class="text-2xl font-black text-slate-800 tracking-tight">Categories</h2>
-      </div>
-      <div class="relative overflow-hidden">
-        <div id="catTrackHome" class="flex transition-transform duration-500 ease-in-out" style="width:<?= count($chunks) * 100 ?>%">
-          <?php foreach ($chunks as $chunk): ?>
-          <div class="flex gap-6 md:gap-8 px-4" style="width:<?= 100 / count($chunks) ?>%">
-            <?php foreach ($chunk as $cat): ?>
-            <?php $catSlug = is_array($cat) ? ($cat['slug'] ?? '') : $cat; ?>
-            <?php $catName = is_array($cat) ? ($cat['name'] ?? '') : $cat; ?>
-            <?php $catImg = is_array($cat) ? ($cat['image'] ?? '') : ''; ?>
-            <a href="<?= url('category/' . e($catSlug)) ?>" class="flex flex-col items-center text-center space-y-3 w-[130px] md:w-[150px] lg:w-[170px] shrink-0 group">
-              <div class="w-full aspect-square rounded-2xl overflow-hidden border-2 border-slate-100 group-hover:border-red-600 group-hover:translate-x-1 group-hover:scale-105 transition-all duration-300 shadow-md group-hover:shadow-xl">
-                <?php if ($catImg): ?>
-                <img src="<?= uploadUrl($catImg, 'categories') ?>" alt="<?= e($catName) ?>" class="w-full h-full object-cover" loading="lazy">
-                <?php else: ?>
-                <div class="w-full h-full bg-gradient-to-br from-red-50 to-slate-100 flex items-center justify-center font-bold text-slate-400"><?= e(substr($catName, 0, 2)) ?></div>
-                <?php endif; ?>
-              </div>
-              <span class="text-xs md:text-sm font-bold uppercase tracking-wider text-slate-700 group-hover:text-red-600 transition-colors"><?= e($catName) ?></span>
-            </a>
-            <?php endforeach; ?>
+    <?php $subList = $subcategories; if (empty($subList)): $subList = [['slug'=>'bridal-patashi-mukut','name'=>'Bridal Patashi','cat_slug'=>'bride'],['slug'=>'sithi-small-mukut','name'=>'Sithi Mukut','cat_slug'=>'bride'],['slug'=>'topor-mukut-set','name'=>'Topor Set','cat_slug'=>'groom'],['slug'=>'baby-topor-boy','name'=>'Baby Topor','cat_slug'=>'baby'],['slug'=>'groom-dorpon','name'=>'Dorpon','cat_slug'=>'groom'],['slug'=>'matha-patti','name'=>'Matha Patti','cat_slug'=>'sholas-jewellery'],['slug'=>'wedding-panpata','name'=>'Panpata','cat_slug'=>'wedding-items'],['slug'=>'mini-crown','name'=>'Mini Crown','cat_slug'=>'sholas-jewellery']]; endif; ?>
+    <section class="py-2 overflow-hidden select-none" id="subcatSectionHome">
+      <div id="subcatScrollHome" class="flex gap-3 md:gap-4 overflow-x-auto px-4 pb-2 scrollbar-hide" style="cursor:grab; scrollbar-width:none; -ms-overflow-style:none; user-select:none; -webkit-user-select:none; -webkit-overflow-scrolling:touch;">
+        <?php foreach ($subList as $sub): ?>
+        <?php $subSlug = is_array($sub) ? ($sub['slug'] ?? '') : $sub; ?>
+        <?php $subName = is_array($sub) ? ($sub['name'] ?? '') : $sub; ?>
+        <?php $subImg = is_array($sub) ? ($sub['image'] ?? '') : ''; ?>
+        <?php $subCatSlug = is_array($sub) ? ($sub['cat_slug'] ?? '') : ''; ?>
+        <a href="<?= url('products?category=' . e($subCatSlug) . '&subcategory=' . e($subSlug)) ?>" draggable="false" ondragstart="return false" class="flex flex-col items-center text-center space-y-2 w-[90px] min-[400px]:w-[100px] sm:w-[110px] md:w-[120px] lg:w-[130px] shrink-0 group">
+          <div class="w-full aspect-square rounded-3xl overflow-hidden border-2 border-slate-100 group-hover:border-red-600 group-hover:scale-105 transition-all duration-300 shadow-md group-hover:shadow-xl">
+            <?php if ($subImg): ?>
+            <img src="<?= uploadUrl($subImg, 'categories') ?>" alt="<?= e($subName) ?>" class="w-full h-full object-cover" loading="lazy" draggable="false">
+            <?php else: ?>
+            <div class="w-full h-full bg-gradient-to-br from-red-50 to-slate-100 flex items-center justify-center font-bold text-slate-400"><?= e(substr($subName, 0, 2)) ?></div>
+            <?php endif; ?>
           </div>
-          <?php endforeach; ?>
-        </div>
+          <span class="text-[10px] min-[400px]:text-[11px] sm:text-xs md:text-sm font-semibold leading-tight text-slate-700 group-hover:text-red-600 transition-colors"><?= e($subName) ?></span>
+        </a>
+        <?php endforeach; ?>
       </div>
     </section>
 
@@ -114,7 +105,7 @@ $videoShowcaseBg = $videoShowcaseBg ?? '';
         <?php $pCat = is_array($product) ? ($product['category_name'] ?? '') : ($product->category_name ?? ''); ?>
         <?php $pSub = is_array($product) ? ($product['subcategory_name'] ?? '') : ($product->subcategory_name ?? ''); ?>
         <?php $pId = is_array($product) ? ($product['id'] ?? 0) : ($product->id ?? 0); ?>
-        <div class="group relative bg-white border border-red-100 hover:border-red-400 rounded-xl overflow-hidden transition-all duration-300 shadow-sm hover:shadow-lg flex flex-col">
+        <div onclick="window.location='<?= url('product/' . e($pSlug)) ?>'" class="cursor-pointer group relative bg-white border border-red-100 hover:border-red-400 rounded-xl overflow-hidden transition-all duration-300 shadow-sm hover:shadow-lg flex flex-col">
           <?php if ($pDisc): ?>
           <span class="absolute top-2 left-2 bg-red-600 text-white text-xs font-black px-2 py-0.5 rounded-md z-20">-<?= (int)$pDisc ?>%</span>
           <?php endif; ?>
@@ -132,17 +123,17 @@ $videoShowcaseBg = $videoShowcaseBg ?? '';
               <?php endif; ?>
             </div>
             <div class="flex items-center gap-1.5 mt-2">
-              <button onclick="addToCart(<?= $pId ?>, 1)" class="bg-red-600 hover:bg-red-700 text-white text-[10px] font-bold px-2 py-1.5 rounded transition-colors flex items-center gap-1">
+              <button onclick="event.stopPropagation();addToCart(<?= $pId ?>, 1)" class="bg-red-600 hover:bg-red-700 text-white text-[10px] font-bold px-2 py-1.5 rounded transition-colors flex items-center gap-1">
                 <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z"/></svg> Cart
               </button>
-              <button onclick="toggleCompare(<?= $pId ?>)" class="bg-slate-700 hover:bg-slate-600 text-white text-[10px] font-bold px-2 py-1.5 rounded transition-colors flex items-center gap-1">
+              <button onclick="event.stopPropagation();toggleCompare(<?= $pId ?>)" class="bg-slate-700 hover:bg-slate-600 text-white text-[10px] font-bold px-2 py-1.5 rounded transition-colors flex items-center gap-1">
                 <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
               </button>
-              <button onclick="quickView(<?= $pId ?>)" class="bg-slate-700 hover:bg-slate-600 text-white text-[10px] font-bold px-2 py-1.5 rounded transition-colors flex items-center gap-1">
+              <button onclick="event.stopPropagation();quickView(<?= $pId ?>)" class="bg-slate-700 hover:bg-slate-600 text-white text-[10px] font-bold px-2 py-1.5 rounded transition-colors flex items-center gap-1">
                 <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
               </button>
             </div>
-            <button onclick="toggleWishlist(<?= $pId ?>)" class="mt-1.5 bg-white/20 hover:bg-white/30 text-white text-[10px] font-bold px-2 py-0.5 rounded-full transition-colors flex items-center gap-1">
+            <button onclick="event.stopPropagation();toggleWishlist(<?= $pId ?>)" class="mt-1.5 bg-white/20 hover:bg-white/30 text-white text-[10px] font-bold px-2 py-0.5 rounded-full transition-colors flex items-center gap-1">
               <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg> Wishlist
             </button>
           </div>
@@ -451,4 +442,7 @@ var hrIdx=0,hrTrack=document.getElementById('heroRightTrack');
 if(hrTrack){var hrSlides=hrTrack.children;
 function heroRightSlide(d){if(!hrSlides.length)return;hrIdx=(hrIdx+d+hrSlides.length)%hrSlides.length;hrTrack.style.transform='translateX(-'+(hrIdx*100)+'%)';}
 setInterval(function(){heroRightSlide(1);},4000);}
+
+/* Subcategory scroll drag */
+(function(){var el=document.getElementById('subcatScrollHome');if(!el)return;var down=false,startX=0,scrollLeft=0,moved=false;el.addEventListener('mousedown',function(e){down=true;moved=false;startX=e.pageX;scrollLeft=el.scrollLeft;el.style.cursor='grabbing';});window.addEventListener('mousemove',function(e){if(!down)return;e.preventDefault();var walk=e.pageX-startX;if(Math.abs(walk)>5)moved=true;el.scrollLeft=scrollLeft-walk;});window.addEventListener('mouseup',function(){down=false;if(el)el.style.cursor='grab';});window.addEventListener('mouseleave',function(){down=false;});el.addEventListener('click',function(e){if(moved){e.stopPropagation();e.preventDefault();}},true);})();
 </script>

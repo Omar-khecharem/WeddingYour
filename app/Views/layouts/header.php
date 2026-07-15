@@ -41,6 +41,7 @@
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>.scrollbar-hide::-webkit-scrollbar{display:none}</style>
     <script>
         tailwind.config = {
             theme: {

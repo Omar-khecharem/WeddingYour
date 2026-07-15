@@ -1,10 +1,9 @@
 <?php
-$result = $products ?? [];
-$productList = $result['products'] ?? [];
-$total = $result['total'] ?? 0;
-$page = $result['page'] ?? 1;
-$perPage = $result['perPage'] ?? 12;
-$totalPages = $result['totalPages'] ?? 1;
+$productList = $products ?? [];
+$total = $total ?? 0;
+$page = $page ?? 1;
+$perPage = $perPage ?? 12;
+$totalPages = $totalPages ?? 1;
 
 $filterOptions = $filterOptions ?? [];
 $categories = $categories ?? $filterOptions['categories'] ?? [];
@@ -30,41 +29,27 @@ $end = min($page * $perPage, $total);
   </div>
 </div>
 
-<?php $catList = $categories;
-$chunks = array_chunk($catList, 7); ?>
-<?php if (!empty($chunks)): ?>
-<!-- CATEGORIES STEP CAROUSEL (7 per slide) -->
-<section class="bg-white border-b border-slate-200 overflow-hidden">
+<?php $subList = $subcategories ?? []; ?>
+<?php if (!empty($subList)): ?>
+<section class="bg-white border-b border-slate-200 overflow-hidden select-none">
   <div class="max-w-[1400px] mx-auto px-4 py-5">
-    <div class="flex items-center justify-between mb-4">
-      <h2 class="text-lg font-black text-slate-800 tracking-tight">Catégories</h2>
-      <div class="flex gap-2">
-        <button id="catPrevBtn" class="w-8 h-8 rounded-full border border-slate-300 flex items-center justify-center text-slate-500 hover:bg-red-600 hover:text-white hover:border-red-600 transition-colors">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
-        </button>
-        <button id="catNextBtn" class="w-8 h-8 rounded-full border border-slate-300 flex items-center justify-center text-slate-500 hover:bg-red-600 hover:text-white hover:border-red-600 transition-colors">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
-        </button>
-      </div>
-    </div>
-    <div class="relative overflow-hidden">
-      <div id="catTrackProd" class="flex transition-transform duration-500 ease-in-out" style="width:<?= count($chunks) * 100 ?>%">
-        <?php foreach ($chunks as $chunk): ?>
-        <div class="flex flex-wrap justify-center gap-3 px-2" style="width:<?= 100 / count($chunks) ?>%">
-          <?php foreach ($chunk as $cat): ?>
-          <?php $catSlug = is_array($cat) ? $cat['slug'] : $cat; ?>
-          <?php $catName = is_array($cat) ? $cat['name'] : $cat; ?>
-          <?php $catImg = is_array($cat) ? ($cat['image'] ?? 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=200') : 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=200'; ?>
-          <a href="<?= url('category/' . e($catSlug)) ?>" class="flex flex-col items-center text-center space-y-2 w-[calc(14.285%-0.75rem)] min-w-[90px] max-w-[140px] shrink-0 group">
-            <div class="w-full aspect-square rounded-2xl overflow-hidden border-2 border-slate-100 group-hover:border-red-600 group-hover:scale-105 transition-all duration-300 shadow-sm group-hover:shadow-md">
-              <img src="<?= uploadUrl($catImg, 'categories') ?>" alt="<?= e($catName) ?>" class="w-full h-full object-cover" loading="lazy">
-            </div>
-            <span class="text-[11px] font-bold uppercase tracking-wider text-slate-700 group-hover:text-red-600 transition-colors"><?= e($catName) ?></span>
-          </a>
-          <?php endforeach; ?>
+    <div id="subcatScrollProd" class="flex gap-3 md:gap-4 overflow-x-auto pb-2 scrollbar-hide" style="cursor:grab; scrollbar-width:none; -ms-overflow-style:none; user-select:none; -webkit-user-select:none; -webkit-overflow-scrolling:touch;">
+      <?php foreach ($subList as $sub): ?>
+      <?php $subSlug = $sub['slug'] ?? ''; ?>
+      <?php $subName = $sub['name'] ?? ''; ?>
+      <?php $subImg = $sub['image'] ?? ''; ?>
+      <?php $subCatSlug = $sub['cat_slug'] ?? ''; ?>
+      <a href="<?= url('products?category=' . e($subCatSlug) . '&subcategory=' . e($subSlug)) ?>" draggable="false" ondragstart="return false" class="flex flex-col items-center text-center space-y-2 w-[90px] min-[400px]:w-[100px] sm:w-[110px] md:w-[120px] lg:w-[130px] shrink-0 group">
+        <div class="w-full aspect-square rounded-3xl overflow-hidden border-2 border-slate-100 group-hover:border-red-600 group-hover:scale-105 transition-all duration-300 shadow-md group-hover:shadow-xl">
+          <?php if ($subImg): ?>
+            <img src="<?= uploadUrl($subImg, 'categories') ?>" alt="<?= e($subName) ?>" class="w-full h-full object-cover" loading="lazy" draggable="false">
+          <?php else: ?>
+          <div class="w-full h-full bg-gradient-to-br from-red-50 to-slate-100 flex items-center justify-center font-bold text-slate-400"><?= e(substr($subName, 0, 2)) ?></div>
+          <?php endif; ?>
         </div>
-        <?php endforeach; ?>
-      </div>
+        <span class="text-[10px] min-[400px]:text-[11px] sm:text-xs md:text-sm font-semibold leading-tight text-slate-700 group-hover:text-red-600 transition-colors"><?= e($subName) ?></span>
+      </a>
+      <?php endforeach; ?>
     </div>
   </div>
 </section>
@@ -100,30 +85,33 @@ $chunks = array_chunk($catList, 7); ?>
         <div class="mb-6">
           <h3 class="text-sm font-bold text-emerald-600 uppercase tracking-wider mb-3">CATEGORIES</h3>
           <ul class="space-y-1">
-            <?php $menuCats = [
-              'bride-mukut' => ['label' => 'BRIDE', 'sub' => [
-                ['label' => 'Bridal Patashi / Mukut', 'slug' => 'bridal-patashi'],
-                ['label' => 'Bridal Sithi / Small Mukut', 'slug' => 'bridal-sithi'],
-                ['label' => 'Crown & 3 Pieces Set', 'slug' => 'crown'],
-                ['label' => 'Boron / Khoidan Kulo', 'slug' => 'boron'],
-                ['label' => 'Gach kouto', 'slug' => 'gachhkouto-dorpon'],
-                ['label' => 'Panpata', 'slug' => 'panpata'],
-                ['label' => 'Piri', 'slug' => 'piri'],
-              ]],
-              'groom-topor' => ['label' => 'GROOM', 'sub' => [
-                ['label' => 'Traditional Topor', 'slug' => 'topor-simple'],
-                ['label' => 'Royal Topor Set', 'slug' => 'topor-royal'],
-              ]],
-              'baby-mukut' => ['label' => 'BABY', 'sub' => [
-                ['label' => 'Baby Topor (Boy)', 'slug' => 'baby-topor-boy'],
-                ['label' => 'Baby Mukut (Girl)', 'slug' => 'baby-mukut-girl'],
-              ]],
-              'wedding-items' => ['label' => 'WEDDING ITEMS', 'sub' => []],
-              'exclusive-collection' => ['label' => "SHOLA'S JEWELLERY", 'sub' => []],
-            ]; ?>
-            <?php foreach ($menuCats as $slug => $mc): $active = ($filters['category'] ?? '') === $slug; ?>
+            <?php
+            $catMenu = [];
+            foreach ($categories as $cat) {
+                $catMenu[$cat['slug']] = ['label' => $cat['name'], 'sub' => []];
+            }
+            foreach ($subcategories as $sub) {
+                $s = $sub['cat_slug'];
+                if (isset($catMenu[$s])) {
+                    $catMenu[$s]['sub'][] = ['label' => $sub['name'], 'slug' => $sub['slug']];
+                }
+            }
+            ?>
+            <?php foreach ($catMenu as $slug => $mc):
+              $active = ($filters['category'] ?? '') === $slug;
+              $catParams = $_GET;
+              if ($active) {
+                  unset($catParams['category'], $catParams['subcategory']);
+              } else {
+                  $catParams['category'] = $slug;
+                  unset($catParams['subcategory']);
+              }
+              unset($catParams['page']);
+              $catParams = array_filter($catParams, fn($v) => $v !== '');
+              $catHref = $catParams ? url('products?' . http_build_query($catParams)) : url('products');
+            ?>
             <li class="relative group">
-              <a href="<?= url('products?' . http_build_query(array_merge($_GET, ['category' => $active ? '' : $slug, 'page' => '']))) ?>" class="flex items-center justify-between text-sm py-2 px-3 rounded transition-colors <?= $active ? 'text-red-600 font-bold bg-red-50' : 'text-slate-600 hover:text-red-600 hover:bg-slate-50' ?>">
+              <a href="<?= $catHref ?>" class="flex items-center justify-between text-sm py-2 px-3 rounded transition-colors <?= $active ? 'text-red-600 font-bold bg-red-50' : 'text-slate-600 hover:text-red-600 hover:bg-slate-50' ?>">
                 <span><?= $mc['label'] ?></span>
                 <?php if (!empty($mc['sub'])): ?>
                 <svg class="w-3 h-3 text-slate-400 group-hover:text-red-600 transition-colors" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
@@ -132,8 +120,19 @@ $chunks = array_chunk($catList, 7); ?>
               <?php if (!empty($mc['sub'])): ?>
               <div class="absolute left-full top-0 w-48 bg-white border border-slate-200 rounded-xl shadow-xl py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-20 ml-2">
                 <ul>
-                  <?php foreach ($mc['sub'] as $sub): $subActive = ($filters['subcategory'] ?? '') === $sub['slug']; ?>
-                  <li><a href="<?= url('products?' . http_build_query(array_merge($_GET, ['category' => $slug, 'subcategory' => $subActive ? '' : $sub['slug'], 'page' => '']))) ?>" class="block px-4 py-2 text-xs font-medium text-slate-600 hover:bg-slate-50 hover:text-red-600 transition-colors <?= $subActive ? 'text-red-600 font-bold bg-red-50' : '' ?>"><?= $sub['label'] ?></a></li>
+                  <?php foreach ($mc['sub'] as $sub):
+                    $subActive = ($filters['subcategory'] ?? '') === $sub['slug'];
+                    $subParams = array_merge($_GET, ['category' => $slug]);
+                    if ($subActive) {
+                        unset($subParams['subcategory']);
+                    } else {
+                        $subParams['subcategory'] = $sub['slug'];
+                    }
+                    unset($subParams['page']);
+                    $subParams = array_filter($subParams, fn($v) => $v !== '');
+                    $subHref = url('products?' . http_build_query($subParams));
+                  ?>
+                  <li><a href="<?= $subHref ?>" class="block px-4 py-2 text-xs font-medium text-slate-600 hover:bg-slate-50 hover:text-red-600 transition-colors <?= $subActive ? 'text-red-600 font-bold bg-red-50' : '' ?>"><?= $sub['label'] ?></a></li>
                   <?php endforeach; ?>
                 </ul>
               </div>
@@ -350,4 +349,7 @@ $chunks = array_chunk($catList, 7); ?>
   maxR.addEventListener('input', update);
   update();
 })();
+
+/* Subcategory scroll drag */
+(function(){var el=document.getElementById('subcatScrollProd');if(!el)return;var down=false,startX=0,scrollLeft=0,moved=false;el.addEventListener('mousedown',function(e){down=true;moved=false;startX=e.pageX;scrollLeft=el.scrollLeft;el.style.cursor='grabbing';});window.addEventListener('mousemove',function(e){if(!down)return;e.preventDefault();var walk=e.pageX-startX;if(Math.abs(walk)>5)moved=true;el.scrollLeft=scrollLeft-walk;});window.addEventListener('mouseup',function(){down=false;if(el)el.style.cursor='grab';});window.addEventListener('mouseleave',function(){down=false;});el.addEventListener('click',function(e){if(moved){e.stopPropagation();e.preventDefault();}},true);})();
 </script>

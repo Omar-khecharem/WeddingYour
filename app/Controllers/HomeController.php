@@ -36,6 +36,12 @@ class HomeController extends Controller
         $outlets = Outlet::getActive();
         $whatsappNumber = Setting::get('whatsapp_number', '+919830136355');
 
+        $subcategories = [];
+        try {
+            $pdo = \App\Core\Database::getInstance()->getConnection();
+            $subcategories = $pdo->query("SELECT sc.id, sc.name, sc.slug, sc.image, sc.category_id, c.slug AS cat_slug FROM sg_subcategories sc JOIN sg_categories c ON c.id = sc.category_id WHERE sc.status = 1 ORDER BY c.sort_order, sc.sort_order, sc.name")->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\Exception $e) {}
+
         // Hero text from settings
         $heroTitle = Setting::get('hero_title', 'Premium Wedding Mukut');
         $heroSubtitle = Setting::get('hero_subtitle', 'New Collection 2026');
@@ -44,7 +50,7 @@ class HomeController extends Controller
         $heroButtonLink = Setting::get('hero_button_link', '/products');
 
         return $this->view('home.index', compact(
-            'categories', 'recentProducts', 'featuredProducts', 'trendingProducts', 'reviews',
+            'categories', 'subcategories', 'recentProducts', 'featuredProducts', 'trendingProducts', 'reviews',
             'banners', 'deals', 'categoryCards', 'galleryItems', 'outlets',
             'whatsappNumber', 'heroTitle', 'heroSubtitle', 'heroDescription', 'heroButtonText', 'heroButtonLink'
         ));

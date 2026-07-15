@@ -88,21 +88,47 @@ INSERT INTO `sg_customers` (`id`, `user_id`, `first_name`, `last_name`, `email`,
 -- 9. CATEGORIES
 -- +----------------------------------------------------------------------------
 INSERT INTO `sg_categories` (`id`, `parent_id`, `name`, `slug`, `description`, `sort_order`, `featured`, `status`) VALUES
-(1, NULL, 'Bébé Mukut',       'bebe-mukut',       'Mukut traditionnel pour bébé',             1, 1, 1),
-(2, NULL, 'Mukut Mariée',     'mukut-mariee',     'Mukut de mariée élégant',                   2, 1, 1),
-(3, NULL, 'Topor Marié',      'topor-marie',      'Topor traditionnel pour le marié',          3, 1, 1),
-(4, NULL, 'Articles Mariage', 'articles-mariage', 'Accessoires complets de mariage',           4, 1, 1),
-(5, NULL, 'Gachhkouto & Dorpon','gachhkouto-dorpon','Articles traditionnels Gachhkouto',        5, 0, 1);
+(1, NULL, 'BABY',              'baby',              'Traditional mukut and topor for babies',                           1, 1, 1),
+(2, NULL, 'BRIDE',             'bride',             'Bridal mukut, patashi, crowns and wedding accessories for the bride',2, 1, 1),
+(3, NULL, 'GROOM',             'groom',             'Topor, dorpon and traditional items for the groom',                  3, 1, 1),
+(4, NULL, 'WEDDING ITEMS',     'wedding-items',     'Complete wedding accessories including panpata, piri and more',       4, 1, 1),
+(5, NULL, "SHOLA'S JEWELLERY", 'sholas-jewellery',  'Handcrafted shola jewellery including matha patti and mini crowns',   5, 0, 1);
 
 -- +----------------------------------------------------------------------------
 -- 10. SUBCATEGORIES
 -- +----------------------------------------------------------------------------
 INSERT INTO `sg_subcategories` (`id`, `category_id`, `name`, `slug`, `sort_order`, `status`) VALUES
-(1, 2, 'Mukut Blanc',  'mukut-blanc',  1, 1),
-(2, 2, 'Mukut Rouge',  'mukut-rouge',  2, 1),
-(3, 2, 'Mukut Doré',   'mukut-dore',   3, 1),
-(4, 3, 'Topor Simple', 'topor-simple', 1, 1),
-(5, 3, 'Topor Royal',  'topor-royal',  2, 1);
+-- BRIDE (category_id = 2)
+(1,  2, 'Bridal Patashi / Mukut',  'bridal-patashi-mukut',  1, 1),
+(2,  2, 'Sithi / Small Mukut',     'sithi-small-mukut',     2, 1),
+(3,  2, 'Crown & 3 Pieces Set',    'crown-3-pieces-set',    3, 1),
+(4,  2, 'Boron / Khoidan Kulo',    'boron-khoidan-kulo',    4, 1),
+(5,  2, 'Gach kouto',              'gach-kouto',            5, 1),
+(6,  2, 'Panpata',                 'bride-panpata',         6, 1),
+(7,  2, 'Piri',                    'bride-piri',            7, 1),
+-- GROOM (category_id = 3)
+(8,  3, 'Topor Mukut Set',      'topor-mukut-set',      1, 1),
+(9,  3, 'Topor (Without Mukut)', 'topor-without-mukut',  2, 1),
+(10, 3, 'Dorpon',                'groom-dorpon',         3, 1),
+(11, 3, 'Kunke',                 'groom-kunke',          4, 1),
+(12, 3, 'Boron / Khoidan Kulo',  'groom-boron-khoidan',  5, 1),
+-- BABY (category_id = 1)
+(13, 1, 'Baby Topor (Boy)',   'baby-topor-boy',   1, 1),
+(14, 1, 'Baby Mukut (Girl)',  'baby-mukut-girl',  2, 1),
+(15, 1, 'Nitbor Topor (Boy)', 'nitbor-topor-boy', 3, 1),
+-- WEDDING ITEMS (category_id = 4)
+(16, 4, 'Panpata',              'wedding-panpata',       1, 1),
+(17, 4, 'Piri',                 'wedding-piri',          2, 1),
+(18, 4, 'Boron / Khoidan Kulo', 'wedding-boron-khoidan', 3, 1),
+(19, 4, 'Tattwa Suchi',         'tattwa-suchi',          4, 1),
+(20, 4, 'Tattwa Tray',          'tattwa-tray',           5, 1),
+(21, 4, 'Haldi Platter',        'haldi-platter',         6, 1),
+(22, 4, 'Haldi Jewellery',      'haldi-jewellery',       7, 1),
+-- SHOLA'S JEWELLERY (category_id = 5)
+(23, 5, 'Matha Patti',            'matha-patti',               1, 1),
+(24, 5, 'Mini Crown',             'mini-crown',                2, 1),
+(25, 5, 'Bridal Sithi / Small Mukut', 'shola-sithi-small',     3, 1),
+(26, 5, 'Crown & 3 Pieces Set',   'shola-crown-3-pieces',     4, 1);
 
 -- +----------------------------------------------------------------------------
 -- 11b. BRANDS
@@ -120,8 +146,8 @@ INSERT INTO `sg_products` (`id`, `category_id`, `subcategory_id`, `brand_id`, `n
 (2, 2, 2, 1, 'Mukut Poddosree',      'mukut-poddosree',      'Mukut de mariée Poddosree exclusif',                     '<p>Mukut Poddosree avec travail traditionnel en shola. Un mélange parfait de tradition et d\'élégance.</p>',                              'PM-001', 1499.00, 799.00, 47, 20, 'in_stock', 1, 1, 1, 0, 4.50, 18, 1),
 (3, 2, 3, 2, 'Mukut Purna',          'mukut-purna',          'Ensemble mukut Purna premium',                           '<p>Ensemble complet mukut Purna pour mariée. Travail traditionnel en shola avec accents dorés.</p>',                                       'PM-002', 1299.00, 799.00, 38, 15, 'in_stock', 1, 0, 1, 0, 4.30, 12, 1),
 (4, 2, 1, 1, 'Mukut Lili',           'mukut-lili',           'Mukut Lili élégant pour mariée',                         '<p>Magnifique Mukut Lili avec délicat travail en shola. Léger et confortable.</p>',                                                         'LM-001', 1399.00, 799.00, 43, 30, 'in_stock', 1, 1, 1, 1, 4.60, 15, 1),
-(5, 3, 4, 1, 'Topor Traditionnel',    'topor-traditionnel',   'Topor traditionnel classique pour marié',                '<p>Topor bengali traditionnel pour le marié. Fabriqué à la main en sholapith de première qualité.</p>',                                     'TT-001', 999.00, 599.00, 40, 35, 'in_stock', 1, 0, 1, 1, 4.90, 30, 1),
-(6, 3, 5, 3, 'Ensemble Topor Royal', 'ensemble-topor-royal', 'Ensemble topor royal premium avec accessoires',          '<p>Ensemble complet topor royal pour le marié avec accessoires assortis.</p>',                                                              'RT-001', 1999.00, 1299.00, 35, 10, 'in_stock', 1, 1, 0, 0, 5.00, 8,  1),
+(5, 3, 8, 1, 'Topor Traditionnel',    'topor-traditionnel',   'Topor traditionnel classique pour marié',                '<p>Topor bengali traditionnel pour le marié. Fabriqué à la main en sholapith de première qualité.</p>',                                     'TT-001', 999.00, 599.00, 40, 35, 'in_stock', 1, 0, 1, 1, 4.90, 30, 1),
+(6, 3, 9, 3, 'Ensemble Topor Royal', 'ensemble-topor-royal', 'Ensemble topor royal premium avec accessoires',          '<p>Ensemble complet topor royal pour le marié avec accessoires assortis.</p>',                                                              'RT-001', 1999.00, 1299.00, 35, 10, 'in_stock', 1, 1, 0, 0, 5.00, 8,  1),
 (7, 1, NULL, 1, 'Mukut Bébé',         'mukut-bebe',          'Mukut traditionnel pour bébé',                           '<p>Magnifique mukut bébé en sholapith pour cérémonies traditionnelles.</p>',                                                                'BM-001', 899.00, 499.00, 45, 50, 'in_stock', 1, 1, 1, 0, 4.70, 22, 1),
 (8, 1, NULL, 3, 'Mukut Bébé Premium', 'mukut-bebe-premium',  'Mukut bébé premium avec accents dorés',                  '<p>Mukut bébé premium avec travail complexe en shola et détails dorés.</p>',                                                               'BM-002', 1299.00, 799.00, 38, 20, 'in_stock', 0, 0, 0, 0, 4.40, 9,  1),
 (9, 4, NULL, 1, 'Ensemble Mariage Mukut & Topor','ensemble-mariage-mukut-topor','Ensemble complet mariage mukut et topor','<p>Ensemble complet incluant mukut de mariée et topor de marié. Ensemble assorti parfait pour le couple.</p>',                            'WM-001', 2499.00, 1499.00, 40, 15, 'in_stock', 1, 1, 1, 1, 4.80, 16, 1),
@@ -237,8 +263,8 @@ INSERT INTO `sg_pages` (`id`, `title`, `slug`, `content`, `status`, `sort_order`
 INSERT INTO `sg_banners` (`id`, `name`, `title`, `description`, `image`, `link`, `position`, `is_active`) VALUES
 (1, 'Bannière été',       'Promo été - 20%',     'Réduction sur tous les mukut', 'banner-ete.jpg',   '/products?on_sale=1', 'home_top', 1),
 (2, 'Bannière livraison', 'Livraison offerte',   'Dès 49€ d\'achat',             'banner-livraison.jpg','', 'sidebar', 1),
-(3, 'Hero Left Wedding',  'Mukut Collection',    '', '', '/products?category=bride-mukut', 'hero_left', 1),
-(4, 'Hero Right Topor',   'Topor Sets',          '', '', '/products?category=groom-topor', 'hero_right', 1);
+(3, 'Hero Left Wedding',  'Mukut Collection',    '', '', '/products?category=mukut-mariee', 'hero_left', 1),
+(4, 'Hero Right Topor',   'Topor Sets',          '', '', '/products?category=topor-marie', 'hero_right', 1);
 
 -- +----------------------------------------------------------------------------
 -- 26. FAQ CATEGORIES
@@ -278,23 +304,75 @@ INSERT INTO `sg_gallery` (`id`, `category_id`, `title`, `image`, `type`, `sort_o
 -- 30. MENUS
 -- +----------------------------------------------------------------------------
 INSERT INTO `sg_menus` (`id`, `name`, `slug`, `location`, `is_active`) VALUES
-(1, 'Menu principal',  'menu-principal',  'primary',   1),
-(2, 'Menu footer',     'menu-footer',     'footer',    1);
+(1, 'Menu principal',  'menu-principal',    'primary',            1),
+(2, 'Menu footer',     'menu-footer',       'footer',             1),
+(3, 'Browse Categories', 'browse-categories', 'categories_dropdown', 1);
 
 -- +----------------------------------------------------------------------------
 -- 31. MENU ITEMS
 -- +----------------------------------------------------------------------------
-INSERT INTO `sg_menu_items` (`id`, `menu_id`, `parent_id`, `title`, `url`, `type`, `sort_order`, `is_active`) VALUES
-(1,  1, NULL, 'Accueil',       '/',              'custom', 1,  1),
-(2,  1, NULL, 'Boutique',      '/products',      'custom', 2,  1),
-(3,  1, 2,    'Mukut Mariée',  '/category/mukut-mariee',  'category', 1, 1),
-(4,  1, 2,    'Topor Marié',   '/category/topor-marie',   'category', 2, 1),
-(5,  1, 2,    'Mukut Bébé',    '/category/bebe-mukut',    'category', 3, 1),
-(6,  1, NULL, 'À propos',      '/a-propos',      'page',    3,  1),
-(7,  1, NULL, 'Contact',       '/contact',       'custom',  4,  1),
-(8,  2, NULL, 'Mentions légales','/cgv',         'page',    1,  1),
-(9,  2, NULL, 'Confidentialité','/confidentialite','page',  2,  1),
-(10, 2, NULL, 'Livraison',     '/livraison-retours','page',3,  1);
+INSERT INTO `sg_menu_items` (`id`, `menu_id`, `parent_id`, `title`, `url`, `type`, `reference_id`, `sort_order`, `is_active`) VALUES
+(1,  1, NULL, 'Accueil',        '/',                  'custom',   NULL, 1, 1),
+(2,  1, NULL, 'Boutique',       '/products',          'custom',   NULL, 2, 1),
+(3,  1, 2,    'Mukut Mariée',   NULL,                 'category', 2,   1, 1),
+(4,  1, 2,    'Topor Marié',    NULL,                 'category', 3,   2, 1),
+(5,  1, 2,    'Mukut Bébé',     NULL,                 'category', 1,   3, 1),
+(6,  1, NULL, 'À propos',       '/a-propos',          'page',     NULL, 3, 1),
+(7,  1, NULL, 'Contact',        '/contact',           'custom',   NULL, 4, 1),
+(8,  2, NULL, 'Mentions légales','/cgv',              'page',     NULL, 1, 1),
+(9,  2, NULL, 'Confidentialité', '/confidentialite',  'page',     NULL, 2, 1),
+(10, 2, NULL, 'Livraison',      '/livraison-retours', 'page',     NULL, 3, 1);
+
+-- Browse Categories menu (menu_id = 3) - Parent items
+INSERT INTO `sg_menu_items` (`id`, `menu_id`, `parent_id`, `title`, `url`, `type`, `reference_id`, `sort_order`, `is_active`) VALUES
+(11, 3, NULL, 'BRIDE',             NULL, 'category', 2,  1, 1),
+(12, 3, NULL, 'GROOM',             NULL, 'category', 3,  2, 1),
+(13, 3, NULL, 'BABY',              NULL, 'category', 1,  3, 1),
+(14, 3, NULL, 'WEDDING ITEMS',     NULL, 'category', 4,  4, 1),
+(15, 3, NULL, "SHOLA'S JEWELLERY", NULL, 'category', 5,  5, 1),
+(16, 3, NULL, 'Best Seller',       '/products?sort=popular', 'custom', NULL, 6, 1),
+(17, 3, NULL, 'Exclusive',         '/products?featured=1',   'custom', NULL, 7, 1);
+
+-- BRIDE sub-items (parent_id = 11)
+INSERT INTO `sg_menu_items` (`id`, `menu_id`, `parent_id`, `title`, `url`, `type`, `reference_id`, `sort_order`, `is_active`) VALUES
+(18, 3, 11, 'Bridal Patashi / Mukut',  NULL, 'category', 6,  1, 1),
+(19, 3, 11, 'Sithi / Small Mukut',     NULL, 'category', 7,  2, 1),
+(20, 3, 11, 'Crown & 3 Pieces Set',    NULL, 'category', 8,  3, 1),
+(21, 3, 11, 'Boron / Khoidan Kulo',    NULL, 'category', 19, 4, 1),
+(22, 3, 11, 'Gach kouto',              NULL, 'category', 24, 5, 1),
+(23, 3, 11, 'Panpata',                 NULL, 'category', 17, 6, 1),
+(24, 3, 11, 'Piri',                    NULL, 'category', 18, 7, 1);
+
+-- GROOM sub-items (parent_id = 12)
+INSERT INTO `sg_menu_items` (`id`, `menu_id`, `parent_id`, `title`, `url`, `type`, `reference_id`, `sort_order`, `is_active`) VALUES
+(25, 3, 12, 'Topor Mukut Set',      NULL, 'category', 9,  1, 1),
+(26, 3, 12, 'Topor (Without Mukut)', NULL, 'category', 10, 2, 1),
+(27, 3, 12, 'Dorpon',               NULL, 'category', 11, 3, 1),
+(28, 3, 12, 'Kunke',                NULL, 'category', 12, 4, 1),
+(29, 3, 12, 'Boron / Khoidan Kulo', NULL, 'category', 13, 5, 1);
+
+-- BABY sub-items (parent_id = 13)
+INSERT INTO `sg_menu_items` (`id`, `menu_id`, `parent_id`, `title`, `url`, `type`, `reference_id`, `sort_order`, `is_active`) VALUES
+(30, 3, 13, 'Baby Topor (Boy)',   NULL, 'category', 14, 1, 1),
+(31, 3, 13, 'Baby Mukut (Girl)',  NULL, 'category', 15, 2, 1),
+(32, 3, 13, 'Nitbor Topor (Boy)', NULL, 'category', 16, 3, 1);
+
+-- WEDDING ITEMS sub-items (parent_id = 14)
+INSERT INTO `sg_menu_items` (`id`, `menu_id`, `parent_id`, `title`, `url`, `type`, `reference_id`, `sort_order`, `is_active`) VALUES
+(33, 3, 14, 'Panpata',              NULL, 'category', 17, 1, 1),
+(34, 3, 14, 'Piri',                 NULL, 'category', 18, 2, 1),
+(35, 3, 14, 'Boron / Khoidan Kulo', NULL, 'category', 19, 3, 1),
+(36, 3, 14, 'Tattwa Suchi',         NULL, 'category', 20, 4, 1),
+(37, 3, 14, 'Tattwa Tray',          NULL, 'category', 21, 5, 1),
+(38, 3, 14, 'Haldi Platter',        NULL, 'category', 22, 6, 1),
+(39, 3, 14, 'Haldi Jewellery',      NULL, 'category', 23, 7, 1);
+
+-- SHOLA'S JEWELLERY sub-items (parent_id = 15)
+INSERT INTO `sg_menu_items` (`id`, `menu_id`, `parent_id`, `title`, `url`, `type`, `reference_id`, `sort_order`, `is_active`) VALUES
+(40, 3, 15, 'Matha Patti',            NULL, 'category', 24, 1, 1),
+(41, 3, 15, 'Mini Crown',             NULL, 'category', 25, 2, 1),
+(42, 3, 15, 'Bridal Sithi / Small Mukut', NULL, 'category', 26, 3, 1),
+(43, 3, 15, 'Crown & 3 Pieces Set',   NULL, 'category', 27, 4, 1);
 
 -- +----------------------------------------------------------------------------
 -- 32. SEO

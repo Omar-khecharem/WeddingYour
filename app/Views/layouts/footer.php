@@ -61,10 +61,8 @@ $currentYear = $currentYear ?? date('Y');
       <div class="flex items-center gap-4">
         <span class="text-sm font-bold text-white">100% Secure Payments</span>
         <div class="flex items-center gap-2">
-          <img src="https://cdn-icons-png.flaticon.com/512/196/196070.png" alt="Visa" class="h-7">
-          <img src="https://cdn-icons-png.flaticon.com/512/196/196081.png" alt="MasterCard" class="h-7">
-          <img src="https://cdn-icons-png.flaticon.com/512/196/196091.png" alt="UPI" class="h-7">
-          <img src="https://cdn-icons-png.flaticon.com/512/196/196076.png" alt="Net Banking" class="h-7">
+          <img src="<?= asset('images/payments.png') ?>" alt="payments" class="h-7">
+          
         </div>
       </div>
 

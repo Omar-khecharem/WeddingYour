@@ -23,6 +23,33 @@ $facebookUrl = $facebookUrl ?? SOCIAL_FACEBOOK;
 $instagramUrl = $instagramUrl ?? SOCIAL_INSTAGRAM;
 $youtubeUrl = $youtubeUrl ?? SOCIAL_YOUTUBE;
 $cartTotal = \App\Helpers\Session::get('cart_total', 0.00);
+
+$categoriesMenu = [];
+$subcategoriesBar = [];
+try {
+    $pdoCat = \App\Core\Database::getInstance()->getConnection();
+    $cats = $pdoCat->query("SELECT id, name, slug FROM sg_categories WHERE status = 1 ORDER BY sort_order, name")->fetchAll(\PDO::FETCH_ASSOC);
+    foreach ($cats as $cat) {
+        $item = ['id' => $cat['id'], 'title' => $cat['name'], 'url' => '/category/' . $cat['slug'], 'children' => []];
+        $subs = $pdoCat->prepare("SELECT id, name, slug, image FROM sg_subcategories WHERE category_id = :cid AND status = 1 ORDER BY sort_order");
+        $subs->execute([':cid' => $cat['id']]);
+        foreach ($subs as $sub) {
+            $item['children'][] = ['id' => $sub['id'], 'title' => $sub['name'], 'url' => '/products?category=' . $cat['slug'] . '&subcategory=' . $sub['slug']];
+            $subcategoriesBar[] = [
+                'name' => $sub['name'],
+                'slug' => $sub['slug'],
+                'image' => $sub['image'],
+                'url' => '/products?category=' . $cat['slug'] . '&subcategory=' . $sub['slug'],
+            ];
+        }
+        $categoriesMenu[] = $item;
+    }
+} catch (\Exception $e) {}
+$outlets = [];
+try {
+    $pdo = \App\Core\Database::getInstance()->getConnection();
+    $outlets = $pdo->query("SELECT name, slug, address FROM sg_outlets WHERE is_active = 1 ORDER BY sort_order, name")->fetchAll(\PDO::FETCH_ASSOC);
+} catch (\Exception $e) {}
 ?>
 <div class="w-full font-sans text-slate-800 antialiased">
 
@@ -133,7 +160,7 @@ $cartTotal = \App\Helpers\Session::get('cart_total', 0.00);
   </header>
 
   <!-- DESKTOP NAVIGATION -->
-  <nav id="desktop-nav" class="w-full bg-[#666666] text-white hidden lg:block">
+  <nav id="desktop-nav" class="w-full bg-[#666666] text-white hidden lg:block relative">
     <div class="max-w-[1400px] mx-auto flex items-center justify-between">
 
       <!-- Browse Categories Dropdown -->
@@ -152,86 +179,29 @@ $cartTotal = \App\Helpers\Session::get('cart_total', 0.00);
 
         <div class="absolute left-0 w-56 xl:w-72 bg-white text-slate-800 border-r border-b border-l border-gray-200 shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
           <ul class="py-1">
-            <!-- BRIDE -->
+            <?php foreach ($categoriesMenu as $parent): ?>
             <li class="relative group/sub">
-              <a href="<?= url('products?category=bride-mukut') ?>" class="flex items-center justify-between px-5 py-3 text-sm font-semibold hover:bg-red-50 hover:text-[#B10912] transition-colors border-b border-gray-100">
-                <span>BRIDE</span>
+              <?php if (!empty($parent['children'])): ?>
+              <a href="<?= url(ltrim($parent['url'], '/')) ?>" class="flex items-center justify-between px-5 py-3 text-sm font-semibold hover:bg-red-50 hover:text-[#B10912] transition-colors border-b border-gray-100">
+                <span><?= e($parent['title']) ?></span>
                 <svg class="w-3.5 h-3.5 text-gray-400 group-hover/sub:text-[#B10912]" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
                 </svg>
               </a>
               <div class="absolute left-full top-0 w-56 xl:w-72 bg-white border border-gray-200 shadow-2xl py-2 opacity-0 invisible group-hover/sub:opacity-100 group-hover/sub:visible transition-all duration-200">
                 <ul>
-                  <li><a href="<?= url('products?category=bride-mukut&subcategory=bridal-patashi') ?>" class="block px-6 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-[#B10912]">Bridal Patashi / Mukut</a></li>
-                  <li><a href="<?= url('products?category=bride-mukut&subcategory=bridal-sithi') ?>" class="block px-6 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-[#B10912]">Bridal Sithi / Small Mukut</a></li>
-                  <li><a href="<?= url('products?category=bride-mukut&subcategory=crown') ?>" class="block px-6 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-[#B10912]">Crown & 3 Pieces Set</a></li>
-                  <li><a href="<?= url('products?category=bride-mukut&subcategory=boron') ?>" class="block px-6 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-[#B10912]">Boron / Khoidan Kulo</a></li>
-                  <li><a href="<?= url('products?category=gachhkouto-dorpon') ?>" class="block px-6 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-[#B10912]">Gach kouto</a></li>
-                  <li><a href="<?= url('products?category=bride-mukut&subcategory=panpata') ?>" class="block px-6 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-[#B10912]">Panpata</a></li>
-                  <li><a href="<?= url('products?category=bride-mukut&subcategory=piri') ?>" class="block px-6 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-[#B10912]">Piri</a></li>
+                  <?php foreach ($parent['children'] as $child): ?>
+                  <li><a href="<?= url(ltrim($child['url'], '/')) ?>" class="block px-6 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-[#B10912]"><?= e($child['title']) ?></a></li>
+                  <?php endforeach; ?>
                 </ul>
               </div>
-            </li>
-
-            <!-- GROOM -->
-            <li class="relative group/sub">
-              <a href="<?= url('products?category=groom-topor') ?>" class="flex items-center justify-between px-5 py-3 text-sm font-semibold hover:bg-red-50 hover:text-[#B10912] transition-colors border-b border-gray-100">
-                <span>GROOM</span>
-                <svg class="w-3.5 h-3.5 text-gray-400 group-hover/sub:text-[#B10912]" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
-                </svg>
+              <?php else: ?>
+              <a href="<?= url(ltrim($parent['url'], '/')) ?>" class="block px-5 py-3 text-sm font-semibold hover:bg-red-50 hover:text-[#B10912] transition-colors border-b border-gray-100">
+                <?= e($parent['title']) ?>
               </a>
-              <div class="absolute left-full top-0 w-56 xl:w-72 bg-white border border-gray-200 shadow-2xl py-2 opacity-0 invisible group-hover/sub:opacity-100 group-hover/sub:visible transition-all duration-200">
-                <ul>
-                  <li><a href="<?= url('products?category=groom-topor&subcategory=topor-simple') ?>" class="block px-6 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-[#B10912]">Traditional Topor</a></li>
-                  <li><a href="<?= url('products?category=groom-topor&subcategory=topor-royal') ?>" class="block px-6 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-[#B10912]">Royal Topor Set</a></li>
-                </ul>
-              </div>
+              <?php endif; ?>
             </li>
-
-            <!-- BABY -->
-            <li class="relative group/sub">
-              <a href="<?= url('products?category=baby-mukut') ?>" class="flex items-center justify-between px-5 py-3 text-sm font-semibold hover:bg-red-50 hover:text-[#B10912] transition-colors border-b border-gray-100">
-                <span>BABY</span>
-                <svg class="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
-                </svg>
-              </a>
-            </li>
-
-            <!-- WEDDING ITEMS -->
-            <li class="relative group/sub">
-              <a href="<?= url('products?category=wedding-items') ?>" class="flex items-center justify-between px-5 py-3 text-sm font-semibold hover:bg-red-50 hover:text-[#B10912] transition-colors border-b border-gray-100">
-                <span>WEDDING ITEMS</span>
-                <svg class="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
-                </svg>
-              </a>
-            </li>
-
-            <!-- SHOLA'S JEWELLERY -->
-            <li class="relative group/sub">
-              <a href="<?= url('products?category=exclusive-collection') ?>" class="flex items-center justify-between px-5 py-3 text-sm font-semibold hover:bg-red-50 hover:text-[#B10912] transition-colors border-b border-gray-100">
-                <span>SHOLA'S JEWELLERY</span>
-                <svg class="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
-                </svg>
-              </a>
-            </li>
-
-            <!-- BEST SELLER -->
-            <li>
-              <a href="<?= url('products?sort=popular') ?>" class="block px-5 py-3 text-sm font-semibold hover:bg-red-50 hover:text-[#B10912] transition-colors border-b border-gray-100">
-                Best Seller
-              </a>
-            </li>
-
-            <!-- EXCLUSIVE -->
-            <li>
-              <a href="<?= url('products?featured=1') ?>" class="block px-5 py-3 text-sm font-semibold hover:bg-red-50 hover:text-[#B10912] transition-colors">
-                Exclusive
-              </a>
-            </li>
+            <?php endforeach; ?>
           </ul>
         </div>
       </div>
@@ -244,12 +214,26 @@ $cartTotal = \App\Helpers\Session::get('cart_total', 0.00);
           </svg>
           HOME
         </a>
-        <a href="<?= url('outlets') ?>" class="flex items-center gap-1.5 py-4 px-2 text-gray-300 hover:text-white transition-colors">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
-          </svg>
-          OUR OUTLETS
-        </a>
+        <div class="relative group/outlets z-40">
+          <span class="flex items-center gap-1.5 py-4 px-2 text-gray-300 cursor-default select-none">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+            </svg>
+            OUR OUTLETS
+          </span>
+          <?php if (!empty($outlets)): ?>
+          <div class="absolute left-0 top-full w-64 bg-white text-slate-800 border border-gray-200 shadow-xl opacity-0 invisible group-hover/outlets:opacity-100 group-hover/outlets:visible transition-all duration-200 rounded-b-lg overflow-hidden z-50">
+            <?php foreach ($outlets as $outlet): ?>
+            <a href="<?= url('outlets/' . e($outlet['slug'])) ?>" class="block px-5 py-3 text-sm font-medium text-slate-700 hover:bg-red-50 hover:text-[#B10912] transition-colors border-b border-gray-100 last:border-b-0">
+              <?= e($outlet['name']) ?>
+              <?php if (!empty($outlet['address'])): ?>
+              <span class="block text-xs text-gray-400 font-normal mt-0.5"><?= e(truncate($outlet['address'], 40)) ?></span>
+              <?php endif; ?>
+            </a>
+            <?php endforeach; ?>
+          </div>
+          <?php endif; ?>
+        </div>
         <a href="<?= url('about') ?>" class="flex items-center gap-1.5 py-4 px-2 text-gray-300 hover:text-white transition-colors">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"/>
@@ -321,86 +305,39 @@ $cartTotal = \App\Helpers\Session::get('cart_total', 0.00);
           Home
         </a>
 
+        <?php foreach ($categoriesMenu as $parent): ?>
         <div class="border-b border-gray-100">
+          <?php if (!empty($parent['children'])): ?>
           <button onclick="this.nextElementSibling.classList.toggle('hidden');this.querySelector('svg').classList.toggle('rotate-90')" class="flex items-center justify-between w-full px-5 py-3 text-sm font-bold text-slate-800 hover:bg-red-50 hover:text-red-600 transition-colors">
-            <span>BRIDE</span>
+            <span><?= e($parent['title']) ?></span>
             <svg class="w-3.5 h-3.5 text-gray-400 transition-transform" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
           </button>
           <div class="hidden bg-gray-50">
-            <a href="<?= url('products?category=bride-mukut&subcategory=bridal-patashi') ?>" class="block px-8 py-2.5 text-xs font-medium text-slate-600 hover:text-red-600 hover:bg-white transition-colors">Bridal Patashi / Mukut</a>
-            <a href="<?= url('products?category=bride-mukut&subcategory=bridal-sithi') ?>" class="block px-8 py-2.5 text-xs font-medium text-slate-600 hover:text-red-600 hover:bg-white transition-colors">Sithi / Small Mukut</a>
-            <a href="<?= url('products?category=bride-mukut&subcategory=crown') ?>" class="block px-8 py-2.5 text-xs font-medium text-slate-600 hover:text-red-600 hover:bg-white transition-colors">Crown & 3 Pieces Set</a>
-            <a href="<?= url('products?category=bride-mukut&subcategory=boron') ?>" class="block px-8 py-2.5 text-xs font-medium text-slate-600 hover:text-red-600 hover:bg-white transition-colors">Boron / Khoidan Kulo</a>
-            <a href="<?= url('products?category=gachhkouto-dorpon') ?>" class="block px-8 py-2.5 text-xs font-medium text-slate-600 hover:text-red-600 hover:bg-white transition-colors">Gach kouto</a>
-            <a href="<?= url('products?category=bride-mukut&subcategory=panpata') ?>" class="block px-8 py-2.5 text-xs font-medium text-slate-600 hover:text-red-600 hover:bg-white transition-colors">Panpata</a>
-            <a href="<?= url('products?category=bride-mukut&subcategory=piri') ?>" class="block px-8 py-2.5 text-xs font-medium text-slate-600 hover:text-red-600 hover:bg-white transition-colors">Piri</a>
+            <?php foreach ($parent['children'] as $child): ?>
+            <a href="<?= url(ltrim($child['url'], '/')) ?>" class="block px-8 py-2.5 text-xs font-medium text-slate-600 hover:text-red-600 hover:bg-white transition-colors"><?= e($child['title']) ?></a>
+            <?php endforeach; ?>
           </div>
+          <?php else: ?>
+          <a href="<?= url(ltrim($parent['url'], '/')) ?>" class="flex items-center gap-3 px-5 py-3 text-sm font-bold text-slate-800 hover:bg-red-50 hover:text-red-600 transition-colors">
+            <?= e($parent['title']) ?>
+          </a>
+          <?php endif; ?>
         </div>
+        <?php endforeach; ?>
 
+        <?php if (!empty($outlets)): ?>
         <div class="border-b border-gray-100">
           <button onclick="this.nextElementSibling.classList.toggle('hidden');this.querySelector('svg').classList.toggle('rotate-90')" class="flex items-center justify-between w-full px-5 py-3 text-sm font-bold text-slate-800 hover:bg-red-50 hover:text-red-600 transition-colors">
-            <span>GROOM</span>
+            <span>OUR OUTLETS</span>
             <svg class="w-3.5 h-3.5 text-gray-400 transition-transform" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
           </button>
           <div class="hidden bg-gray-50">
-            <a href="<?= url('products?category=groom-topor&subcategory=topor-simple') ?>" class="block px-8 py-2.5 text-xs font-medium text-slate-600 hover:text-red-600 hover:bg-white transition-colors">Topor Mukut Set</a>
-            <a href="<?= url('products?category=groom-topor&subcategory=topor-royal') ?>" class="block px-8 py-2.5 text-xs font-medium text-slate-600 hover:text-red-600 hover:bg-white transition-colors">Topor (Without Mukut)</a>
-            <a href="<?= url('products?category=groom-topor&subcategory=dorpon') ?>" class="block px-8 py-2.5 text-xs font-medium text-slate-600 hover:text-red-600 hover:bg-white transition-colors">Dorpon</a>
-            <a href="<?= url('products?category=groom-topor&subcategory=kunke') ?>" class="block px-8 py-2.5 text-xs font-medium text-slate-600 hover:text-red-600 hover:bg-white transition-colors">Kunke</a>
-            <a href="<?= url('products?category=groom-topor&subcategory=boron') ?>" class="block px-8 py-2.5 text-xs font-medium text-slate-600 hover:text-red-600 hover:bg-white transition-colors">Boron / Khoidan Kulo</a>
+            <?php foreach ($outlets as $outlet): ?>
+            <a href="<?= url('outlets/' . e($outlet['slug'])) ?>" class="block px-8 py-2.5 text-xs font-medium text-slate-600 hover:text-red-600 hover:bg-white transition-colors"><?= e($outlet['name']) ?></a>
+            <?php endforeach; ?>
           </div>
         </div>
-
-        <div class="border-b border-gray-100">
-          <button onclick="this.nextElementSibling.classList.toggle('hidden');this.querySelector('svg').classList.toggle('rotate-90')" class="flex items-center justify-between w-full px-5 py-3 text-sm font-bold text-slate-800 hover:bg-red-50 hover:text-red-600 transition-colors">
-            <span>BABY</span>
-            <svg class="w-3.5 h-3.5 text-gray-400 transition-transform" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
-          </button>
-          <div class="hidden bg-gray-50">
-            <a href="<?= url('products?category=baby-mukut&subcategory=baby-topor-boy') ?>" class="block px-8 py-2.5 text-xs font-medium text-slate-600 hover:text-red-600 hover:bg-white transition-colors">Baby Topor (Boy)</a>
-            <a href="<?= url('products?category=baby-mukut&subcategory=baby-mukut-girl') ?>" class="block px-8 py-2.5 text-xs font-medium text-slate-600 hover:text-red-600 hover:bg-white transition-colors">Baby Mukut (Girl)</a>
-            <a href="<?= url('products?category=baby-mukut&subcategory=nitbor-topor') ?>" class="block px-8 py-2.5 text-xs font-medium text-slate-600 hover:text-red-600 hover:bg-white transition-colors">Nitbor Topor (Boy)</a>
-          </div>
-        </div>
-
-        <div class="border-b border-gray-100">
-          <button onclick="this.nextElementSibling.classList.toggle('hidden');this.querySelector('svg').classList.toggle('rotate-90')" class="flex items-center justify-between w-full px-5 py-3 text-sm font-bold text-slate-800 hover:bg-red-50 hover:text-red-600 transition-colors">
-            <span>WEDDING ITEMS</span>
-            <svg class="w-3.5 h-3.5 text-gray-400 transition-transform" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
-          </button>
-          <div class="hidden bg-gray-50">
-            <a href="<?= url('products?category=wedding-items&subcategory=panpata') ?>" class="block px-8 py-2.5 text-xs font-medium text-slate-600 hover:text-red-600 hover:bg-white transition-colors">Panpata</a>
-            <a href="<?= url('products?category=wedding-items&subcategory=piri') ?>" class="block px-8 py-2.5 text-xs font-medium text-slate-600 hover:text-red-600 hover:bg-white transition-colors">Piri</a>
-            <a href="<?= url('products?category=wedding-items&subcategory=boron') ?>" class="block px-8 py-2.5 text-xs font-medium text-slate-600 hover:text-red-600 hover:bg-white transition-colors">Boron / Khoidan Kulo</a>
-            <a href="<?= url('products?category=wedding-items&subcategory=tattwa-suchi') ?>" class="block px-8 py-2.5 text-xs font-medium text-slate-600 hover:text-red-600 hover:bg-white transition-colors">Tattwa Suchi</a>
-            <a href="<?= url('products?category=wedding-items&subcategory=tattwa-tray') ?>" class="block px-8 py-2.5 text-xs font-medium text-slate-600 hover:text-red-600 hover:bg-white transition-colors">Tattwa Tray</a>
-            <a href="<?= url('products?category=wedding-items&subcategory=haldi-platter') ?>" class="block px-8 py-2.5 text-xs font-medium text-slate-600 hover:text-red-600 hover:bg-white transition-colors">Haldi Platter</a>
-            <a href="<?= url('products?category=wedding-items&subcategory=haldi-jewellery') ?>" class="block px-8 py-2.5 text-xs font-medium text-slate-600 hover:text-red-600 hover:bg-white transition-colors">Haldi Jewellery</a>
-          </div>
-        </div>
-
-        <div class="border-b border-gray-100">
-          <button onclick="this.nextElementSibling.classList.toggle('hidden');this.querySelector('svg').classList.toggle('rotate-90')" class="flex items-center justify-between w-full px-5 py-3 text-sm font-bold text-slate-800 hover:bg-red-50 hover:text-red-600 transition-colors">
-            <span>SHOLA'S JEWELLERY</span>
-            <svg class="w-3.5 h-3.5 text-gray-400 transition-transform" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
-          </button>
-          <div class="hidden bg-gray-50">
-            <a href="<?= url('products?category=exclusive-collection&subcategory=matha-patti') ?>" class="block px-8 py-2.5 text-xs font-medium text-slate-600 hover:text-red-600 hover:bg-white transition-colors">Matha Patti</a>
-            <a href="<?= url('products?category=exclusive-collection&subcategory=mini-crown') ?>" class="block px-8 py-2.5 text-xs font-medium text-slate-600 hover:text-red-600 hover:bg-white transition-colors">Mini Crown</a>
-            <a href="<?= url('products?category=exclusive-collection&subcategory=bridal-sithi') ?>" class="block px-8 py-2.5 text-xs font-medium text-slate-600 hover:text-red-600 hover:bg-white transition-colors">Bridal Sithi / Small Mukut</a>
-            <a href="<?= url('products?category=exclusive-collection&subcategory=crown') ?>" class="block px-8 py-2.5 text-xs font-medium text-slate-600 hover:text-red-600 hover:bg-white transition-colors">Crown & 3 Pieces Set</a>
-          </div>
-        </div>
-
-        <a href="<?= url('products?featured=1') ?>" class="flex items-center gap-3 px-5 py-3 text-sm font-bold text-slate-800 hover:bg-red-50 hover:text-red-600 transition-colors border-b border-gray-100">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/></svg>
-          Exclusive
-        </a>
-
-        <a href="<?= url('products?sort=popular') ?>" class="flex items-center gap-3 px-5 py-3 text-sm font-bold text-slate-800 hover:bg-red-50 hover:text-red-600 transition-colors border-b border-gray-100">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
-          Best Seller
-        </a>
+        <?php endif; ?>
 
         <a href="<?= url('blog') ?>" class="flex items-center gap-3 px-5 py-3 text-sm font-bold text-slate-800 hover:bg-red-50 hover:text-red-600 transition-colors border-b border-gray-100">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>
@@ -502,5 +439,6 @@ $cartTotal = \App\Helpers\Session::get('cart_total', 0.00);
       }
     });
   });
+
   </script>
 </div>

@@ -94,10 +94,21 @@ Router::get('/contact', function () {
     return $controller->view('pages.contact');
 })->name('contact');
 
-Router::get('/outlets', function () {
+Router::get('/outlets/{slug}', function (array $params) {
+    $slug = $params['slug'] ?? '';
+    $outlet = \App\Models\Outlet::findBySlug($slug);
+    if (!$outlet) {
+        http_response_code(404);
+        return \App\Core\View::render('errors.404');
+    }
+    return \App\Core\View::render('pages.outlet', ['outlet' => $outlet]);
+})->name('outlet');
+
+Router::get('/gallery', function () {
     $controller = new \App\Core\Controller();
-    return $controller->view('pages.outlets');
-})->name('outlets');
+    $galleryItems = \App\Models\GalleryItem::getActive(null, 30);
+    return $controller->view('pages.gallery', ['galleryItems' => $galleryItems]);
+})->name('gallery');
 
 Router::get('/blog', function () {
     $controller = new \App\Core\Controller();

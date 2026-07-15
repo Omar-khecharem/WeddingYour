@@ -84,7 +84,6 @@
                     ['url' => url('admin/category-cards'), 'label' => 'Section Cards', 'icon' => 'fa-layer-group'],
                     ['url' => url('admin/gallery'), 'label' => 'Gallery', 'icon' => 'fa-camera'],
                     ['url' => url('admin/outlets'), 'label' => 'Outlets', 'icon' => 'fa-store'],
-
                 ];
                 ?>
                 <div class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider px-3 py-2">Management</div>

@@ -54,12 +54,19 @@ class ProductController extends Controller
 
         $this->setMeta($title, $description);
 
+        $subcategories = [];
+        try {
+            $pdo = \App\Core\Database::getInstance()->getConnection();
+            $subcategories = $pdo->query("SELECT sc.id, sc.name, sc.slug, sc.image, sc.category_id, c.slug AS cat_slug FROM sg_subcategories sc JOIN sg_categories c ON c.id = sc.category_id WHERE sc.status = 1 ORDER BY c.sort_order, sc.sort_order, sc.name")->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\Exception $e) {}
+
         return $this->view('products.index', array_merge($result, [
             'filterOptions' => $filterOptions,
             'filters' => $filters,
             'currentCategory' => $filters['category'] ?: '',
             'searchQuery' => $filters['search'] ?: '',
             'sortBy' => $filters['sort'],
+            'subcategories' => $subcategories,
         ]));
     }
 
