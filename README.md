@@ -37,7 +37,6 @@
 - [Database](#-database)
 - [Installation](#-installation)
 - [Configuration](#%EF%B8%8F-configuration)
-- [Screenshots](#-screenshots)
 - [Security](#-security)
 - [Contributing](#-contributing)
 - [License](#-license)
