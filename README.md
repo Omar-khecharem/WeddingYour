@@ -1,52 +1,45 @@
-<p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://img.shields.io/badge/WeddingYour-v2.0-FF69B4?style=for-the-badge&logo=wedding&labelColor=1a1a2e">
-    <img src="https://img.shields.io/badge/WeddingYour-v2.0-800080?style=for-the-badge&logo=wedding&labelColor=1a1a2e" alt="WeddingYour">
-  </picture>
-</p>
-
-<h1 align="center">💍 WeddingYour — <em>Shola Ghar</em></h1>
-
-<p align="center">
-  <b>Premium Bengali Wedding E‑Commerce Platform</b><br>
-  <sub>Handcrafted Sholapith artistry — Mukut, Topor &amp; traditional wedding accessories</sub>
-</p>
-
-<p align="center">
-  <a href="https://github.com/Omar-khecharem/WeddingYour/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-Non--Commercial-red?style=flat-square" alt="License"></a>
-  <a href="https://www.php.net/releases/8_2_0.php"><img src="https://img.shields.io/badge/PHP-8.2-777BB4?style=flat-square&logo=php&logoColor=white" alt="PHP 8.2"></a>
-  <a href="https://dev.mysql.com/doc/relnotes/mysql/8.0/en/"><img src="https://img.shields.io/badge/MySQL-8.0-4479A1?style=flat-square&logo=mysql&logoColor=white" alt="MySQL 8.0"></a>
-  <a href="https://tailwindcss.com"><img src="https://img.shields.io/badge/Tailwind_CSS-3.4-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white" alt="Tailwind CSS 3.4"></a>
-  <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript"><img src="https://img.shields.io/badge/JavaScript-Vanilla%20ES6%2B-F7DF1E?style=flat-square&logo=javascript&logoColor=black" alt="Vanilla JS"></a>
+<div align="center">
+  <img src="public/assets/images/logo_wedding.png" alt="WeddingYour — Shola Ghar" width="180" height="180">
+  <br><br>
+  <h1>WeddingYour — <em>Shola Ghar</em></h1>
+  <p><strong>Premium Bengali Wedding E-Commerce Platform</strong></p>
+  <p><sub>Handcrafted Sholapith artistry — Mukut, Topor &amp; traditional wedding accessories</sub></p>
   <br>
-  <a href="https://github.com/Omar-khecharem"><img src="https://img.shields.io/badge/Author-Omar%20Khecharem-181717?style=flat-square&logo=github" alt="Author"></a>
-  <a href="#installation"><img src="https://img.shields.io/badge/🚀%20Installation-blue?style=flat-square" alt="Installation"></a>
-  <a href="#documentation"><img src="https://img.shields.io/badge/📖%20Documentation-green?style=flat-square" alt="Documentation"></a>
-</p>
-
-<br>
-
----
-
-## 📋 Table of Contents
-
-- [About](#-about)
-- [Architecture](#-architecture)
-- [Features](#-features)
-- [Tech Stack](#-tech-stack)
-- [Database](#-database)
-- [Installation](#-installation)
-- [Configuration](#%EF%B8%8F-configuration)
-- [Security](#-security)
-- [Contributing](#-contributing)
-- [License](#-license)
-- [Contact](#-contact)
+  <p>
+    <a href="https://www.php.net/releases/8_2_0.php"><img src="https://img.shields.io/badge/PHP-8.2-777BB4?style=flat-square&logo=php&logoColor=white" alt="PHP 8.2"></a>
+    <a href="https://dev.mysql.com/doc/relnotes/mysql/8.0/en/"><img src="https://img.shields.io/badge/MySQL-8.0-4479A1?style=flat-square&logo=mysql&logoColor=white" alt="MySQL 8.0"></a>
+    <a href="https://tailwindcss.com"><img src="https://img.shields.io/badge/Tailwind_CSS-3.4-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white" alt="Tailwind CSS 3.4"></a>
+    <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript"><img src="https://img.shields.io/badge/JavaScript-Vanilla%20ES6%2B-F7DF1E?style=flat-square&logo=javascript&logoColor=black" alt="Vanilla JS"></a>
+    <br>
+    <a href="https://github.com/Omar-khecharem/WeddingYour/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-Non--Commercial-red?style=flat-square" alt="License"></a>
+    <a href="https://github.com/Omar-khecharem"><img src="https://img.shields.io/badge/Author-Omar%20Khecharem-181717?style=flat-square&logo=github" alt="Author"></a>
+  </p>
+</div>
 
 ---
 
-## 🏛️ About
+## Table of Contents
 
-**WeddingYour (Shola Ghar)** is a **full-featured, production-grade e-commerce platform** purpose-built for the Bengali wedding industry. It delivers a seamless shopping experience for handcrafted Sholapith wedding items — from bridal Mukut (crowns) and groom Topor (headdresses) to complete wedding sets and accessories.
+- [Overview](#overview)
+- [Architecture](#architecture)
+- [Features](#features)
+  - [Customer-Facing (Frontend)](#customer-facing-frontend)
+  - [Admin Panel (Backend)](#admin-panel-backend)
+  - [Automated Communications](#automated-communications)
+- [Tech Stack](#tech-stack)
+- [Database](#database)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Security](#security)
+- [Contributing](#contributing)
+- [License](#license)
+- [Contact](#contact)
+
+---
+
+## Overview
+
+**WeddingYour (Shola Ghar)** is a production-grade e-commerce platform purpose-built for the Bengali wedding industry. It delivers a seamless shopping experience for handcrafted Sholapith wedding items — from bridal Mukut (crowns) and groom Topor (headdresses) to complete wedding sets and accessories.
 
 Born from a deep understanding of Bengali wedding traditions and modern e-commerce best practices, the platform serves both customers browsing premium wedding accessories and administrators managing inventory, orders, and content — all through a single, cohesive application.
 
@@ -54,7 +47,7 @@ Born from a deep understanding of Bengali wedding traditions and modern e-commer
 
 ---
 
-## 🏗️ Architecture
+## Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────┐
@@ -77,10 +70,10 @@ Born from a deep understanding of Bengali wedding traditions and modern e-commer
 │              │  (PHP + H)  │                             │
 │              └─────────────┘                             │
 │  ┌──────────┐  ┌──────────┐  ┌────────────────────────┐ │
-│  │Middleware│  │  Helpers │  │  Services (Email, PDF, │ │
-│  │(CSRF,    │  │(Security,│  │  WhatsApp, Cart, Auth, │ │
-│  │ Auth,    │  │ Session, │  │  Cache, Coupon, Order) │ │
-│  │ RateLim) │  │ Format)  │  │                        │ │
+│  │Middleware│  │  Helpers │  │  Services (Email, PDF,  │ │
+│  │(CSRF,    │  │(Security,│  │  WhatsApp, Cart, Auth,  │ │
+│  │ Auth,    │  │ Session, │  │  Cache, Coupon, Order)  │ │
+│  │ RateLim) │  │ Format)  │  │                          │ │
 │  └──────────┘  └──────────┘  └────────────────────────┘ │
 └─────────────────────────────────────────────────────────┘
                        │
@@ -91,26 +84,27 @@ Born from a deep understanding of Bengali wedding traditions and modern e-commer
 ```
 
 **Key architectural decisions:**
-- **Zero external framework dependency** — every layer is handcrafted for maximum control and minimal bloat
-- **Custom MVC** with a regex-based router supporting middleware chains, named routes, route groups, and RESTful conventions
-- **Active Record pattern** via a base Model class with CRUD, pagination, query builder, and relationship support
-- **PSR-4 autoloading** — clean namespace mapping (`App\` → `app/`)
-- **Layout system** with named sections, component includes, and view composers
+
+- **Zero external framework dependency** — every layer is handcrafted for maximum control and minimal bloat.
+- **Custom MVC** with a regex-based router supporting middleware chains, named routes, route groups, and RESTful conventions.
+- **Active Record pattern** via a base Model class with CRUD, pagination, query builder, and relationship support.
+- **PSR-4 autoloading** — clean namespace mapping (`App\` → `app/`).
+- **Layout system** with named sections, component includes, and view composers.
 
 ---
 
-## ✨ Features
+## Features
 
-### 🛍️ Customer-Facing (Frontend)
+### Customer-Facing (Frontend)
 
 | Category | Features |
 |----------|----------|
 | **Homepage** | Dynamic hero section with video/image banners · Category step-carousel (8 per slide) · Popular products with image cycling · Flash sale banners · Video showcase · Google Reviews carousel · Recent products slider · "Shola's Outlets" with drag-scroll · Coupon marquee bar · WhatsApp floating button |
-| **Product Catalog** | Filterable grid (category, subcategory, price range, rating, stock status) · Sortable (price, name, popularity, discount) · AJAX instant search (300ms debounce) · 4-column responsive layout · Per-page selector · "Showing X–Y of Z results" |
-| **Product Detail** | Vertical thumbnail gallery (desktop) / horizontal strip (mobile) · Price with discount badge · Specs table · Quantity selector · Pincode availability checker · Compare / Wishlist / Share actions · "People watching" live counter · 3‑tab layout (Description / Specification / Reviews) with star-rating distribution · Related products grid · JSON‑LD structured data |
-| **Cart** | Full AJAX cart management · Quantity +/- controls · Coupon code application · Real‑time price summary |
-| **Checkout** | Multi‑step flow (shipping info → payment) · Order confirmation · PDF invoice generation |
-| **Compare** | Side‑by‑side product comparison · Toggle remove · Count badge |
+| **Product Catalog** | Filterable grid (category, subcategory, price range, rating, stock status) · Sortable (price, name, popularity, discount) · AJAX instant search (300 ms debounce) · 4-column responsive layout · Per-page selector |
+| **Product Detail** | Vertical thumbnail gallery (desktop) / horizontal strip (mobile) · Price with discount badge · Specs table · Quantity selector · Pincode availability checker · Compare / Wishlist / Share actions · "People watching" live counter · 3-tab layout (Description / Specification / Reviews) with star-rating distribution · Related products grid · JSON-LD structured data |
+| **Cart** | Full AJAX cart management · Quantity +/- controls · Coupon code application · Real-time price summary |
+| **Checkout** | Multi-step flow (shipping info → payment) · Order confirmation · PDF invoice generation |
+| **Compare** | Side-by-side product comparison · Toggle remove · Count badge |
 | **Wishlist** | Add/remove products · Persistent per user |
 | **Search** | AJAX instant search with dropdown results |
 | **User Account** | Dashboard · Profile editing · Order history with detail view · Address book · Password change |
@@ -118,13 +112,13 @@ Born from a deep understanding of Bengali wedding traditions and modern e-commer
 | **Newsletter** | AJAX email subscription |
 | **Outlets** | Physical store locator with address, phone, map links |
 
-### 🔧 Admin Panel (Backend)
+### Admin Panel (Backend)
 
 | Module | Capabilities |
 |--------|-------------|
 | **Dashboard** | Revenue charts · Sales stats · Order counts · Recent orders · Low stock alerts |
 | **Orders** | Full CRUD · Status management (pending → confirmed → processing → shipped → delivered) · Tracking number · Customer info |
-| **Products** | CRUD with multi-image upload (independent, not replaced) · Stock & pricing · Categories, brands, variants, tags · Pincode availability per product · SEO meta fields · Discount auto‑calculation |
+| **Products** | CRUD with multi-image upload (independent, not replaced) · Stock & pricing · Categories, brands, variants, tags · Pincode availability per product · SEO meta fields · Discount auto-calculation |
 | **Categories** | Hierarchical CRUD · Image upload · SEO meta |
 | **Banners** | 4 positions: hero_left (video), hero_right (image carousel), promotional (image), bride_video (video) |
 | **Gallery** | Simplified image-only upload · Auto-generated title from filename |
@@ -137,17 +131,17 @@ Born from a deep understanding of Bengali wedding traditions and modern e-commer
 | **Logs** | System activity viewer |
 | **Cache** | One-click view & data cache clearing |
 
-### 📧 Automated Communications
+### Automated Communications
 
-- **Order confirmation** — customer + admin notification
-- **Shipping confirmation** — with tracking link
-- **Welcome email** — on registration
-- **Password reset** — secure token-based flow
-- **PDF Invoice** — generated via TCPDF with HTML fallback
+- **Order confirmation** — customer + admin notification.
+- **Shipping confirmation** — with tracking link.
+- **Welcome email** — on registration.
+- **Password reset** — secure token-based flow.
+- **PDF Invoice** — generated via TCPDF with HTML fallback.
 
 ---
 
-## 🛠 Tech Stack
+## Tech Stack
 
 ### Core
 
@@ -174,7 +168,7 @@ Born from a deep understanding of Bengali wedding traditions and modern e-commer
 
 ---
 
-## 🗄 Database
+## Database
 
 **48 InnoDB tables** — fully normalized with foreign key cascades and strategic indexes.
 
@@ -198,7 +192,7 @@ Born from a deep understanding of Bengali wedding traditions and modern e-commer
 
 ---
 
-## 🚀 Installation
+## Installation
 
 ### Prerequisites
 
@@ -255,19 +249,18 @@ open http://localhost:8080
 
 ---
 
-## ⚙️ Configuration
+## Configuration
 
 | File | Key Settings |
 |------|-------------|
-| `config/app.php` | `APP_URL`, `APP_NAME`, `APP_CURRENCY`, `APP_TAGLINE`, social links, `SESSION_LIFETIME` (480 min), `MAX_UPLOAD_SIZE` (50MB), tax & shipping defaults |
+| `config/app.php` | `APP_URL`, `APP_NAME`, `APP_CURRENCY`, `APP_TAGLINE`, social links, `SESSION_LIFETIME` (480 min), `MAX_UPLOAD_SIZE` (50 MB), tax & shipping defaults |
 | `config/database.php` | `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASS` |
 | `config/constants.php` | Directory paths (`UPLOADS_DIR`, `VIEWS_DIR`, etc.), status constants |
 | `config/autoload.php` | Session configuration (SameSite, save path, GC lifetime), PHP limits, error handler |
 
-
 ---
 
-## 🛡️ Security
+## Security
 
 | Measure | Implementation |
 |---------|---------------|
@@ -279,18 +272,18 @@ open http://localhost:8080
 | **Rate Limiting** | Middleware-based throttling for API endpoints |
 | **Brute Force** | Login throttling — 5 attempts, 15-minute lockout |
 | **SSL** | Enforced in production via config flag |
-| **File Uploads** | Type validation, size limits (50MB max), sanitized filenames |
+| **File Uploads** | Type validation, size limits (50 MB max), sanitized filenames |
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 We welcome contributions that improve the platform for the Bengali wedding community.
 
 ### Getting Started
 
-1. **Fork** the repository
-2. Create a feature branch: `git checkout -b feat/your-feature`
+1. **Fork** the repository.
+2. Create a feature branch: `git checkout -b feat/your-feature`.
 3. **Commit** using [Conventional Commits](https://www.conventionalcommits.org/):
    ```
    feat: add WhatsApp order sharing
@@ -299,21 +292,21 @@ We welcome contributions that improve the platform for the Bengali wedding commu
    perf: optimize product image loading
    style: refine navbar scroll animation
    ```
-4. **Push** to your fork: `git push origin feat/your-feature`
-5. Open a **Pull Request**
+4. **Push** to your fork: `git push origin feat/your-feature`.
+5. Open a **Pull Request**.
 
 ### Guidelines
 
-- Follow **PSR-1/PSR-4** for PHP code
-- Use **4 spaces** for PHP, **2 spaces** for HTML/Tailwind views
-- Keep views **logic-free** — extract to helpers/components
-- Use the **`e()` helper** for all output escaping
-- Add **meaningful comments** for non-obvious business logic
-- Test all changes with the built-in server before submitting
+- Follow **PSR-1/PSR-4** for PHP code.
+- Use **4 spaces** for PHP, **2 spaces** for HTML/Tailwind views.
+- Keep views **logic-free** — extract to helpers/components.
+- Use the **`e()` helper** for all output escaping.
+- Add **meaningful comments** for non-obvious business logic.
+- Test all changes with the built-in server before submitting.
 
 ---
 
-## 📄 License
+## License
 
 **Shola Ghar — Non-Commercial License**
 
@@ -327,7 +320,7 @@ For commercial licensing inquiries: **khcharem.omar@gmail.com**
 
 ---
 
-## 📬 Contact
+## Contact
 
 **Omar Khecharem** — Full-Stack Developer & Creator
 
