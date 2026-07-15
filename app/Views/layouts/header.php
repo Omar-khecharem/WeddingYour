@@ -87,6 +87,8 @@
             }
         }
     </script>
+
+    <script>window.CSRF_TOKEN = '<?= \App\Helpers\Session::csrfToken() ?>';</script>
     
     <!-- Custom Styles -->
     <style>
@@ -204,6 +206,8 @@
         @media (max-width: 640px) {
             .whatsapp-float { width: 50px; height: 50px; font-size: 26px; bottom: 20px; right: 20px; }
         }
+        [data-wishlist].is-active svg { fill: #dc2626 !important; stroke: #dc2626 !important; }
+        [data-wishlist].is-inactive svg { fill: none !important; }
     </style>
 </head>
 <body>

@@ -51,7 +51,7 @@ class ProductCard extends Component
 
         // Quick action overlay
         $html .= '<div class="absolute top-2 right-2 flex flex-col gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">';
-        $html .= '<button onclick="addToWishlist(' . $productId . ')" class="w-8 h-8 bg-white rounded-full shadow flex items-center justify-center text-gray-500 hover:text-primary-red transition-all" title="Add to Wishlist"><i class="fa-regular fa-heart text-xs"></i></button>';
+        $html .= '<button data-wishlist="' . $productId . '" onclick="toggleWishlist(' . $productId . ')" class="w-8 h-8 bg-white rounded-full shadow flex items-center justify-center text-gray-500 hover:text-primary-red transition-all" title="Add to Wishlist"><i class="fa-regular fa-heart text-xs"></i></button>';
         $html .= '<button onclick="addToCompare(' . $productId . ')" class="w-8 h-8 bg-white rounded-full shadow flex items-center justify-center text-gray-500 hover:text-primary-red transition-all" title="Compare"><i class="fa-solid fa-arrows-rotate text-xs"></i></button>';
         $html .= '</div>';
 

@@ -154,12 +154,11 @@
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     <?php if (!empty($cart['items'])): ?>
-
     async function updateCart(itemId, quantity) {
         try {
             const res = await fetch('<?= url('cart/update') ?>', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+                headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest', 'X-CSRF-TOKEN': window.CSRF_TOKEN },
                 body: JSON.stringify({ item_id: itemId, quantity: quantity })
             });
             if (res.ok) location.reload();
@@ -170,13 +169,12 @@ document.addEventListener('DOMContentLoaded', function () {
         try {
             const res = await fetch('<?= url('cart/remove') ?>', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+                headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest', 'X-CSRF-TOKEN': window.CSRF_TOKEN },
                 body: JSON.stringify({ item_id: itemId })
             });
             if (res.ok) location.reload();
         } catch (e) { console.error(e); }
     }
-
     document.querySelectorAll('.qty-down').forEach(btn => {
         btn.addEventListener('click', function () {
             const id = this.dataset.itemId;
@@ -219,7 +217,7 @@ document.addEventListener('DOMContentLoaded', function () {
         try {
             const res = await fetch('<?= url('cart/coupon') ?>', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+                headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest', 'X-CSRF-TOKEN': window.CSRF_TOKEN },
                 body: JSON.stringify({ code: code })
             });
             if (res.ok) location.reload();
@@ -230,7 +228,7 @@ document.addEventListener('DOMContentLoaded', function () {
         try {
             const res = await fetch('<?= url('cart/coupon') ?>', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+                headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest', 'X-CSRF-TOKEN': window.CSRF_TOKEN },
                 body: JSON.stringify({ code: '' })
             });
             if (res.ok) location.reload();

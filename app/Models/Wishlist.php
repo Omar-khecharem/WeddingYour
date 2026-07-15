@@ -47,10 +47,12 @@ class Wishlist extends Model
         $pdo = Database::getInstance()->getConnection();
         $stmt = $pdo->prepare("
             SELECT w.id as wishlist_id, w.created_at as added_at,
-                   p.*, 
-                   (SELECT image FROM sg_product_images WHERE product_id = p.id AND is_primary = 1 LIMIT 1) as image
+                   p.*, c.name AS category_name, sc.name AS subcategory_name,
+                   (SELECT image FROM sg_product_images WHERE product_id = p.id ORDER BY is_primary DESC, sort_order ASC LIMIT 1) as image
             FROM sg_wishlists w
             JOIN sg_products p ON p.id = w.product_id
+            LEFT JOIN sg_categories c ON c.id = p.category_id
+            LEFT JOIN sg_subcategories sc ON sc.id = p.subcategory_id
             WHERE w.user_id = :uid AND p.status = 1
             ORDER BY w.created_at DESC
         ");
@@ -58,8 +60,9 @@ class Wishlist extends Model
 
         $items = $stmt->fetchAll();
         foreach ($items as &$item) {
-            $item['image'] = $item['image']
-                ? uploadUrl($item['image'], 'products')
+            $img = $item['image'] ?? '';
+            $item['image'] = $img
+                ? uploadUrl($img, 'products')
                 : asset('images/placeholder.png');
         }
 

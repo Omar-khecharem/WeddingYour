@@ -19,6 +19,7 @@ use App\Services\InvoiceService;
 use App\Models\Product;
 use App\Models\Wishlist;
 use App\Models\Address;
+use App\Helpers\Session;
 
 class AccountController extends Controller
 {
@@ -190,6 +191,7 @@ class AccountController extends Controller
         $user = $this->viewData['authUser'];
 
         $wishlistItems = Wishlist::getUserWishlist($user['id']);
+        Session::set('wishlist.count', count($wishlistItems));
 
         return $this->view('account.wishlist', [
             'wishlistItems' => $wishlistItems,
@@ -209,6 +211,8 @@ class AccountController extends Controller
         }
 
         $result = Wishlist::toggle($user['id'], $productId);
+        $result['count'] = Wishlist::getCount($user['id']);
+        Session::set('wishlist.count', $result['count']);
 
         $this->json($result);
     }

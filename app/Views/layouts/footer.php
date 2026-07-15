@@ -112,23 +112,21 @@ function toggleMobileMenu() {
 }
 function addToCart(productId, quantity, variantId) {
     quantity = quantity || 1;
-    var formData = new FormData();
-    formData.append('action', 'add_to_cart');
-    formData.append('product_id', productId);
-    formData.append('quantity', quantity);
-    if (variantId) formData.append('variant_id', variantId);
-    formData.append('_csrf_token', '<?= \App\Helpers\Session::csrfToken() ?>');
-    fetch('<?= url('cart/add') ?>', {
-        method: 'POST',
-        body: formData,
-        headers: { 'X-Requested-With': 'XMLHttpRequest' }
-    })
-    .then(function(r) { return r.json(); })
-    .then(function(d) {
-        if (d.success) { showToast(d.message, 'success'); updateCartCount(d.cart_count); }
-        else { showToast(d.message, 'error'); }
-    })
-    .catch(function() { showToast('Failed to add to cart.', 'error'); });
+    var params = 'action=add_to_cart&product_id=' + productId + '&quantity=' + quantity + '&_csrf_token=<?= \App\Helpers\Session::csrfToken() ?>';
+    if (variantId) params += '&variant_id=' + variantId;
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', '<?= url('cart/add') ?>', true);
+    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.onload = function() {
+        try {
+            var d = JSON.parse(xhr.responseText);
+            if (d.success) { showToast(d.message, 'success'); updateCartCount(d.cart_count); }
+            else { showToast(d.message, 'error'); }
+        } catch(e) { showToast('Failed to add to cart.', 'error'); }
+    };
+    xhr.onerror = function() { showToast('Failed to add to cart.', 'error'); };
+    xhr.send(params);
 }
 function addToWishlist(productId) {
     var formData = new FormData();
@@ -160,11 +158,35 @@ function addToCompare(productId) {
     .catch(function() { showToast('Failed to add to compare.', 'error'); });
 }
 function updateCartCount(count) {
-    var badge = document.querySelector('a[href*="cart"] .cart-badge');
-    if (badge) { badge.textContent = count; badge.style.display = count > 0 ? 'flex' : 'none'; }
+    var badges = document.querySelectorAll('.cart-count, .cart-count-mobile');
+    badges.forEach(function(b) { b.textContent = count; b.style.display = count > 0 ? 'flex' : 'none'; });
+}
+function toggleWishlist(productId) {
+    var btn = document.querySelector('[data-wishlist="' + productId + '"]');
+    var formData = new FormData();
+    formData.append('product_id', productId);
+    formData.append('_csrf_token', '<?= \App\Helpers\Session::csrfToken() ?>');
+    fetch('<?= url('account/wishlist/add') ?>', {
+        method: 'POST', body: formData,
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+        if (data.success) {
+            if (btn) {
+                btn.classList.toggle('is-active', data.action === 'added');
+                btn.classList.toggle('is-inactive', data.action === 'removed');
+            }
+            if (typeof data.count === 'number') updateWishlistCount(data.count);
+            showToast(data.action === 'added' ? 'Added to wishlist' : 'Removed from wishlist', 'success');
+        } else {
+            showToast(data.message || 'Error', 'error');
+        }
+    })
+    .catch(function() { showToast('Network error', 'error'); });
 }
 function updateWishlistCount(count) {
-    var badges = document.querySelectorAll('a[href*="wishlist"] .cart-badge');
+    var badges = document.querySelectorAll('.wishlist-count');
     badges.forEach(function(b) { b.textContent = count; b.style.display = count > 0 ? 'flex' : 'none'; });
 }
 function showToast(message, type) {
