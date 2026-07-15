@@ -327,8 +327,8 @@
           }
           var msg =
             data.action === 'added'
-              ? 'Ajouté aux favoris'
-              : 'Retiré des favoris';
+              ? 'Added to wishlist'
+              : 'Removed from wishlist';
           showFlash(msg, 'success');
         } else {
           showFlash(data.message || 'Erreur', 'error');

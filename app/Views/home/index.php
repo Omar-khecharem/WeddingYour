@@ -133,7 +133,7 @@ $videoShowcaseBg = $videoShowcaseBg ?? '';
                 <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
               </button>
             </div>
-            <button onclick="event.stopPropagation();toggleWishlist(<?= $pId ?>)" class="mt-1.5 bg-white/20 hover:bg-white/30 text-white text-[10px] font-bold px-2 py-0.5 rounded-full transition-colors flex items-center gap-1">
+            <button data-wishlist="<?= $pId ?>" onclick="event.stopPropagation();toggleWishlist(<?= $pId ?>)" class="mt-1.5 bg-white/20 hover:bg-white/30 text-white text-[10px] font-bold px-2 py-0.5 rounded-full transition-colors flex items-center gap-1">
               <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg> Wishlist
             </button>
           </div>
@@ -316,7 +316,7 @@ $videoShowcaseBg = $videoShowcaseBg ?? '';
                 <button onclick="toggleCompare(<?= $pId ?>)" class="w-8 h-8 bg-white rounded-full flex items-center justify-center text-slate-700 hover:bg-red-600 hover:text-white transition-colors shadow-md hidden md:flex" title="Compare">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
                 </button>
-                <button onclick="toggleWishlist(<?= $pId ?>)" class="w-8 h-8 bg-white rounded-full flex items-center justify-center text-slate-700 hover:bg-red-600 hover:text-white transition-colors shadow-md" title="Wishlist">
+                <button data-wishlist="<?= $pId ?>" onclick="toggleWishlist(<?= $pId ?>)" class="w-8 h-8 bg-white rounded-full flex items-center justify-center text-slate-700 hover:bg-red-600 hover:text-white transition-colors shadow-md" title="Wishlist">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
                 </button>
               </div>
