@@ -21,8 +21,7 @@ class BlogController extends BaseAdminController
     public function create(Request $request, Response $response): string
     {
         $this->setMeta('Create Blog Post');
-        $categories = Blog::getCategories();
-        return $this->view('admin.blog.form', ['categories' => $categories]);
+        return $this->view('admin.blog.form');
     }
 
     public function store(Request $request, Response $response): void
@@ -44,7 +43,7 @@ class BlogController extends BaseAdminController
 
         $stmt = $pdo->prepare("INSERT INTO sg_blogs (category_id, author_id, title, slug, excerpt, content, featured_image, meta_title, meta_description, is_published, published_at) VALUES (:c, :a, :t, :s, :e, :co, :fi, :mt, :md, :ip, :pa)");
         $stmt->execute([
-            ':c' => (int)$request->input('category_id', 0) ?: null,
+            ':c' => Blog::resolveCategoryId($request->input('category_name', '')) ?: null,
             ':a' => (int)$request->input('author_id', 0) ?: null,
             ':t' => $request->input('title', ''),
             ':s' => $slug,
@@ -71,8 +70,8 @@ class BlogController extends BaseAdminController
         if (!$post) { http_response_code(404); exit; }
 
         $this->setMeta('Edit Blog Post');
-        $categories = Blog::getCategories();
-        return $this->view('admin.blog.form', ['post' => $post, 'categories' => $categories]);
+        $post['category_name'] = Blog::getCategoryName((int)($post['category_id'] ?? 0));
+        return $this->view('admin.blog.form', ['post' => $post]);
     }
 
     public function update(Request $request, Response $response): void
@@ -97,7 +96,7 @@ class BlogController extends BaseAdminController
 
         $stmt = $pdo->prepare("UPDATE sg_blogs SET category_id = :c, title = :t, slug = :s, excerpt = :e, content = :co, featured_image = :fi, meta_title = :mt, meta_description = :md, is_published = :ip, published_at = :pa WHERE id = :id");
         $stmt->execute([
-            ':c' => (int)$request->input('category_id', 0) ?: null,
+            ':c' => Blog::resolveCategoryId($request->input('category_name', '')) ?: null,
             ':t' => $request->input('title', ''),
             ':s' => $request->input('slug', ''),
             ':e' => $request->input('excerpt', ''),

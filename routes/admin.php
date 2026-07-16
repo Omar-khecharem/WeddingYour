@@ -187,12 +187,26 @@ Router::group('/admin', ['middleware' => [AdminMiddleware::class]], function () 
         return \App\Core\View::render('admin.reviews.index', ['reviews' => $reviews], 'admin');
     })->name('admin.reviews');
 
-    Router::post('/reviews/approve', function () {
-        \App\Models\Review::approve((int)($_POST['id'] ?? 0));
+    Router::get('/reviews/{id}/approve', function ($params) {
+        \App\Models\Review::approve((int)($params['id'] ?? 0));
         \App\Helpers\Session::flash('success', 'Review approved.');
         header('Location: ' . ($_SERVER['HTTP_REFERER'] ?? url('admin/reviews')));
         exit;
     })->name('admin.reviews.approve');
+
+    Router::get('/reviews/{id}/reject', function ($params) {
+        \App\Models\Review::reject((int)($params['id'] ?? 0));
+        \App\Helpers\Session::flash('success', 'Review rejected.');
+        header('Location: ' . ($_SERVER['HTTP_REFERER'] ?? url('admin/reviews')));
+        exit;
+    })->name('admin.reviews.reject');
+
+    Router::get('/reviews/{id}/delete', function ($params) {
+        \App\Models\Review::deleteReview((int)($params['id'] ?? 0));
+        \App\Helpers\Session::flash('success', 'Review deleted.');
+        header('Location: ' . ($_SERVER['HTTP_REFERER'] ?? url('admin/reviews')));
+        exit;
+    })->name('admin.reviews.delete');
 
     // Settings
     Router::get('/settings', [SettingController::class, 'index'])->name('admin.settings');

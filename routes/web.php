@@ -176,7 +176,15 @@ Router::get('/gallery', function () {
 
 Router::get('/blog', function () {
     $pdo = \App\Core\Database::getInstance()->getConnection();
-    $stmt = $pdo->query("SELECT b.*, bc.name AS category_name, bc.slug AS category_slug FROM sg_blogs b LEFT JOIN sg_blog_categories bc ON bc.id = b.category_id WHERE b.is_published = 1 ORDER BY b.published_at DESC");
+    $categoryName = $_GET['category'] ?? '';
+    $where = 'b.is_published = 1';
+    $params = [];
+    if ($categoryName) {
+        $where .= ' AND bc.name = :cat';
+        $params[':cat'] = $categoryName;
+    }
+    $stmt = $pdo->prepare("SELECT b.*, bc.name AS category_name, bc.slug AS category_slug FROM sg_blogs b LEFT JOIN sg_blog_categories bc ON bc.id = b.category_id WHERE $where ORDER BY b.published_at DESC");
+    $stmt->execute($params);
     $posts = $stmt->fetchAll();
     return \App\Core\View::render('pages.blog', ['posts' => $posts]);
 })->name('blog');

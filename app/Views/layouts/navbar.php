@@ -181,7 +181,7 @@ try {
           </svg>
         </button>
 
-        <div class="absolute left-0 w-56 xl:w-72 bg-white text-slate-800 border-r border-b border-l border-gray-200 shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+        <div class="absolute left-0 w-56 xl:w-72 bg-white text-slate-800 border-r border-b border-l border-gray-200 shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[60]">
           <ul class="py-1">
             <?php foreach ($categoriesMenu as $parent): ?>
             <li class="relative group/sub">
@@ -192,7 +192,7 @@ try {
                   <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
                 </svg>
               </a>
-              <div class="absolute left-full top-0 w-56 xl:w-72 bg-white border border-gray-200 shadow-2xl py-2 opacity-0 invisible group-hover/sub:opacity-100 group-hover/sub:visible transition-all duration-200">
+              <div class="absolute left-full top-0 w-56 xl:w-72 bg-white border border-gray-200 shadow-2xl py-2 opacity-0 invisible group-hover/sub:opacity-100 group-hover/sub:visible transition-all duration-200 z-[70]">
                 <ul>
                   <?php foreach ($parent['children'] as $child): ?>
                   <li><a href="<?= url(ltrim($child['url'], '/')) ?>" class="block px-6 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-[#B10912]"><?= e($child['title']) ?></a></li>

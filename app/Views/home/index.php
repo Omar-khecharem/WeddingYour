@@ -7,6 +7,8 @@ $reviews = $reviews ?? [];
 $banners = $banners ?? [];
 $deals = $deals ?? [];
 $categoryCards = $categoryCards ?? [];
+$categoryCardProducts = $categoryCardProducts ?? [];
+$defaultCardFallback = $defaultCardFallback ?? [];
 $galleryItems = $galleryItems ?? [];
 $outlets = $outlets ?? [];
 $whatsappNumber = $whatsappNumber ?? '+919830136355';
@@ -106,14 +108,15 @@ $videoShowcaseBg = $videoShowcaseBg ?? '';
         <?php $pSub = is_array($product) ? ($product['subcategory_name'] ?? '') : ($product->subcategory_name ?? ''); ?>
         <?php $pId = is_array($product) ? ($product['id'] ?? 0) : ($product->id ?? 0); ?>
         <?php $rAvg = $homeRatings[$pId]['average'] ?? 0; $rTot = $homeRatings[$pId]['total'] ?? 0; ?>
-        <div onclick="window.location='<?= url('product/' . e($pSlug)) ?>'" class="cursor-pointer group relative bg-white border border-red-100 hover:border-red-400 rounded-xl overflow-hidden transition-all duration-300 shadow-sm hover:shadow-lg flex flex-col">
+        <div onclick="window.location='<?= url('product/' . e($pSlug)) ?>'" class="cursor-pointer group relative bg-white border border-red-100 hover:border-red-400 rounded-xl overflow-hidden shadow-sm hover:shadow-lg flex flex-col">
           <?php if ($pDisc): ?>
           <span class="absolute top-2 left-2 bg-red-600 text-white text-xs font-black px-2 py-0.5 rounded-md z-20">-<?= (int)$pDisc ?>%</span>
           <?php endif; ?>
-          <a href="<?= url('product/' . e($pSlug)) ?>" class="aspect-square w-full overflow-hidden bg-slate-50 block">
-            <img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" src="<?= e($pImg ?: 'https://images.unsplash.com/photo-1546182990-dffeafbe841d?w=300&auto=format&fit=crop&q=80') ?>" alt="<?= e($pName) ?>" loading="lazy">
-          </a>
-          <div class="absolute inset-0 bg-black/75 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-center items-center p-3 text-white text-center z-10">
+          <div class="relative aspect-square w-full overflow-hidden bg-slate-50">
+            <a href="<?= url('product/' . e($pSlug)) ?>" class="block w-full h-full">
+              <img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" src="<?= e($pImg ?: 'https://images.unsplash.com/photo-1546182990-dffeafbe841d?w=300&auto=format&fit=crop&q=80') ?>" alt="<?= e($pName) ?>" loading="lazy">
+            </a>
+            <div class="absolute inset-0 bg-black/75 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-center items-center p-3 text-white text-center z-10">
             <h4 class="text-xs font-black uppercase tracking-wide"><?= e($pName) ?></h4>
             <p class="text-[10px] text-red-300 font-semibold mt-0.5"><?= e($pCat) ?>, <?= e($pSub) ?></p>
             <?= renderStars($rAvg) ?>
@@ -140,6 +143,7 @@ $videoShowcaseBg = $videoShowcaseBg ?? '';
               <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg> Wishlist
             </button>
           </div>
+        </div>
         </div>
         <?php endforeach; ?>
         <?php if (empty($displayProducts)): ?>
@@ -187,34 +191,42 @@ $videoShowcaseBg = $videoShowcaseBg ?? '';
 
     <section class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
       <?php if (!empty($categoryCards)): ?>
-      <?php foreach ($categoryCards as $card): ?>
+      <?php foreach ($categoryCards as $i => $card): ?>
+      <?php $cardProds = $categoryCardProducts[$i] ?? []; ?>
       <div class="bg-white rounded-xl shadow-md overflow-hidden border border-slate-100 hover:shadow-lg transition-shadow">
         <div class="p-3">
           <h3 class="text-sm font-black text-slate-800 uppercase tracking-wide mb-2"><?= e($card['title'] ?? '') ?></h3>
           <div class="grid grid-cols-2 gap-1.5">
-            <?php if (!empty($card['image'])): ?>
-            <img src="<?= uploadUrl($card['image'], 'category-cards') ?>" alt="" class="w-full aspect-square object-cover rounded-lg">
+            <?php foreach ([0,1,2,3] as $pi): $cp = $cardProds[$pi] ?? null; ?>
+            <?php if ($cp && !empty($cp['slug'])): ?>
+            <a href="<?= url('product/' . e($cp['slug'])) ?>" class="block aspect-square rounded-lg overflow-hidden bg-slate-50 animate-fadeInUp" style="animation-delay:<?= $pi * 0.08 ?>s">
+              <img src="<?= e($cp['image'] ?: 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=150') ?>" alt="" class="w-full h-full object-cover hover:scale-105 transition-transform duration-300" loading="lazy">
+            </a>
             <?php else: ?>
-            <div class="w-full aspect-square rounded-lg bg-gradient-to-br from-red-50 to-slate-100 flex items-center justify-center text-slate-300 font-bold">IMG</div>
+            <div class="w-full aspect-square rounded-lg bg-gradient-to-br from-red-50 to-slate-100"></div>
             <?php endif; ?>
-            <div class="w-full aspect-square rounded-lg bg-gradient-to-br from-red-50 to-slate-100"></div>
-            <div class="w-full aspect-square rounded-lg bg-gradient-to-br from-red-50 to-slate-100"></div>
-            <div class="w-full aspect-square rounded-lg bg-gradient-to-br from-red-50 to-slate-100"></div>
+            <?php endforeach; ?>
           </div>
           <a href="<?= e($card['link'] ?? url('products?category=' . ($card['category_id'] ?? ''))) ?>" class="mt-2 text-xs font-bold text-red-600 hover:text-red-700 flex items-center gap-1 justify-end">See more <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg></a>
         </div>
       </div>
       <?php endforeach; ?>
       <?php else: ?>
-      <?php $defaultCards = [['title'=>'Mukut & Topor','link'=>url('products?category=mukut-mariee')],['title'=>'Wedding Items for All','link'=>url('products?category=articles-mariage')],['title'=>'Gachhkouto & Dorpon','link'=>url('products?category=gachhkouto-dorpon')],['title'=>'Best Seller Items','link'=>url('products?sort=popular')]]; foreach ($defaultCards as $card): ?>
+      <?php $defaultCards = [['title'=>'Mukut & Topor','link'=>url('products?category=mukut-mariee')],['title'=>'Wedding Items for All','link'=>url('products?category=articles-mariage')],['title'=>'Gachhkouto & Dorpon','link'=>url('products?category=gachhkouto-dorpon')],['title'=>'Best Seller Items','link'=>url('products?sort=popular')]]; foreach ($defaultCards as $i => $card): ?>
+      <?php $cardProds = $defaultCardFallback[$i] ?? []; ?>
       <div class="bg-white rounded-xl shadow-md overflow-hidden border border-slate-100 hover:shadow-lg transition-shadow">
         <div class="p-3">
           <h3 class="text-sm font-black text-slate-800 uppercase tracking-wide mb-2"><?= $card['title'] ?></h3>
           <div class="grid grid-cols-2 gap-1.5">
+            <?php foreach ([0,1,2,3] as $pi): $cp = $cardProds[$pi] ?? null; ?>
+            <?php if ($cp && !empty($cp['slug'])): ?>
+            <a href="<?= url('product/' . e($cp['slug'])) ?>" class="block aspect-square rounded-lg overflow-hidden bg-slate-50 animate-fadeInUp" style="animation-delay:<?= $pi * 0.08 ?>s">
+              <img src="<?= e($cp['image'] ?: 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=150') ?>" alt="" class="w-full h-full object-cover hover:scale-105 transition-transform duration-300" loading="lazy">
+            </a>
+            <?php else: ?>
             <div class="w-full aspect-square rounded-lg bg-gradient-to-br from-red-50 to-slate-100"></div>
-            <div class="w-full aspect-square rounded-lg bg-gradient-to-br from-red-50 to-slate-100"></div>
-            <div class="w-full aspect-square rounded-lg bg-gradient-to-br from-red-50 to-slate-100"></div>
-            <div class="w-full aspect-square rounded-lg bg-gradient-to-br from-red-50 to-slate-100"></div>
+            <?php endif; ?>
+            <?php endforeach; ?>
           </div>
           <a href="<?= $card['link'] ?>" class="mt-2 text-xs font-bold text-red-600 hover:text-red-700 flex items-center gap-1 justify-end">See more <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg></a>
         </div>
@@ -348,10 +360,7 @@ $videoShowcaseBg = $videoShowcaseBg ?? '';
         </div>
         </div>
       </div>
-      <div class="flex items-center justify-center gap-2 pt-1">
-        <button onclick="recentPageNav(0)" class="w-2.5 h-2.5 rounded-full recent-page-btn bg-slate-400" data-page="0"></button>
-        <button onclick="recentPageNav(1)" class="w-2.5 h-2.5 rounded-full recent-page-btn bg-slate-300" data-page="1"></button>
-      </div>
+      <div class="flex items-center justify-center gap-2 pt-1" id="recent-dots"></div>
     </section>
 
     <div class="flex justify-center pt-2">
@@ -376,7 +385,16 @@ $videoShowcaseBg = $videoShowcaseBg ?? '';
         </div>
         <?php endforeach; ?>
       </div>
-      <style>.scrollbar-hide::-webkit-scrollbar { display: none; }</style>
+      <style>
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(16px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeInUp {
+          animation: fadeInUp 0.4s ease-out both;
+        }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+      </style>
       <script>(function(){var el=document.getElementById('memories-scroll');if(!el)return;var down=false,startX=0,scrollLeft=0;el.addEventListener('mousedown',function(e){down=true;startX=e.pageX;scrollLeft=el.scrollLeft;el.style.cursor='grabbing';});window.addEventListener('mousemove',function(e){if(!down)return;e.preventDefault();var walk=e.pageX-startX;el.scrollLeft=scrollLeft-walk;});window.addEventListener('mouseup',function(){down=false;if(el)el.style.cursor='grab';});})();</script>
     </section>
 
@@ -413,8 +431,14 @@ $videoShowcaseBg = $videoShowcaseBg ?? '';
   </main>
 </div>
 <script>
-function recentScroll(d){var t=document.getElementById('recent-viewport');if(!t)return;var i=t.querySelector('#recent-track');if(!i)return;var s=t.offsetWidth;i.style.transform='translateX('+(d*s)+'px)';}
-function recentPageNav(p){var i=document.querySelectorAll('.recent-page-btn');i.forEach(function(b,bIdx){b.classList.toggle('bg-slate-400',bIdx===p);b.classList.toggle('bg-slate-300',bIdx!==p);});}
+/* Recent Products slider */
+(function(){var t=document.getElementById('recent-track'),v=document.getElementById('recent-viewport'),dc=document.getElementById('recent-dots');if(!t||!v||!dc)return;var c=0,ch=t.children,ni=ch.length;if(!ni)return;
+function gpp(){return window.innerWidth<768?2:window.innerWidth<1024?3:6;}
+function upd(){var p=gpp(),tp=Math.ceil(ni/p);if(c>=tp)c=tp-1;if(c<0)c=0;dc.innerHTML='';for(var i=0;i<tp;i++){var d=document.createElement('button');d.className='w-2.5 h-2.5 rounded-full '+(i===c?'bg-slate-400':'bg-slate-300');d.onclick=function(p){return function(){go(p);};}(i);dc.appendChild(d);}
+var sw=v.offsetWidth;t.style.transform='translateX(-'+(c*sw)+'px)';}
+function go(p){c=p;upd();}
+window.recentScroll=function(d){go(c+d);};
+upd();window.addEventListener('resize',upd);})();
 
 /* Hero right carousel */
 var hrIdx=0,hrTrack=document.getElementById('heroRightTrack');

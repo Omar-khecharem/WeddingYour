@@ -53,7 +53,7 @@ $typeColors = [
                 </button>
             </div>
 
-            <form method="POST" action="<?= url('account/addresses/save') ?>" class="space-y-5">
+            <form method="POST" action="<?= url('account/addresses') ?>" class="space-y-5">
                 <?= \App\Helpers\Security::csrfField() ?>
                 <input type="hidden" name="address_id" id="address_id" value="">
 

@@ -160,6 +160,15 @@ $end = min($page * $perPage, $total);
           Showing <?= $start ?>–<?= $end ?> of <?= $total ?> results
         </p>
         <div class="flex items-center gap-3">
+          <!-- View toggle -->
+          <div class="flex items-center border border-slate-200 rounded overflow-hidden">
+            <button onclick="setView('grid')" id="view-grid" class="p-1.5 text-xs bg-white hover:bg-slate-50 transition-colors border-r border-slate-200" title="Grid view">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+            </button>
+            <button onclick="setView('list')" id="view-list" class="p-1.5 text-xs bg-white hover:bg-slate-50 transition-colors" title="List view">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
+            </button>
+          </div>
           <!-- Per page -->
           <div class="flex items-center gap-1.5">
             <span class="text-xs text-slate-500">Show</span>
@@ -358,4 +367,37 @@ $end = min($page * $perPage, $total);
 
 /* Subcategory scroll drag */
 (function(){var el=document.getElementById('subcatScrollProd');if(!el)return;var down=false,startX=0,scrollLeft=0,moved=false;el.addEventListener('mousedown',function(e){down=true;moved=false;startX=e.pageX;scrollLeft=el.scrollLeft;el.style.cursor='grabbing';});window.addEventListener('mousemove',function(e){if(!down)return;e.preventDefault();var walk=e.pageX-startX;if(Math.abs(walk)>5)moved=true;el.scrollLeft=scrollLeft-walk;});window.addEventListener('mouseup',function(){down=false;if(el)el.style.cursor='grab';});window.addEventListener('mouseleave',function(){down=false;});el.addEventListener('click',function(e){if(moved){e.stopPropagation();e.preventDefault();}},true);})();
+
+/* View toggle */
+function setView(mode) {
+  var grid = document.getElementById('product-grid');
+  if (!grid) return;
+  localStorage.setItem('productView', mode);
+  applyView(mode);
+}
+function applyView(mode) {
+  var grid = document.getElementById('product-grid');
+  if (!grid) return;
+  document.getElementById('view-grid')?.classList.toggle('bg-red-600', mode === 'grid');
+  document.getElementById('view-grid')?.classList.toggle('text-white', mode === 'grid');
+  document.getElementById('view-grid')?.classList.toggle('bg-white', mode !== 'grid');
+  document.getElementById('view-grid')?.classList.toggle('text-slate-600', mode !== 'grid');
+  document.getElementById('view-list')?.classList.toggle('bg-red-600', mode === 'list');
+  document.getElementById('view-list')?.classList.toggle('text-white', mode === 'list');
+  document.getElementById('view-list')?.classList.toggle('bg-white', mode !== 'list');
+  document.getElementById('view-list')?.classList.toggle('text-slate-600', mode !== 'list');
+  if (mode === 'list') {
+    grid.className = 'grid grid-cols-1 md:grid-cols-2 gap-4';
+    grid.style.maxWidth = '900px';
+    grid.style.margin = '0 auto';
+  } else {
+    grid.className = 'grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4';
+    grid.style.maxWidth = '';
+    grid.style.margin = '';
+  }
+}
+(function() {
+  var saved = localStorage.getItem('productView');
+  if (saved) applyView(saved);
+})();
 </script>

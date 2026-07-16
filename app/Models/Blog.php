@@ -30,11 +30,36 @@ class Blog extends Model
         return $stmt->fetch() ?: null;
     }
 
-    public static function getCategories(): array
+    public static function resolveCategoryId(string $name): int
     {
+        $name = trim($name);
+        if ($name === '') return 0;
+
         $pdo = Database::getInstance()->getConnection();
-        $stmt = $pdo->query("SELECT * FROM sg_blog_categories WHERE status = 1 ORDER BY sort_order ASC, name ASC");
-        return $stmt->fetchAll();
+        $stmt = $pdo->prepare("SELECT id FROM sg_blog_categories WHERE name = :n LIMIT 1");
+        $stmt->execute([':n' => $name]);
+        $row = $stmt->fetch();
+
+        if ($row) return (int)$row['id'];
+
+        $slug = slugify($name);
+        $stmt = $pdo->prepare("INSERT INTO sg_blog_categories (name, slug, status) VALUES (:n, :s, 1)");
+        $stmt->execute([':n' => $name, ':s' => $slug]);
+        return (int)$pdo->lastInsertId();
+    }
+
+    public static function getCategoryName(int $id): ?string
+    {
+        if ($id <= 0) return null;
+        try {
+            $pdo = Database::getInstance()->getConnection();
+            $stmt = $pdo->prepare("SELECT name FROM sg_blog_categories WHERE id = :id LIMIT 1");
+            $stmt->execute([':id' => $id]);
+            $row = $stmt->fetch();
+            return $row ? $row['name'] : null;
+        } catch (\Exception $e) {
+            return null;
+        }
     }
 
     public static function createCategory(array $data): int

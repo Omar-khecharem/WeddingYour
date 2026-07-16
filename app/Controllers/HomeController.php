@@ -32,6 +32,35 @@ class HomeController extends Controller
         $banners = Banner::getAllActive();
         $deals = Deal::getActive();
         $categoryCards = CategoryCard::getActive();
+        $categoryCardProducts = [];
+        $fallbackPool = Product::getTrending(8) ?: Product::getFeatured(8) ?: Product::getRecent(8);
+        $fallbackCount = max(count($fallbackPool), 1);
+        foreach ($categoryCards as $i => $card) {
+            if (!empty($card['category_id'])) {
+                $products = Product::getByCategoryId((int)$card['category_id'], 4);
+            } else {
+                $products = [];
+            }
+            if (count($products) < 4) {
+                $needed = 4 - count($products);
+                for ($j = 0; $j < $needed; $j++) {
+                    $idx = ($i * 4 + count($products) + $j) % $fallbackCount;
+                    $products[] = $fallbackPool[$idx] ?? [];
+                }
+            }
+            $categoryCardProducts[$i] = $products;
+        }
+        // Also build fallback for default (no-DB) cards
+        $defaultCardFallback = [];
+        for ($i = 0; $i < 4; $i++) {
+            $slice = [];
+            for ($j = 0; $j < 4; $j++) {
+                $idx = ($i * 4 + $j) % $fallbackCount;
+                $slice[] = $fallbackPool[$idx] ?? [];
+            }
+            $defaultCardFallback[$i] = $slice;
+        }
+
         $galleryItems = GalleryItem::getActive();
         $outlets = Outlet::getActive();
         $whatsappNumber = Setting::get('whatsapp_number', '+919830136355');
@@ -58,7 +87,8 @@ class HomeController extends Controller
 
         return $this->view('home.index', compact(
             'categories', 'subcategories', 'recentProducts', 'featuredProducts', 'trendingProducts', 'reviews',
-            'banners', 'deals', 'categoryCards', 'galleryItems', 'outlets',
+            'banners', 'deals', 'categoryCards', 'categoryCardProducts', 'defaultCardFallback',
+            'galleryItems', 'outlets',
             'whatsappNumber', 'heroTitle', 'heroSubtitle', 'heroDescription', 'heroButtonText', 'heroButtonLink',
             'homeRatings'
         ));

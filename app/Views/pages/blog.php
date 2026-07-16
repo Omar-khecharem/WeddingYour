@@ -7,6 +7,23 @@
 
     <h1 class="text-3xl font-black text-gray-800 mb-8">Our Blog</h1>
 
+    <?php
+    $uniqueCategories = [];
+    foreach ($posts as $p) {
+        if (!empty($p['category_name']) && !isset($uniqueCategories[$p['category_name']])) {
+            $uniqueCategories[$p['category_name']] = $p['category_name'];
+        }
+    }
+    ?>
+    <?php if (!empty($uniqueCategories)): ?>
+    <div class="flex flex-wrap gap-2 mb-8">
+        <a href="<?= url('blog') ?>" class="text-xs font-bold px-3 py-1.5 rounded-full transition-colors <?= !isset($_GET['category']) ? 'bg-red-600 text-white' : 'bg-red-100 text-red-700 hover:bg-red-200' ?>">All</a>
+        <?php foreach ($uniqueCategories as $catName): ?>
+        <a href="<?= url('blog?category=' . e($catName)) ?>" class="text-xs font-bold px-3 py-1.5 rounded-full transition-colors <?= isset($_GET['category']) && ($_GET['category'] ?? '') === $catName ? 'bg-red-600 text-white' : 'bg-red-100 text-red-700 hover:bg-red-200' ?>"><?= e($catName) ?></a>
+        <?php endforeach; ?>
+    </div>
+    <?php endif; ?>
+
     <?php if (!empty($posts)): ?>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <?php foreach ($posts as $post): ?>

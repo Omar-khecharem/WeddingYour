@@ -142,10 +142,10 @@
                 <?php endif; ?>
 
                 <!-- Payment method -->
-                <?php if (!empty($paymentMethods)): ?>
                 <div class="border border-gray-200 rounded-lg p-6 mb-6">
                     <h2 class="text-lg font-semibold text-gray-900 mb-4">Payment Method</h2>
                     <div class="space-y-3">
+                        <?php if (!empty($paymentMethods)): ?>
                         <?php foreach ($paymentMethods as $method): ?>
                         <label class="flex items-center gap-3 p-4 border border-gray-200 rounded-lg cursor-pointer hover:border-gray-400 transition has-[:checked]:border-gray-900 has-[:checked]:bg-gray-50">
                             <input type="radio" name="payment_method" value="<?= $method['id'] ?>" class="w-4 h-4 text-gray-900 focus:ring-gray-900" <?= $loop->first ?? '' ? 'checked' : '' ?>>
@@ -160,9 +160,16 @@
                             </div>
                         </label>
                         <?php endforeach; ?>
+                        <?php endif; ?>
+                        <label class="flex items-center gap-3 p-4 border border-gray-200 rounded-lg opacity-60 cursor-not-allowed bg-gray-50">
+                            <input type="radio" name="payment_method" value="razorpay" class="w-4 h-4 text-gray-900" disabled>
+                            <div>
+                                <span class="font-medium text-gray-900">Pay Online (Card/UPI/Net Banking)</span>
+                                <p class="text-xs text-gray-500">Secure payment via Razorpay</p>
+                            </div>
+                        </label>
                     </div>
                 </div>
-                <?php endif; ?>
 
                 <?= \App\Helpers\Security::csrfField() ?>
                 <button type="submit" class="w-full bg-gray-900 text-white py-3 rounded-lg font-medium text-base hover:bg-gray-800 transition">
@@ -225,16 +232,6 @@
     </div>
 </div>
 <?php endif; ?>
-
-<div class="max-w-6xl mx-auto mt-4 px-4">
-    <div class="bg-green-50 border border-green-200 rounded-xl p-4 flex items-center gap-3 text-sm text-green-800">
-        <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-        <div>
-            <span class="font-semibold">Pay Online (Card/UPI/Net Banking)</span>
-            <span class="text-green-600"> — Secure payment via Razorpay</span>
-        </div>
-    </div>
-</div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {

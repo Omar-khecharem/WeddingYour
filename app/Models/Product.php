@@ -294,6 +294,23 @@ class Product extends Model
         return compact('categories', 'brands', 'priceRange');
     }
 
+    public static function getByCategoryId(int $categoryId, int $limit = 4): array
+    {
+        $pdo = Database::getInstance()->getConnection();
+        $stmt = $pdo->prepare("
+            SELECT p.*, c.name AS category_name, sc.name AS subcategory_name
+            FROM sg_products p
+            LEFT JOIN sg_categories c ON c.id = p.category_id
+            LEFT JOIN sg_subcategories sc ON sc.id = p.subcategory_id
+            WHERE p.category_id = :cat_id AND p.status = 1
+            ORDER BY p.is_featured DESC, p.created_at DESC LIMIT :limit
+        ");
+        $stmt->bindValue(':cat_id', $categoryId, \PDO::PARAM_INT);
+        $stmt->bindValue(':limit', $limit, \PDO::PARAM_INT);
+        $stmt->execute();
+        return self::attachImages($stmt->fetchAll());
+    }
+
     public static function getByCategory(int $categoryId, int $page = 1, int $perPage = 12): array
     {
         return self::paginate($page, $perPage, ['category_id' => $categoryId, 'status' => STATUS_ACTIVE]);

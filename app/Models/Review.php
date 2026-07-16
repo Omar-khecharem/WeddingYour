@@ -150,6 +150,26 @@ class Review extends Model
     }
 
     /**
+     * Reject a review
+     */
+    public static function reject(int $reviewId): bool
+    {
+        $pdo = Database::getInstance()->getConnection();
+        $stmt = $pdo->prepare("UPDATE sg_reviews SET is_approved = 0 WHERE id = :id");
+        return $stmt->execute([':id' => $reviewId]);
+    }
+
+    /**
+     * Delete a review
+     */
+    public static function deleteReview(int $reviewId): bool
+    {
+        $pdo = Database::getInstance()->getConnection();
+        $stmt = $pdo->prepare("DELETE FROM sg_reviews WHERE id = :id");
+        return $stmt->execute([':id' => $reviewId]);
+    }
+
+    /**
      * Submit a new review
      */
     public static function submit(array $data): array
