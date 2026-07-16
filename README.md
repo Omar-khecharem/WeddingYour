@@ -374,7 +374,7 @@ For commercial licensing: **khcharem.omar@gmail.com**
 <p align="left">
   <a href="mailto:khcharem.omar@gmail.com"><img src="https://img.shields.io/badge/Email-khcharem.omar%40gmail.com-EA4335?style=flat-square&logo=gmail&logoColor=white" alt="Email"></a>
   <a href="https://github.com/Omar-khecharem"><img src="https://img.shields.io/badge/GitHub-Omar--khecharem-181717?style=flat-square&logo=github" alt="GitHub"></a>
-  <a href="https://linkedin.com/in/omar-khecharem"><img src="https://img.shields.io/badge/LinkedIn-Connect-0A66C2?style=flat-square&logo=linkedin" alt="LinkedIn"></a>
+  <a href="https://www.linkedin.com/in/omar-khecharem-373b16241/?locale=fr"><img src="https://img.shields.io/badge/LinkedIn-Connect-0A66C2?style=flat-square&logo=linkedin" alt="LinkedIn"></a>
 </p>
 
 ---
