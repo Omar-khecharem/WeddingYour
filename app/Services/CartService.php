@@ -102,16 +102,26 @@ class CartService
         $cartId = $this->getOrCreateCart();
 
         // Check if item already in cart
-        $stmt = $pdo->prepare("
-            SELECT id, quantity FROM sg_cart_items 
-            WHERE cart_id = :cart_id AND product_id = :product_id 
-            AND (variant_id = :variant_id OR (variant_id IS NULL AND :variant_id IS NULL))
-        ");
-        $stmt->execute([
-            ':cart_id' => $cartId,
-            ':product_id' => $productId,
-            ':variant_id' => $variantId
-        ]);
+        if ($variantId !== null) {
+            $stmt = $pdo->prepare("
+                SELECT id, quantity FROM sg_cart_items 
+                WHERE cart_id = :cart_id AND product_id = :product_id AND variant_id = :variant_id
+            ");
+            $stmt->execute([
+                ':cart_id' => $cartId,
+                ':product_id' => $productId,
+                ':variant_id' => $variantId,
+            ]);
+        } else {
+            $stmt = $pdo->prepare("
+                SELECT id, quantity FROM sg_cart_items 
+                WHERE cart_id = :cart_id AND product_id = :product_id AND variant_id IS NULL
+            ");
+            $stmt->execute([
+                ':cart_id' => $cartId,
+                ':product_id' => $productId,
+            ]);
+        }
         $existing = $stmt->fetch();
 
         if ($existing) {
@@ -165,12 +175,14 @@ class CartService
         $stmt = $pdo->prepare("
             UPDATE sg_cart_items ci
             JOIN sg_products p ON p.id = ci.product_id
-            SET ci.quantity = :quantity, ci.total_price = (ci.unit_price * :quantity)
+            SET ci.quantity = :qty, ci.total_price = (ci.unit_price * :qty2)
             WHERE ci.id = :id AND ci.cart_id = :cart_id
-            AND (:quantity <= p.stock_quantity OR p.stock_status = 'in_stock')
+            AND (:qty3 <= p.stock_quantity OR p.stock_status = 'in_stock')
         ");
         $stmt->execute([
-            ':quantity' => $quantity,
+            ':qty' => $quantity,
+            ':qty2' => $quantity,
+            ':qty3' => $quantity,
             ':id' => $itemId,
             ':cart_id' => $cartId
         ]);
@@ -380,6 +392,7 @@ class CartService
     {
         $cart = $this->getCart();
         Session::set('cart.count', $cart['total_items'] ?? 0);
+        Session::set('cart.total', $cart['total'] ?? 0.00);
     }
 
     /**
@@ -391,7 +404,13 @@ class CartService
         $stmt = $pdo->prepare("SELECT image FROM sg_product_images WHERE product_id = :id AND is_primary = 1 LIMIT 1");
         $stmt->execute([':id' => $productId]);
         $result = $stmt->fetch();
-        return $result ? uploadUrl($result['image'], 'products') : asset('images/placeholder.png');
+        if ($result && !empty($result['image'])) {
+            $path = UPLOADS_DIR . DS . $result['image'];
+            if (file_exists($path)) {
+                return uploadUrl($result['image'], 'products');
+            }
+        }
+        return asset('images/placeholder.png');
     }
 
     /**

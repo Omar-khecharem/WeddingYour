@@ -5,21 +5,21 @@ $pagination = $pagination ?? ['currentPage' => 1, 'totalPages' => 1, 'hasPrev' =
 
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                 <div>
-                    <h1 class="text-2xl font-bold text-gray-800">Avis clients</h1>
-                    <p class="text-sm text-gray-500">Modérez les avis laissés par vos clients</p>
+                    <h1 class="text-2xl font-bold text-gray-800">Customer Reviews</h1>
+                    <p class="text-sm text-gray-500">Moderate reviews left by your customers</p>
                 </div>
-                <span class="text-sm text-gray-500 bg-white px-4 py-2 rounded-lg border border-gray-200"><?= $pagination['totalItems'] ?? count($reviews) ?> avis</span>
+                <span class="text-sm text-gray-500 bg-white px-4 py-2 rounded-lg border border-gray-200"><?= $pagination['totalItems'] ?? count($reviews) ?> reviews</span>
             </div>
             <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm">
                         <thead>
                             <tr class="bg-gray-50 text-left">
-                                <th class="px-5 py-3 text-gray-500 font-medium text-xs uppercase tracking-wider">Produit</th>
-                                <th class="px-5 py-3 text-gray-500 font-medium text-xs uppercase tracking-wider">Client</th>
-                                <th class="px-5 py-3 text-gray-500 font-medium text-xs uppercase tracking-wider">Note</th>
-                                <th class="px-5 py-3 text-gray-500 font-medium text-xs uppercase tracking-wider">Avis</th>
-                                <th class="px-5 py-3 text-gray-500 font-medium text-xs uppercase tracking-wider">Statut</th>
+                                <th class="px-5 py-3 text-gray-500 font-medium text-xs uppercase tracking-wider">Product</th>
+                                <th class="px-5 py-3 text-gray-500 font-medium text-xs uppercase tracking-wider">Customer</th>
+                                <th class="px-5 py-3 text-gray-500 font-medium text-xs uppercase tracking-wider">Rating</th>
+                                <th class="px-5 py-3 text-gray-500 font-medium text-xs uppercase tracking-wider">Review</th>
+                                <th class="px-5 py-3 text-gray-500 font-medium text-xs uppercase tracking-wider">Status</th>
                                 <th class="px-5 py-3 text-gray-500 font-medium text-xs uppercase tracking-wider">Date</th>
                                 <th class="px-5 py-3 text-gray-500 font-medium text-xs uppercase tracking-wider">Actions</th>
                             </tr>
@@ -29,7 +29,7 @@ $pagination = $pagination ?? ['currentPage' => 1, 'totalPages' => 1, 'hasPrev' =
                             <tr>
                                 <td colspan="7" class="px-5 py-12 text-center text-gray-400">
                                     <i class="fa-solid fa-star text-3xl mb-2 block text-gray-300"></i>
-                                    Aucun avis trouvé
+                                    No reviews found
                                 </td>
                             </tr>
                             <?php else: ?>
@@ -55,23 +55,23 @@ $pagination = $pagination ?? ['currentPage' => 1, 'totalPages' => 1, 'hasPrev' =
                                 </td>
                                 <td class="px-5 py-3">
                                     <?php if (($review['status'] ?? '') === 'approved'): ?>
-                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">Approuvé</span>
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">Approved</span>
                                     <?php elseif (($review['status'] ?? '') === 'pending'): ?>
-                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-700">En attente</span>
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-700">Pending</span>
                                     <?php else: ?>
-                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-red-100 text-red-700">Rejeté</span>
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-red-100 text-red-700">Rejected</span>
                                     <?php endif; ?>
                                 </td>
                                 <td class="px-5 py-3 text-gray-500 whitespace-nowrap"><?= formatDate($review['created_at'] ?? '') ?></td>
                                 <td class="px-5 py-3">
                                     <div class="flex items-center gap-1">
                                         <?php if (($review['status'] ?? '') !== 'approved'): ?>
-                                        <a href="<?= url('admin/reviews/' . e($review['id']) . '/approve') ?>" class="p-1.5 text-gray-400 hover:text-green-600 transition-colors" title="Approuver"><i class="fa-solid fa-check"></i></a>
+                                        <a href="<?= url('admin/reviews/' . e($review['id']) . '/approve') ?>" class="p-1.5 text-gray-400 hover:text-green-600 transition-colors" title="Approve"><i class="fa-solid fa-check"></i></a>
                                         <?php endif; ?>
                                         <?php if (($review['status'] ?? '') !== 'rejected'): ?>
-                                        <a href="<?= url('admin/reviews/' . e($review['id']) . '/reject') ?>" class="p-1.5 text-gray-400 hover:text-yellow-600 transition-colors" title="Rejeter"><i class="fa-solid fa-ban"></i></a>
+                                        <a href="<?= url('admin/reviews/' . e($review['id']) . '/reject') ?>" class="p-1.5 text-gray-400 hover:text-yellow-600 transition-colors" title="Reject"><i class="fa-solid fa-ban"></i></a>
                                         <?php endif; ?>
-                                        <button onclick="confirmDelete(<?= e($review['id']) ?>)" class="p-1.5 text-gray-400 hover:text-red-600 transition-colors" title="Supprimer"><i class="fa-solid fa-trash"></i></button>
+                                        <button onclick="confirmDelete(<?= e($review['id']) ?>)" class="p-1.5 text-gray-400 hover:text-red-600 transition-colors" title="Delete"><i class="fa-solid fa-trash"></i></button>
                                     </div>
                                 </td>
                             </tr>
@@ -89,7 +89,7 @@ $pagination = $pagination ?? ['currentPage' => 1, 'totalPages' => 1, 'hasPrev' =
 <?php startSection('scripts') ?>
 <script>
 function confirmDelete(id) {
-    if (confirm('Êtes-vous sûr de vouloir supprimer cet avis ?')) {
+    if (confirm('Are you sure you want to delete this review?')) {
         window.location.href = '<?= url('admin/reviews') ?>/' + id + '/delete';
     }
 }

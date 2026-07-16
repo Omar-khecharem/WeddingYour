@@ -87,15 +87,19 @@ $subName = $product['subcategory_name'] ?? '';
         <?php endif; ?>
 
         <!-- Price -->
-        <div class="flex items-baseline gap-3">
+        <div class="flex items-baseline gap-3" id="priceDisplay">
+          <?php
+          $unitPrice = !empty($product['sale_price']) && $product['sale_price'] < $product['regular_price'] ? (float)$product['sale_price'] : (float)$product['regular_price'];
+          $regPrice = (float)$product['regular_price'];
+          ?>
           <?php if (!empty($product['sale_price']) && $product['sale_price'] < $product['regular_price']): ?>
-          <span class="text-3xl font-black text-red-600"><?= formatPrice($product['sale_price']) ?></span>
-          <span class="text-xl text-gray-400 line-through"><?= formatPrice($product['regular_price']) ?></span>
+          <span class="text-3xl font-black text-red-600" id="priceCurrent"><?= formatPrice($product['sale_price']) ?></span>
+          <span class="text-xl text-gray-400 line-through" id="priceOriginal"><?= formatPrice($product['regular_price']) ?></span>
           <?php if (!empty($product['discount_percent'])): ?>
           <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-red-100 text-red-700"><?= (int)$product['discount_percent'] ?>% OFF</span>
           <?php endif; ?>
           <?php else: ?>
-          <span class="text-3xl font-black text-gray-900"><?= formatPrice($product['regular_price']) ?></span>
+          <span class="text-3xl font-black text-gray-900" id="priceCurrent"><?= formatPrice($product['regular_price']) ?></span>
           <?php endif; ?>
         </div>
 
@@ -319,8 +323,17 @@ $subName = $product['subcategory_name'] ?? '';
 
   // Quantity
   const qty = document.getElementById('qtyInput');
-  document.getElementById('qtyMinus')?.addEventListener('click', function(){ const v = parseInt(qty.value)||1; if(v>1) qty.value = v-1; });
-  document.getElementById('qtyPlus')?.addEventListener('click', function(){ const v = parseInt(qty.value)||1; if(v<999) qty.value = v+1; });
+  const priceEl = document.getElementById('priceCurrent');
+  var unitPrice = <?= json_encode($unitPrice) ?>;
+  var currency = window.APP_CURRENCY || '<?= APP_CURRENCY ?>';
+  function updatePrice() {
+    if (!priceEl) return;
+    var v = parseInt(qty.value) || 1;
+    priceEl.textContent = currency + ' ' + Number(v * unitPrice).toFixed(2);
+  }
+  document.getElementById('qtyMinus')?.addEventListener('click', function(){ const v = parseInt(qty.value)||1; if(v>1) qty.value = v-1; updatePrice(); });
+  document.getElementById('qtyPlus')?.addEventListener('click', function(){ const v = parseInt(qty.value)||1; if(v<999) qty.value = v+1; updatePrice(); });
+  qty.addEventListener('input', updatePrice);
 
   // Tabs
   document.querySelectorAll('.tab-btn').forEach(btn => {

@@ -35,11 +35,13 @@ class CsrfMiddleware
 
         if (empty($token) || !Session::verifyCsrf($token)) {
             http_response_code(419);
-            if (strpos($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json') !== false) {
+            $isAjax = strtolower($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') === 'xmlhttprequest'
+                   || strpos($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json') !== false;
+            if ($isAjax) {
                 header('Content-Type: application/json');
-                echo json_encode(['error' => 'CSRF token mismatch', 'status' => 419]);
+                echo json_encode(['success' => false, 'error' => 'CSRF token mismatch', 'message' => 'Security token expired. Please refresh the page and try again.']);
             } else {
-                Session::flash('error', 'Security token expired. Please try again.');
+                Session::flash('error', 'Security token expired. Please refresh the page and try again.');
                 header('Location: ' . ($_SERVER['HTTP_REFERER'] ?? APP_URL), true, 302);
             }
             exit;

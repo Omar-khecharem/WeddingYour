@@ -113,7 +113,7 @@
           if (!data.results || data.results.length === 0) {
             var empty = document.createElement('div');
             empty.style.cssText = 'padding:12px 16px;color:#999;';
-            empty.textContent = 'Aucun résultat trouvé';
+            empty.textContent = 'No results found';
             dropdown.appendChild(empty);
             dropdown.style.display = 'block';
             return;
@@ -200,16 +200,16 @@
     return apiPost('/cart/add', payload)
       .then(function (data) {
         if (data.success) {
-          showFlash('Produit ajouté au panier', 'success');
+          showFlash('Product added to cart', 'success');
           if (typeof data.count === 'number') updateCartBadge(data.count);
           else getCartCount();
         } else {
-          showFlash(data.message || 'Erreur lors de l\'ajout au panier', 'error');
+          showFlash(data.message || 'Error adding to cart', 'error');
         }
         return data;
       })
       .catch(function () {
-        showFlash('Erreur réseau', 'error');
+        showFlash('Network error', 'error');
       });
   };
 
@@ -224,12 +224,12 @@
             if (container) container.innerHTML = data.cartHtml;
           }
         } else {
-          showFlash(data.message || 'Erreur de mise à jour', 'error');
+          showFlash(data.message || 'Update error', 'error');
         }
         return data;
       })
       .catch(function () {
-        showFlash('Erreur réseau', 'error');
+        showFlash('Network error', 'error');
       });
   };
 
@@ -238,7 +238,7 @@
     return apiPost('/cart/remove', { item_id: itemId })
       .then(function (data) {
         if (data.success) {
-          showFlash('Article retiré du panier', 'success');
+          showFlash('Item removed from cart', 'success');
           if (typeof data.count === 'number') updateCartBadge(data.count);
           if (data.cartHtml) {
             var container = document.querySelector('.cart-container');
@@ -248,12 +248,12 @@
             if (row) row.remove();
           }
         } else {
-          showFlash(data.message || 'Erreur lors de la suppression', 'error');
+          showFlash(data.message || 'Error removing item', 'error');
         }
         return data;
       })
       .catch(function () {
-        showFlash('Erreur réseau', 'error');
+        showFlash('Network error', 'error');
       });
   };
 
@@ -279,7 +279,7 @@
         return data;
       })
       .catch(function () {
-        showFlash('Erreur réseau', 'error');
+        showFlash('Network error', 'error');
       });
   };
 
@@ -296,12 +296,12 @@
             location.reload();
           }
         } else {
-          showFlash(data.message || 'Erreur', 'error');
+          showFlash(data.message || 'Error', 'error');
         }
         return data;
       })
       .catch(function () {
-        showFlash('Erreur réseau', 'error');
+        showFlash('Network error', 'error');
       });
   };
 
@@ -331,12 +331,12 @@
               : 'Removed from wishlist';
           showFlash(msg, 'success');
         } else {
-          showFlash(data.message || 'Erreur', 'error');
+          showFlash(data.message || 'Error', 'error');
         }
         return data;
       })
       .catch(function () {
-        showFlash('Erreur réseau', 'error');
+        showFlash('Network error', 'error');
       });
   };
 
@@ -359,16 +359,16 @@
           }
           var msg =
             data.action === 'added'
-              ? 'Ajouté à la comparaison'
-              : 'Retiré de la comparaison';
+              ? 'Added to comparison'
+              : 'Removed from comparison';
           showFlash(msg, 'success');
         } else {
-          showFlash(data.message || 'Erreur', 'error');
+          showFlash(data.message || 'Error', 'error');
         }
         return data;
       })
       .catch(function () {
-        showFlash('Erreur réseau', 'error');
+        showFlash('Network error', 'error');
       });
   };
 

@@ -5,23 +5,23 @@ $pagination = $pagination ?? ['currentPage' => 1, 'totalPages' => 1, 'hasPrev' =
 
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                 <div>
-                    <h1 class="text-2xl font-bold text-gray-800">Clients</h1>
-                    <p class="text-sm text-gray-500">Gérez les comptes de vos clients</p>
+                    <h1 class="text-2xl font-bold text-gray-800">Customers</h1>
+                    <p class="text-sm text-gray-500">Manage your customer accounts</p>
                 </div>
-                <span class="text-sm text-gray-500 bg-white px-4 py-2 rounded-lg border border-gray-200"><?= $pagination['totalItems'] ?? count($users) ?> clients</span>
+                <span class="text-sm text-gray-500 bg-white px-4 py-2 rounded-lg border border-gray-200"><?= $pagination['totalItems'] ?? count($users) ?> customers</span>
             </div>
             <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm">
                         <thead>
                             <tr class="bg-gray-50 text-left">
-                                <th class="px-5 py-3 text-gray-500 font-medium text-xs uppercase tracking-wider">Client</th>
+                                <th class="px-5 py-3 text-gray-500 font-medium text-xs uppercase tracking-wider">Customer</th>
                                 <th class="px-5 py-3 text-gray-500 font-medium text-xs uppercase tracking-wider">Email</th>
-                                <th class="px-5 py-3 text-gray-500 font-medium text-xs uppercase tracking-wider">Téléphone</th>
-                                <th class="px-5 py-3 text-gray-500 font-medium text-xs uppercase tracking-wider">Rôle</th>
-                                <th class="px-5 py-3 text-gray-500 font-medium text-xs uppercase tracking-wider">Statut</th>
-                                <th class="px-5 py-3 text-gray-500 font-medium text-xs uppercase tracking-wider">Commandes</th>
-                                <th class="px-5 py-3 text-gray-500 font-medium text-xs uppercase tracking-wider">Inscrit le</th>
+                                <th class="px-5 py-3 text-gray-500 font-medium text-xs uppercase tracking-wider">Phone</th>
+                                <th class="px-5 py-3 text-gray-500 font-medium text-xs uppercase tracking-wider">Role</th>
+                                <th class="px-5 py-3 text-gray-500 font-medium text-xs uppercase tracking-wider">Status</th>
+                                <th class="px-5 py-3 text-gray-500 font-medium text-xs uppercase tracking-wider">Orders</th>
+                                <th class="px-5 py-3 text-gray-500 font-medium text-xs uppercase tracking-wider">Registered on</th>
                                 <th class="px-5 py-3 text-gray-500 font-medium text-xs uppercase tracking-wider">Actions</th>
                             </tr>
                         </thead>
@@ -30,7 +30,7 @@ $pagination = $pagination ?? ['currentPage' => 1, 'totalPages' => 1, 'hasPrev' =
                             <tr>
                                 <td colspan="8" class="px-5 py-12 text-center text-gray-400">
                                     <i class="fa-solid fa-users text-3xl mb-2 block text-gray-300"></i>
-                                    Aucun client trouvé
+                                    No customers found
                                 </td>
                             </tr>
                             <?php else: ?>
@@ -56,7 +56,7 @@ $pagination = $pagination ?? ['currentPage' => 1, 'totalPages' => 1, 'hasPrev' =
                                     <?php if ($role === 'admin'): ?>
                                     <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-700">Admin</span>
                                     <?php elseif ($role === 'customer'): ?>
-                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700">Client</span>
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700">Customer</span>
                                     <?php else: ?>
                                     <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600"><?= e($role) ?></span>
                                     <?php endif; ?>
@@ -64,11 +64,11 @@ $pagination = $pagination ?? ['currentPage' => 1, 'totalPages' => 1, 'hasPrev' =
                                 <td class="px-5 py-3">
                                     <?php $ustat = $user['status'] ?? 'active'; ?>
                                     <?php if ($ustat === 'active'): ?>
-                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">Actif</span>
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">Active</span>
                                     <?php elseif ($ustat === 'inactive'): ?>
-                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-red-100 text-red-700">Inactif</span>
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-red-100 text-red-700">Inactive</span>
                                     <?php elseif ($ustat === 'banned'): ?>
-                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600">Banni</span>
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600">Banned</span>
                                     <?php else: ?>
                                     <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600"><?= e($ustat) ?></span>
                                     <?php endif; ?>
@@ -77,9 +77,9 @@ $pagination = $pagination ?? ['currentPage' => 1, 'totalPages' => 1, 'hasPrev' =
                                 <td class="px-5 py-3 text-gray-500 whitespace-nowrap"><?= formatDate($user['created_at'] ?? '') ?></td>
                                 <td class="px-5 py-3">
                                     <div class="flex items-center gap-1">
-                                        <a href="<?= url('admin/users/' . e($user['id']) . '/edit') ?>" class="p-1.5 text-gray-400 hover:text-primary-red transition-colors" title="Modifier"><i class="fa-solid fa-pen"></i></a>
+                                        <a href="<?= url('admin/users/' . e($user['id']) . '/edit') ?>" class="p-1.5 text-gray-400 hover:text-primary-red transition-colors" title="Edit"><i class="fa-solid fa-pen"></i></a>
                                         <?php if (($user['status'] ?? '') !== 'banned'): ?>
-                                        <a href="<?= url('admin/users/' . e($user['id']) . '/ban') ?>" class="p-1.5 text-gray-400 hover:text-red-600 transition-colors" title="Bannir"><i class="fa-solid fa-ban"></i></a>
+                                        <a href="<?= url('admin/users/' . e($user['id']) . '/ban') ?>" class="p-1.5 text-gray-400 hover:text-red-600 transition-colors" title="Ban"><i class="fa-solid fa-ban"></i></a>
                                         <?php endif; ?>
                                     </div>
                                 </td>

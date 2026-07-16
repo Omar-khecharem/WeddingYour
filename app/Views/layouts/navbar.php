@@ -22,7 +22,7 @@ $appTagline = \App\Models\Setting::get('site_tagline', APP_TAGLINE);
 $facebookUrl = $facebookUrl ?? SOCIAL_FACEBOOK;
 $instagramUrl = $instagramUrl ?? SOCIAL_INSTAGRAM;
 $youtubeUrl = $youtubeUrl ?? SOCIAL_YOUTUBE;
-$cartTotal = \App\Helpers\Session::get('cart_total', 0.00);
+$cartTotal = \App\Helpers\Session::get('cart.total', 0.00);
 
 $categoriesMenu = [];
 $subcategoriesBar = [];
@@ -252,14 +252,14 @@ try {
       <!-- Action Buttons -->
       <div class="flex items-center gap-3 pr-4 py-2 shrink-0">
         <!-- Profile -->
-        <a href="<?= $isLoggedIn ? url('account') : url('login') ?>" class="w-9 h-9 rounded-full bg-white text-slate-700 hover:bg-slate-100 flex items-center justify-center transition-colors shadow-sm" aria-label="Profil">
+        <a href="<?= $isLoggedIn ? url('account') : url('login') ?>" class="w-9 h-9 rounded-full bg-white text-slate-700 hover:bg-slate-100 flex items-center justify-center transition-colors shadow-sm" aria-label="Profile">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
           </svg>
         </a>
 
         <!-- Compare -->
-        <a href="<?= url('compare') ?>" class="relative w-9 h-9 rounded-full bg-white text-slate-700 hover:bg-slate-100 flex items-center justify-center transition-colors shadow-sm" aria-label="Comparer">
+        <a href="<?= url('compare') ?>" class="relative w-9 h-9 rounded-full bg-white text-slate-700 hover:bg-slate-100 flex items-center justify-center transition-colors shadow-sm" aria-label="Compare">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
           </svg>
@@ -267,7 +267,7 @@ try {
         </a>
 
         <!-- Wishlist -->
-        <a href="<?= url('account/wishlist') ?>" class="relative w-9 h-9 rounded-full bg-white text-slate-700 hover:bg-slate-100 flex items-center justify-center transition-colors shadow-sm" aria-label="Favoris">
+        <a href="<?= url('account/wishlist') ?>" class="relative w-9 h-9 rounded-full bg-white text-slate-700 hover:bg-slate-100 flex items-center justify-center transition-colors shadow-sm" aria-label="Wishlist">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
           </svg>
@@ -282,7 +282,7 @@ try {
             </svg>
             <span class="absolute -top-1.5 -right-1.5 bg-white text-[#B10912] text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center cart-count"><?= $cartCount ?></span>
           </div>
-          <span class="text-xs font-black text-white select-none"><?= APP_CURRENCY ?> <?= number_format($cartTotal, 2) ?></span>
+          <span class="text-xs font-black text-white select-none cart-total"><?= APP_CURRENCY ?> <?= number_format($cartTotal, 2) ?></span>
         </a>
       </div>
 

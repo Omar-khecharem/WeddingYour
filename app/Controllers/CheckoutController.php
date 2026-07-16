@@ -86,6 +86,7 @@ class CheckoutController extends Controller
             }
         }
 
+        $country = $request->input('billing_country', '');
         $billing = [
             'name' => Security::sanitize($request->input('billing_name', '')),
             'email' => Security::sanitizeEmail($request->input('billing_email', '')),
@@ -95,6 +96,7 @@ class CheckoutController extends Controller
             'city' => Security::sanitize($request->input('billing_city', '')),
             'state' => Security::sanitize($request->input('billing_state', '')),
             'pincode' => Security::sanitize($request->input('billing_pincode', '')),
+            'country' => $country,
         ];
 
         // Use billing for shipping if same
@@ -107,6 +109,7 @@ class CheckoutController extends Controller
                 'city' => Security::sanitize($request->input('shipping_city', $billing['city'])),
                 'state' => Security::sanitize($request->input('shipping_state', $billing['state'])),
                 'pincode' => Security::sanitize($request->input('shipping_pincode', $billing['pincode'])),
+                'country' => $request->input('shipping_country', $country),
             ];
         } else {
             $shipping = $billing;
@@ -115,17 +118,32 @@ class CheckoutController extends Controller
         $paymentMethod = $request->input('payment_method', 'cod');
         $shippingMethodId = (int)$request->input('shipping_method', 0);
 
-        // Calculate TVA (French VAT at 20%)
+        // Validate shipping method exists in DB (FK constraint)
+        $validMethodId = null;
+        $shippingMethodName = 'Standard Shipping';
+        if ($shippingMethodId > 0) {
+            try {
+                $pdo = Database::getInstance()->getConnection();
+                $stmt = $pdo->prepare("SELECT id, name, base_rate, free_above FROM shipping_methods WHERE id = :id AND status = 1 LIMIT 1");
+                $stmt->execute([':id' => $shippingMethodId]);
+                $method = $stmt->fetch();
+                if ($method) {
+                    $validMethodId = (int)$method['id'];
+                    $shippingMethodName = $method['name'];
+                }
+            } catch (\Exception $e) {
+            }
+        }
+
+        // Calculate TVA (20% VAT)
         $subtotal = $cart['subtotal'] ?? 0;
         $discount = $cart['discount'] ?? 0;
         $tvaBase = $subtotal - $discount;
         $tva = round($tvaBase * 0.20, 2);
-        $cart['tax'] = $tva;
 
         // Get selected shipping cost
         $shippingCost = $this->getShippingCost($shippingMethodId, $subtotal);
-        $cart['shipping'] = $shippingCost;
-        $cart['total'] = $tvaBase + $tva + $shippingCost;
+        $totalFinal = $tvaBase + $tva + $shippingCost;
 
         // Generate invoice number
         $invoiceNumber = generateInvoiceNumber();
@@ -134,13 +152,15 @@ class CheckoutController extends Controller
         $result = $this->orderService->createOrder($billing, $shipping, $paymentMethod);
 
         if ($result['success']) {
-            // Update order with TVA and shipping method
+            // Update order with correct totals, TVA, shipping, invoice
             $pdo = Database::getInstance()->getConnection();
-            $pdo->prepare("UPDATE sg_orders SET tax = :tax, shipping_cost = :shipping, shipping_method = :ship_meth, invoice_number = :inv WHERE id = :id")->execute([
+            $pdo->prepare("UPDATE sg_orders SET tax = :tax, shipping_cost = :shipping, shipping_method_id = :ship_meth_id, shipping_method_name = :ship_meth_name, invoice_number = :inv, total = :total WHERE id = :id")->execute([
                 ':tax' => $tva,
                 ':shipping' => $shippingCost,
-                ':ship_meth' => $shippingMethodId,
+                ':ship_meth_id' => $validMethodId,
+                ':ship_meth_name' => $shippingMethodName,
                 ':inv' => $invoiceNumber,
+                ':total' => $totalFinal,
                 ':id' => $result['order_id'],
             ]);
 
@@ -245,6 +265,28 @@ class CheckoutController extends Controller
                 'has_tracking' => 1,
             ],
         ];
+    }
+
+    /**
+     * Get shipping method name by ID
+     */
+    private function getShippingMethodName(int $methodId): string
+    {
+        try {
+            $pdo = Database::getInstance()->getConnection();
+            $stmt = $pdo->prepare("SELECT name FROM shipping_methods WHERE id = :id AND status = 1 LIMIT 1");
+            $stmt->execute([':id' => $methodId]);
+            $method = $stmt->fetch();
+            if ($method) {
+                return $method['name'];
+            }
+        } catch (\Exception $e) {
+        }
+        $defaults = $this->getDefaultShippingMethods();
+        foreach ($defaults as $d) {
+            if ($d['id'] === $methodId) return $d['name'];
+        }
+        return 'Standard Shipping';
     }
 
     /**

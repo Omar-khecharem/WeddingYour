@@ -209,6 +209,11 @@ class ProductController extends BaseAdminController
 
         $pdo = \App\Core\Database::getInstance()->getConnection();
 
+        // If no existing primary image, the first uploaded image becomes primary
+        $stmt = $pdo->prepare("SELECT COUNT(*) FROM sg_product_images WHERE product_id = :pid AND is_primary = 1");
+        $stmt->execute([':pid' => $productId]);
+        $hasPrimary = (int)$stmt->fetchColumn() > 0;
+
         $nameCount = count($_FILES['images']['name']);
         for ($i = 0; $i < $nameCount; $i++) {
             if ($_FILES['images']['error'][$i] !== UPLOAD_ERR_OK) continue;
@@ -227,15 +232,41 @@ class ProductController extends BaseAdminController
             $filename = Image::upload($file, PRODUCT_IMAGES_DIR, 'product_' . $productId);
             if (!$filename) continue;
 
-            $isPrimary = $isNew && $i === 0 ? 1 : 0;
+            $isPrimary = ($isNew || !$hasPrimary) && $i === 0 ? 1 : 0;
             $pdo->prepare("INSERT INTO sg_product_images (product_id, image, is_primary) VALUES (:pid, :img, :prim)")
                 ->execute([':pid' => $productId, ':img' => $filename, ':prim' => $isPrimary]);
 
-            if ($isNew && $i === 0) {
+            if (($isNew || !$hasPrimary) && $i === 0) {
                 $pdo->prepare("UPDATE sg_product_images SET is_primary = 0 WHERE product_id = :pid AND id != LAST_INSERT_ID()")
                     ->execute([':pid' => $productId]);
+                $hasPrimary = true;
             }
         }
+    }
+
+    public function setPrimaryImage(Request $request, Response $response): void
+    {
+        $id = (int)$request->input('id');
+        $pdo = \App\Core\Database::getInstance()->getConnection();
+
+        $stmt = $pdo->prepare("SELECT product_id FROM sg_product_images WHERE id = :id LIMIT 1");
+        $stmt->execute([':id' => $id]);
+        $productId = $stmt->fetchColumn();
+
+        if (!$productId) {
+            $this->flash('error', 'Image not found.');
+            $this->redirectBack();
+            return;
+        }
+
+        $pdo->prepare("UPDATE sg_product_images SET is_primary = 0 WHERE product_id = :pid")
+            ->execute([':pid' => $productId]);
+        $pdo->prepare("UPDATE sg_product_images SET is_primary = 1 WHERE id = :id")
+            ->execute([':id' => $id]);
+
+        clearSiteCache();
+        $this->flash('success', 'Primary image updated.');
+        $this->redirect(url('admin/products/edit/' . $productId));
     }
 
     public function deleteImage(Request $request, Response $response): void

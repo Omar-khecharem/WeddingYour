@@ -1,5 +1,9 @@
 <?php
 $currentYear = $currentYear ?? date('Y');
+$footerName = \App\Models\Setting::get('site_name', 'Shola Ghar');
+$footerTagline = \App\Models\Setting::get('site_tagline', '');
+$siteLogo = \App\Models\Setting::get('site_logo', '');
+if (empty($siteLogo) && file_exists(PUBLIC_DIR . DS . 'uploads' . DS . 'site_logo.png')) $siteLogo = 'site_logo.png';
 ?>
 <!-- ============================================ -->
 <!-- FOOTER - RED THEME -->
@@ -12,10 +16,21 @@ $currentYear = $currentYear ?? date('Y');
 
       <!-- Logo + Brand -->
       <div class="flex flex-col items-start gap-3">
-        <?php $footerName = \App\Models\Setting::get('site_name', 'Shola Ghar'); ?>
-        <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center border border-white/30">
-          <span class="text-white font-black text-2xl tracking-tighter"><?= e(substr($footerName, 0, 2)) ?></span>
-        </div>
+        <a href="<?= url('') ?>" class="flex items-center gap-3 shrink-0">
+          <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center border border-white/30 shadow-sm overflow-hidden">
+            <?php if ($siteLogo): ?>
+            <img src="<?= uploadUrl($siteLogo) ?>" alt="<?= e($footerName) ?>" class="w-full h-full object-contain">
+            <?php else: ?>
+            <span class="text-white font-black text-2xl tracking-tighter"><?= e(substr($footerName, 0, 2)) ?></span>
+            <?php endif; ?>
+          </div>
+          <div class="flex flex-col justify-center">
+            <span class="text-white font-black text-xl tracking-wide leading-none"><?= e($footerName) ?></span>
+            <?php if ($footerTagline): ?>
+            <span class="text-[10px] text-white/70 font-medium tracking-tight mt-0.5"><?= e($footerTagline) ?></span>
+            <?php endif; ?>
+          </div>
+        </a>
         <p class="text-sm text-white/80 leading-relaxed">The one and only destination of the Bengali wedding Topor Mukut is <?= e($footerName) ?>. All the efficient Karigars of <?= e($footerName) ?> are constantly trying their best to make the best quality and the most...</p>
       </div>
 
@@ -119,13 +134,18 @@ function addToCart(productId, quantity, variantId) {
     xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     xhr.onload = function() {
+        console.log('addToCart response:', xhr.status, xhr.responseText.substring(0, 500));
         try {
             var d = JSON.parse(xhr.responseText);
-            if (d.success) { showToast(d.message, 'success'); updateCartCount(d.cart_count); }
-            else { showToast(d.message, 'error'); }
-        } catch(e) { showToast('Failed to add to cart.', 'error'); }
+            if (d.success) { showToast(d.message, 'success'); updateCartCount(d.cart_count); updateCartTotal(d.cart_total); }
+            else { showToast(d.message || 'Error', 'error'); }
+        } catch(e) {
+            console.error('addToCart JSON parse error:', e.message, 'Status:', xhr.status);
+            console.error('Raw response:', xhr.responseText.substring(0, 1000));
+            showToast('Failed to add to cart.', 'error');
+        }
     };
-    xhr.onerror = function() { showToast('Failed to add to cart.', 'error'); };
+    xhr.onerror = function() { console.error('addToCart network error'); showToast('Failed to add to cart.', 'error'); };
     xhr.send(params);
 }
 function addToWishlist(productId) {
@@ -161,6 +181,12 @@ function updateCartCount(count) {
     var badges = document.querySelectorAll('.cart-count, .cart-count-mobile');
     badges.forEach(function(b) { b.textContent = count; b.style.display = count > 0 ? 'flex' : 'none'; });
 }
+function updateCartTotal(total) {
+    if (total === undefined) return;
+    var currency = window.APP_CURRENCY || '<?= APP_CURRENCY ?>';
+    var pills = document.querySelectorAll('.cart-total');
+    pills.forEach(function(el) { el.textContent = currency + ' ' + Number(total).toFixed(2); });
+}
 function toggleWishlist(productId) {
     var btn = document.querySelector('[data-wishlist="' + productId + '"]');
     var formData = new FormData();
@@ -170,8 +196,15 @@ function toggleWishlist(productId) {
         method: 'POST', body: formData,
         headers: { 'X-Requested-With': 'XMLHttpRequest' }
     })
-    .then(function(r) { return r.json(); })
+    .then(function(r) {
+        console.log('toggleWishlist status:', r.status, r.statusText);
+        return r.json().catch(function(e) {
+            console.error('toggleWishlist JSON parse error:', e);
+            return r.text().then(function(t) { console.error('Response text:', t.substring(0, 500)); throw e; });
+        });
+    })
     .then(function(data) {
+        console.log('toggleWishlist data:', JSON.stringify(data));
         if (data.success) {
             if (btn) {
                 btn.classList.toggle('is-active', data.action === 'added');
@@ -183,7 +216,7 @@ function toggleWishlist(productId) {
             showToast(data.message || 'Error', 'error');
         }
     })
-    .catch(function() { showToast('Network error', 'error'); });
+    .catch(function(e) { console.error('toggleWishlist caught:', e); showToast('Network error', 'error'); });
 }
 function updateWishlistCount(count) {
     var badges = document.querySelectorAll('.wishlist-count');

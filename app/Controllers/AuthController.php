@@ -65,7 +65,8 @@ class AuthController extends Controller
             $cartService = new \App\Services\CartService();
             $cartService->mergeCartOnLogin($result['user']['id']);
 
-            $redirect = $_SESSION['redirect_after_login'] ?? (($result['user']['role'] ?? '') === 'admin' ? url('admin') : url('account'));
+            $isAdmin = ($_SESSION['user']['role'] ?? '') === 'admin';
+            $redirect = $isAdmin ? url('admin') : ($_SESSION['redirect_after_login'] ?? url('account'));
             unset($_SESSION['redirect_after_login']);
             $this->redirect($redirect);
         } else {

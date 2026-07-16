@@ -57,15 +57,15 @@ class InvoiceService
         $settings = self::getSettings();
         $currency = $settings['currency'] ?? '₹';
         $currencyCode = $settings['currency_code'] ?? 'INR';
-        $companyName = $settings['company_name'] ?? APP_NAME;
+        $companyName = $settings['company_name'] ?: (\App\Models\Setting::get('site_name', APP_NAME));
         $companyAddress = $settings['company_address'] ?? CONTACT_ADDRESS;
         $companyPhone = $settings['company_phone'] ?? CONTACT_PHONE;
         $companyEmail = $settings['company_email'] ?? CONTACT_EMAIL;
-        $bankDetails = $settings['bank_details'] ?? 'Account: Shola Ghar | Bank: HDFC Bank | A/C: 50200012345678 | IFSC: HDFC0001234';
+        $bankDetails = $settings['bank_details'] ?? ('Account: ' . $companyName . ' | Bank: HDFC Bank | A/C: 50200012345678 | IFSC: HDFC0001234');
         $terms = $settings['invoice_terms'] ?? 'Goods once sold cannot be returned or exchanged. Payment must be made within 7 days of invoice date.';
         $taxName = $settings['tax_name'] ?? TAX_NAME;
         $taxRate = $settings['tax_rate'] ?? TAX_RATE;
-        $logo = $settings['logo_url'] ?? '';
+        $logo = $settings['logo_url'] ?: (\App\Models\Setting::get('site_logo', ''));
 
         $invoiceNumber = $order['invoice_number'] ?? self::getNextInvoiceNumber();
         $orderDate = !empty($order['created_at']) ? date('d M, Y', strtotime($order['created_at'])) : date('d M, Y');
@@ -343,8 +343,8 @@ HTML;
     {
         try {
             $product = \App\Models\Product::find($productId);
-            if ($product && !empty($product['image'])) {
-                return (new \App\Helpers\Image())::url($product['image'], 'thumb');
+            if ($product && !empty($product->image)) {
+                return \App\Helpers\Image::url($product->image, 'thumb');
             }
         } catch (\Exception $e) {
         }

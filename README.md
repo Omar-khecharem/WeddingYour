@@ -1,205 +1,244 @@
 <div align="center">
-  <img src="public/assets/images/logo_wedding.png" alt="WeddingYour — Shola Ghar" width="180" height="180">
+  <img src="public/assets/images/logo_wedding.png" alt="WeddingYour — Shola Ghar" width="160" height="160">
   <br><br>
   <h1>WeddingYour — <em>Shola Ghar</em></h1>
   <p><strong>Premium Bengali Wedding E-Commerce Platform</strong></p>
   <p><sub>Handcrafted Sholapith artistry — Mukut, Topor &amp; traditional wedding accessories</sub></p>
   <br>
   <p>
-    <a href="https://www.php.net/releases/8_2_0.php"><img src="https://img.shields.io/badge/PHP-8.2-777BB4?style=flat-square&logo=php&logoColor=white" alt="PHP 8.2"></a>
-    <a href="https://dev.mysql.com/doc/relnotes/mysql/8.0/en/"><img src="https://img.shields.io/badge/MySQL-8.0-4479A1?style=flat-square&logo=mysql&logoColor=white" alt="MySQL 8.0"></a>
-    <a href="https://tailwindcss.com"><img src="https://img.shields.io/badge/Tailwind_CSS-3.4-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white" alt="Tailwind CSS 3.4"></a>
-    <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript"><img src="https://img.shields.io/badge/JavaScript-Vanilla%20ES6%2B-F7DF1E?style=flat-square&logo=javascript&logoColor=black" alt="Vanilla JS"></a>
-    <br>
-    <a href="https://github.com/Omar-khecharem/WeddingYour/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-Non--Commercial-red?style=flat-square" alt="License"></a>
-    <a href="https://github.com/Omar-khecharem"><img src="https://img.shields.io/badge/Author-Omar%20Khecharem-181717?style=flat-square&logo=github" alt="Author"></a>
+    <a href="https://www.php.net/releases/8_2_0.php"><img src="https://img.shields.io/badge/PHP-8.2-777BB4?style=for-the-badge&logo=php&logoColor=white" alt="PHP 8.2"></a>
+    <a href="https://dev.mysql.com/doc/relnotes/mysql/8.0/en/"><img src="https://img.shields.io/badge/MySQL-8.0-4479A1?style=for-the-badge&logo=mysql&logoColor=white" alt="MySQL 8.0"></a>
+    <a href="https://tailwindcss.com"><img src="https://img.shields.io/badge/Tailwind_CSS-3.4-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white" alt="Tailwind CSS 3.4"></a>
+    <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript"><img src="https://img.shields.io/badge/JavaScript-Vanilla%20ES6-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" alt="Vanilla JS"></a>
+  </p>
+  <p>
+    <img src="https://img.shields.io/github/repo-size/Omar-khecharem/WeddingYour?style=flat-square&label=repo%20size" alt="Repo Size">
+    <img src="https://img.shields.io/github/last-commit/Omar-khecharem/WeddingYour?style=flat-square" alt="Last Commit">
+    <img src="https://img.shields.io/github/issues/Omar-khecharem/WeddingYour?style=flat-square" alt="GitHub Issues">
+    <img src="https://img.shields.io/github/license/Omar-khecharem/WeddingYour?style=flat-square&color=red" alt="License">
+    <img src="https://img.shields.io/badge/PRs-welcome-brightgreen?style=flat-square" alt="PRs Welcome">
   </p>
 </div>
 
 ---
 
-## Table of Contents
+## 📋 Table of Contents
 
-- [Overview](#overview)
-- [Architecture](#architecture)
-- [Features](#features)
-  - [Customer-Facing (Frontend)](#customer-facing-frontend)
-  - [Admin Panel (Backend)](#admin-panel-backend)
-  - [Automated Communications](#automated-communications)
-- [Tech Stack](#tech-stack)
-- [Database](#database)
-- [Installation](#installation)
-- [Configuration](#configuration)
-- [Security](#security)
-- [Contributing](#contributing)
-- [License](#license)
-- [Contact](#contact)
+- [Overview](#-overview)
+- [Key Differentiators](#-key-differentiators)
+- [Features](#-features)
+- [Tech Stack](#-tech-stack)
+- [Architecture](#-architecture)
+- [Project Structure](#-project-structure)
+- [Database](#-database)
+- [Installation](#-installation)
+- [Configuration](#-configuration)
+- [Security](#-security)
+- [Performance](#-performance)
+- [Contributing](#-contributing)
+- [License](#-license)
+- [Contact](#-contact)
 
 ---
 
-## Overview
+## 🚀 Overview
 
-**WeddingYour (Shola Ghar)** is a production-grade e-commerce platform purpose-built for the Bengali wedding industry. It delivers a seamless shopping experience for handcrafted Sholapith wedding items — from bridal Mukut (crowns) and groom Topor (headdresses) to complete wedding sets and accessories.
+**WeddingYour (Shola Ghar)** is a **production-grade, zero-dependency PHP MVC e-commerce platform** purpose-built for the **Bengali wedding industry**. It delivers a seamless shopping experience for handcrafted Sholapith wedding items — from bridal Mukut (crowns) and groom Topor (headdresses) to complete wedding sets and accessories.
 
-Born from a deep understanding of Bengali wedding traditions and modern e-commerce best practices, the platform serves both customers browsing premium wedding accessories and administrators managing inventory, orders, and content — all through a single, cohesive application.
+Built entirely from scratch without any external PHP framework, this platform demonstrates deep mastery of MVC architecture, database design, security best practices, and modern frontend development.
 
 > *"It's your day, you are the celebrity..."*
 
 ---
 
-## Architecture
+## 🏆 Key Differentiators
 
-```
-┌─────────────────────────────────────────────────────────┐
-│                     Frontend (Browser)                    │
-│  ┌───────────┐  ┌──────────┐  ┌──────────────────────┐  │
-│  │ Tailwind  │  │   Font   │  │  Vanilla ES6+ JS     │  │
-│  │   CSS 3.4 │  │ Awesome 6│  │  (AJAX, Fetch, DOM)  │  │
-│  └───────────┘  └──────────┘  └──────────────────────┘  │
-└──────────────────────┬──────────────────────────────────┘
-                       │ HTTP / AJAX
-┌──────────────────────▼──────────────────────────────────┐
-│               Custom PHP MVC Framework                    │
-│  ┌──────────┐  ┌──────────┐  ┌────────┐  ┌──────────┐  │
-│  │  Router  │→ │   Ctrl   │→ │  Model │→ │    DB    │  │
-│  │ (Regex)  │  │  (MVC)   │  │  (AR)  │  │  (PDO)   │  │
-│  └──────────┘  └────┬─────┘  └────────┘  └──────────┘  │
-│                     │                                    │
-│              ┌──────▼──────┐                             │
-│              │    View     │                             │
-│              │  (PHP + H)  │                             │
-│              └─────────────┘                             │
-│  ┌──────────┐  ┌──────────┐  ┌────────────────────────┐ │
-│  │Middleware│  │  Helpers │  │  Services (Email, PDF,  │ │
-│  │(CSRF,    │  │(Security,│  │  WhatsApp, Cart, Auth,  │ │
-│  │ Auth,    │  │ Session, │  │  Cache, Coupon, Order)  │ │
-│  │ RateLim) │  │ Format)  │  │                          │ │
-│  └──────────┘  └──────────┘  └────────────────────────┘ │
-└─────────────────────────────────────────────────────────┘
-                       │
-┌──────────────────────▼──────────────────────────────────┐
-│                  MySQL 8.0 — InnoDB                       │
-│             48 tables with full relational integrity       │
-└─────────────────────────────────────────────────────────┘
-```
-
-**Key architectural decisions:**
-
-- **Zero external framework dependency** — every layer is handcrafted for maximum control and minimal bloat.
-- **Custom MVC** with a regex-based router supporting middleware chains, named routes, route groups, and RESTful conventions.
-- **Active Record pattern** via a base Model class with CRUD, pagination, query builder, and relationship support.
-- **PSR-4 autoloading** — clean namespace mapping (`App\` → `app/`).
-- **Layout system** with named sections, component includes, and view composers.
+| | |
+|---|---|
+| ✅ **100% Custom Framework** | Zero external PHP dependencies — no Laravel, Symfony, or any framework |
+| ✅ **48 Normalized Tables** | Fully relational InnoDB schema with foreign keys, cascades, and strategic indexes |
+| ✅ **Production-Grade Security** | CSRF tokens, bcrypt (cost 12), prepared statements, rate limiting, XSS escaping |
+| ✅ **Full Admin Panel** | Complete CRUD for orders, products, categories, banners, coupons, users, reviews, outlets, deals |
+| ✅ **Automated Communications** | HTML emails (order confirmations, shipping, password reset) + PDF invoices via TCPDF |
+| ✅ **Modern Frontend** | Tailwind CSS 3.4 (zero build step), Vanilla ES6+ JS, Font Awesome 6, AJAX everywhere |
+| ✅ **SEO Optimized** | JSON-LD structured data, meta fields per product/category, semantic HTML |
 
 ---
 
-## Features
+## ✨ Features
 
-### Customer-Facing (Frontend)
+### 🛒 Customer-Facing (Frontend)
 
 | Category | Features |
 |----------|----------|
-| **Homepage** | Dynamic hero section with video/image banners · Category step-carousel (8 per slide) · Popular products with image cycling · Flash sale banners · Video showcase · Google Reviews carousel · Recent products slider · "Shola's Outlets" with drag-scroll · Coupon marquee bar · WhatsApp floating button |
-| **Product Catalog** | Filterable grid (category, subcategory, price range, rating, stock status) · Sortable (price, name, popularity, discount) · AJAX instant search (300 ms debounce) · 4-column responsive layout · Per-page selector |
-| **Product Detail** | Vertical thumbnail gallery (desktop) / horizontal strip (mobile) · Price with discount badge · Specs table · Quantity selector · Pincode availability checker · Compare / Wishlist / Share actions · "People watching" live counter · 3-tab layout (Description / Specification / Reviews) with star-rating distribution · Related products grid · JSON-LD structured data |
-| **Cart** | Full AJAX cart management · Quantity +/- controls · Coupon code application · Real-time price summary |
-| **Checkout** | Multi-step flow (shipping info → payment) · Order confirmation · PDF invoice generation |
-| **Compare** | Side-by-side product comparison · Toggle remove · Count badge |
-| **Wishlist** | Add/remove products · Persistent per user |
-| **Search** | AJAX instant search with dropdown results |
-| **User Account** | Dashboard · Profile editing · Order history with detail view · Address book · Password change |
-| **Order Tracking** | Public order tracking by order number |
+| **Homepage** | Dynamic hero with video/image banners • Category step-carousel (8 per slide) • Popular products with image cycling • Flash sale banners • Video showcase • Google Reviews carousel • Recent products slider • Outlets drag-scroll • Coupon marquee bar • WhatsApp floating button |
+| **Product Catalog** | Filterable grid (category, subcategory, price range, rating, stock) • Sortable (price, name, popularity, discount) • AJAX instant search (300 ms debounce) • 4-column responsive layout • Per-page selector |
+| **Product Detail** | Vertical thumbnail gallery (desktop) / horizontal strip (mobile) • Price with discount badge • Specs table • Quantity selector • Pincode availability checker • Compare / Wishlist / Share • "People watching" live counter • 3-tab layout (Description / Specs / Reviews) • Star-rating distribution • Related products • JSON-LD structured data |
+| **Cart** | Full AJAX • Quantity +/- • Coupon codes • Real-time price summary |
+| **Checkout** | Multi-step (shipping → payment) • Order confirmation • PDF invoice |
+| **Compare** | Side-by-side product comparison • Toggle remove • Count badge |
+| **Wishlist** | Persistent per user • Add/remove • Count badge |
+| **Search** | AJAX instant search with dropdown results (300 ms debounce) |
+| **User Account** | Dashboard • Profile editing • Order history with detail • Address book • Password change |
+| **Order Tracking** | Public tracking by order number |
 | **Newsletter** | AJAX email subscription |
-| **Outlets** | Physical store locator with address, phone, map links |
+| **Outlets** | Physical store locator with Google Maps |
 
-### Admin Panel (Backend)
+### 🔧 Admin Panel (Backend)
 
 | Module | Capabilities |
 |--------|-------------|
-| **Dashboard** | Revenue charts · Sales stats · Order counts · Recent orders · Low stock alerts |
-| **Orders** | Full CRUD · Status management (pending → confirmed → processing → shipped → delivered) · Tracking number · Customer info |
-| **Products** | CRUD with multi-image upload (independent, not replaced) · Stock & pricing · Categories, brands, variants, tags · Pincode availability per product · SEO meta fields · Discount auto-calculation |
-| **Categories** | Hierarchical CRUD · Image upload · SEO meta |
+| **Dashboard** | Revenue charts • Sales stats • Order counts • Recent orders • Low stock alerts |
+| **Orders** | Full CRUD • Status workflow (pending → confirmed → processing → shipped → delivered) • Tracking number • Customer info |
+| **Products** | CRUD with multi-image upload (independent, not replaced) • Stock & pricing • Categories, brands, variants, tags • Pincode availability • SEO meta fields • Discount auto-calculation |
+| **Categories** | Hierarchical CRUD • Image upload • SEO meta |
 | **Banners** | 4 positions: hero_left (video), hero_right (image carousel), promotional (image), bride_video (video) |
-| **Gallery** | Simplified image-only upload · Auto-generated title from filename |
-| **Outlets** | Physical store CRUD with Google Maps link |
-| **Deals** | Flash sale management |
 | **Coupons** | Discount codes (percentage, fixed amount, free shipping) |
 | **Reviews** | Approve / reject / delete customer reviews |
 | **Users** | Customer list with order history |
-| **Settings** | Site name, logo, social links, header banners, contact info, WhatsApp number |
+| **Outlets** | Physical store CRUD with Google Maps |
+| **Deals** | Flash sale management |
+| **Settings** | Site name, logo, social links, header banners, contact info, WhatsApp |
 | **Logs** | System activity viewer |
 | **Cache** | One-click view & data cache clearing |
 
-### Automated Communications
+### 📧 Automated Communications
 
-- **Order confirmation** — customer + admin notification.
-- **Shipping confirmation** — with tracking link.
-- **Welcome email** — on registration.
-- **Password reset** — secure token-based flow.
-- **PDF Invoice** — generated via TCPDF with HTML fallback.
+- **Order confirmation** — customer email + admin notification
+- **Shipping confirmation** — with tracking link
+- **Welcome email** — on user registration
+- **Password reset** — secure token-based flow
+- **PDF invoices** — generated via TCPDF with HTML fallback
+- **WhatsApp notifications** — order updates via WhatsApp API
 
 ---
 
-## Tech Stack
+## 🛠 Tech Stack
 
 ### Core
 
 | Layer | Technology | Rationale |
 |-------|-----------|-----------|
-| **Language** | PHP 8.2 | Mature, widely supported, excellent for e-commerce |
-| **Database** | MySQL 8.0 (InnoDB) | Transactional integrity, fulltext search, foreign keys |
-| **Frontend** | Tailwind CSS 3.4 + Vanilla ES6+ JS | Zero build step, utility-first styling, no framework overhead |
+| **Language** | PHP 8.2+ | Mature, widely supported, excellent for e-commerce |
+| **Database** | MySQL 8.0+ (InnoDB) | Transactional integrity, fulltext search, foreign keys |
+| **Frontend** | Tailwind CSS 3.4 + Vanilla ES6+ JS | Zero build step, utility-first, no framework overhead |
 | **Icons** | Font Awesome 6 (Free) | Comprehensive icon set |
 | **Typography** | Google Fonts — Montserrat + Playfair Display | Modern sans-serif + elegant serif |
+| **PDF** | TCPDF | Reliable PDF generation with HTML fallback |
 
-### Infrastructure
+### Architecture Components
 
 | Component | Implementation |
 |-----------|---------------|
-| **Autoloader** | Custom PSR-4 autoloader (composer-free) |
-| **Router** | Custom regex-based — supports parameters, named routes, groups, middleware binding, RESTful methods |
+| **Router** | Custom regex-based — parameters, named routes, groups, middleware binding, RESTful methods |
 | **ORM** | Custom Active Record — base `Model` class with CRUD, pagination, query builder |
-| **Database** | PDO with prepared statements — singleton connection manager |
+| **Database Layer** | PDO with prepared statements — singleton connection manager |
 | **View Engine** | Native PHP — layout system with sections, components, helpers |
-| **Security** | CSRF tokens (per-session), XSS escaping (`e()` helper), bcrypt (cost 12), prepared statements, SameSite=Lax cookies, rate limiting, login throttling |
-| **Emails** | PHP `mail()` with HTML templates |
-| **PDF** | TCPDF (Composer) with auto-fallback to HTML |
+| **Autoloader** | Custom PSR-4 autoloader (composer-free) |
+| **Middleware** | Chainable — CSRF, Auth, Rate Limiting |
+| **Mail** | PHP `mail()` with rich HTML templates |
+| **Cache** | File-based view & data caching with configurable TTL |
 
 ---
 
-## Database
+## 🏗 Architecture
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│                       Browser (Client)                        │
+│  ┌──────────────┐  ┌──────────────┐  ┌───────────────────┐  │
+│  │  Tailwind 3.4 │  │ Font Awesome │  │  Vanilla ES6+ JS  │  │
+│  │  (CDN)        │  │  6 (CDN)     │  │  (AJAX, Fetch)    │  │
+│  └──────────────┘  └──────────────┘  └───────────────────┘  │
+└──────────────────────────┬───────────────────────────────────┘
+                           │ HTTP / AJAX
+┌──────────────────────────▼───────────────────────────────────┐
+│                   Custom PHP MVC Framework                     │
+│                                                               │
+│  ┌──────────┐   ┌───────────┐   ┌──────────┐   ┌──────────┐ │
+│  │  Router   │──▶│Controller │──▶│  Model   │──▶│    DB    │ │
+│  │ (Regex)   │   │   (MVC)   │   │  (AR)    │   │  (PDO)   │ │
+│  └──────────┘   └─────┬─────┘   └──────────┘   └──────────┘ │
+│                       │                                       │
+│                ┌──────▼──────┐                                │
+│                │    View     │                                │
+│                │  (PHP + H)  │                                │
+│                └─────────────┘                                │
+│  ┌──────────┐   ┌──────────┐   ┌──────────────────────────┐  │
+│  │Middleware│   │ Helpers  │   │  Services (Email, PDF,    │  │
+│  │(CSRF,    │   │(Security,│   │  WhatsApp, Cart, Auth,    │  │
+│  │ Auth,    │   │ Session, │   │  Cache, Coupon, Order)    │  │
+│  │RateLim)  │   │ Format)  │   │                           │  │
+│  └──────────┘   └──────────┘   └──────────────────────────┘  │
+└──────────────────────────────────────────────────────────────┘
+                           │
+┌──────────────────────────▼───────────────────────────────────┐
+│                    MySQL 8.0 — InnoDB                         │
+│             48 tables with full relational integrity           │
+└──────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 📂 Project Structure
+
+```
+WeddingYour/
+├── app/                        # Application source code
+│   ├── Controllers/            # MVC Controllers
+│   ├── Models/                 # Active Record models
+│   ├── Views/                  # PHP view templates
+│   ├── Core/                   # Framework core (Router, DB, View, etc.)
+│   ├── Services/               # Business logic (Cart, Order, Invoice, etc.)
+│   ├── Middleware/             # Auth, CSRF middleware
+│   ├── Helpers/                # Utility helpers (Security, Session, Format)
+│   └── Components/             # Reusable UI components
+├── config/                     # Configuration files
+├── database/                   # SQL migrations & seed data
+├── public/                     # Web root
+│   ├── assets/                 # CSS, JS, images
+│   └── uploads/                # User uploads (gitignored)
+├── routes/                     # Route definitions
+├── cache/                      # File cache (gitignored)
+├── storage/                    # Session files (gitignored)
+├── logs/                       # Application logs (gitignored)
+└── invoices/                   # Generated PDFs (gitignored)
+```
+
+---
+
+## 🗄 Database
 
 **48 InnoDB tables** — fully normalized with foreign key cascades and strategic indexes.
 
 ```
-📦 sg_                  # All tables prefixed with sg_
-├── 👥 Users (4)        # sg_users, sg_addresses, sg_user_tokens, sg_password_resets
-├── 📦 Products (6)     # sg_products, sg_product_images, sg_product_variants,
-│                       # sg_tags, sg_product_tags, sg_product_pincodes
-├── 📂 Categories (2)   # sg_categories, sg_subcategories
-├── 🏷️ Brands (1)      # sg_brands
-├── 🛒 Orders (5)       # sg_orders, sg_order_items, sg_order_status_history, sg_carts, sg_cart_items
-├── 📣 Marketing (6)    # sg_coupons, sg_wishlists, sg_compare, sg_reviews, sg_newsletter
-├── 📄 Content (6)      # sg_pages, sg_banners, sg_gallery, sg_deals, sg_category_cards, sg_settings
-├── 🏪 Outlets (1)      # sg_outlets
-├── ⚙️ System (6)       # sg_sessions, sg_activity_logs, sg_email_queue, sg_countries, sg_currencies
-├── 🔐 RBAC (7)         # sg_roles, sg_permissions, sg_role_permissions, sg_user_roles
-└── 🔗 Relations (4)    # Pivot tables for many-to-many
+📦 shola_ghar (@sg_ prefix)
+├── 👥 Users          (4)  ─  sg_users, sg_addresses, sg_user_tokens, sg_password_resets
+├── 📦 Products       (6)  ─  sg_products, sg_product_images, sg_product_variants,
+│                              sg_tags, sg_product_tags, sg_product_pincodes
+├── 📂 Categories     (2)  ─  sg_categories, sg_subcategories
+├── 🏷️ Brands         (1)  ─  sg_brands
+├── 🛒 Orders         (5)  ─  sg_orders, sg_order_items, sg_order_status_history, sg_carts, sg_cart_items
+├── 📣 Marketing      (6)  ─  sg_coupons, sg_wishlists, sg_compare, sg_reviews, sg_newsletter
+├── 📄 Content        (6)  ─  sg_pages, sg_banners, sg_gallery, sg_deals, sg_category_cards, sg_settings
+├── 🏪 Outlets        (1)  ─  sg_outlets
+├── ⚙️ System         (6)  ─  sg_sessions, sg_activity_logs, sg_email_queue, sg_countries, sg_currencies
+├── 🔐 RBAC           (7)  ─  sg_roles, sg_permissions, sg_role_permissions, sg_user_roles
+└── 🔗 Relations      (4)  ─  Pivot tables for many-to-many
 ```
 
-> Full schema: `database/migrations/001_create_all_tables.sql`
+> Full schema: [`database/migrations/001_create_all_tables.sql`](database/migrations/001_create_all_tables.sql)
 
 ---
 
-## Installation
+## ⚡ Installation
 
 ### Prerequisites
 
 - **PHP 8.2+** — extensions: `pdo_mysql`, `mbstring`, `gd`, `zip`, `json`
 - **MySQL 8.0+** — with InnoDB support
 - **Git**
-- **Composer** (optional — only for TCPDF PDF generation)
+- **Composer** *(optional — only for TCPDF PDF generation)*
 
 ### Quick Start
 
@@ -208,23 +247,20 @@ Born from a deep understanding of Bengali wedding traditions and modern e-commer
 git clone https://github.com/Omar-khecharem/WeddingYour.git
 cd WeddingYour
 
-# 2. Create database
+# 2. Create the database
 mysql -u root -p -e "CREATE DATABASE shola_ghar CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
 
-# 3. Run migrations + seed data
+# 3. Run migrations & seed data
 mysql -u root -p shola_ghar < database/migrations/001_create_all_tables.sql
 mysql -u root -p shola_ghar < database/seed.sql
 
-# 4. Configure database credentials
-#    Edit config/database.php with your MySQL connection details
+# 4. Configure database credentials in config/database.php
+# 5. Configure APP_URL in config/app.php
 
-# 5. Configure app URL
-#    Edit config/app.php — set APP_URL to 'http://localhost:8080'
-
-# 6. Start the development server
+# 6. Start the built-in PHP server
 php -S localhost:8080 -t public public/router.php
 
-# 7. Open in browser
+# 7. Open in your browser
 open http://localhost:8080
 ```
 
@@ -245,45 +281,55 @@ open http://localhost:8080
 
 | Role | URL | Default Credentials |
 |------|-----|-------------------|
-| **Admin Panel** | `http://localhost:8080/admin` | admin@sholaghar.com / password (see seed.sql) |
+| **Admin Panel** | `http://localhost:8080/admin` | `admin@sholaghar.com` / `password` *(see seed.sql)* |
 
 ---
 
-## Configuration
+## ⚙️ Configuration
 
 | File | Key Settings |
 |------|-------------|
-| `config/app.php` | `APP_URL`, `APP_NAME`, `APP_CURRENCY`, `APP_TAGLINE`, social links, `SESSION_LIFETIME` (480 min), `MAX_UPLOAD_SIZE` (50 MB), tax & shipping defaults |
-| `config/database.php` | `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASS` |
-| `config/constants.php` | Directory paths (`UPLOADS_DIR`, `VIEWS_DIR`, etc.), status constants |
-| `config/autoload.php` | Session configuration (SameSite, save path, GC lifetime), PHP limits, error handler |
+| [`config/app.php`](config/app.php) | `APP_URL`, `APP_NAME`, `APP_CURRENCY`, `APP_TAGLINE`, `SESSION_LIFETIME` (480 min), `MAX_UPLOAD_SIZE` (50 MB), tax & shipping defaults |
+| [`config/database.php`](config/database.php) | `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASS` |
+| [`config/constants.php`](config/constants.php) | Directory paths, status constants |
+| [`config/autoload.php`](config/autoload.php) | Session config (SameSite, save path, GC lifetime), PHP limits, error handler |
 
 ---
 
-## Security
+## 🔒 Security
 
 | Measure | Implementation |
 |---------|---------------|
 | **CSRF Protection** | Per-session tokens validated via middleware on all POST/PUT/DELETE requests |
-| **XSS Prevention** | All output escaped through `e()` helper (`htmlspecialchars`) |
-| **SQL Injection** | Prepared statements with parameter binding (PDO) |
+| **XSS Prevention** | All output escaped through `e()` helper (`htmlspecialchars` with UTF-8) |
+| **SQL Injection** | Prepared statements with parameter binding (PDO) — no raw queries |
 | **Password Hashing** | bcrypt with cost factor 12 |
-| **Session Security** | HTTP-only cookies, SameSite=Lax, configurable lifetime, dedicated save path |
+| **Session Security** | HTTP-only cookies, SameSite=Lax, dedicated save path, 8-hour lifetime |
 | **Rate Limiting** | Middleware-based throttling for API endpoints |
-| **Brute Force** | Login throttling — 5 attempts, 15-minute lockout |
-| **SSL** | Enforced in production via config flag |
+| **Brute Force Protection** | Login throttling — 5 attempts, 15-minute lockout |
+| **SSL Enforcement** | HTTPS enforced in production via config flag |
 | **File Uploads** | Type validation, size limits (50 MB max), sanitized filenames |
 
 ---
 
-## Contributing
+## 📈 Performance
 
-We welcome contributions that improve the platform for the Bengali wedding community.
+- **File-based caching** — view & data cache with configurable TTL
+- **Optimized images** — configurable compression quality (80%), multiple format support
+- **AJAX lazy loading** — search with 300 ms debounce, lazy-loaded product sections
+- **Efficient queries** — strategic database indexes, paginated results, eager loading
+- **Minimal dependencies** — zero framework overhead, only essential Composer packages
 
-### Getting Started
+---
 
-1. **Fork** the repository.
-2. Create a feature branch: `git checkout -b feat/your-feature`.
+## 🤝 Contributing
+
+Contributions are welcome! Please follow these guidelines:
+
+### Workflow
+
+1. **Fork** the repository
+2. Create a feature branch: `git checkout -b feat/your-feature`
 3. **Commit** using [Conventional Commits](https://www.conventionalcommits.org/):
    ```
    feat: add WhatsApp order sharing
@@ -292,37 +338,36 @@ We welcome contributions that improve the platform for the Bengali wedding commu
    perf: optimize product image loading
    style: refine navbar scroll animation
    ```
-4. **Push** to your fork: `git push origin feat/your-feature`.
-5. Open a **Pull Request**.
+4. **Push** to your fork: `git push origin feat/your-feature`
+5. Open a **Pull Request**
 
-### Guidelines
+### Code Standards
 
-- Follow **PSR-1/PSR-4** for PHP code.
-- Use **4 spaces** for PHP, **2 spaces** for HTML/Tailwind views.
-- Keep views **logic-free** — extract to helpers/components.
-- Use the **`e()` helper** for all output escaping.
-- Add **meaningful comments** for non-obvious business logic.
-- Test all changes with the built-in server before submitting.
+- Follow **PSR-1/PSR-4** for PHP code
+- **4 spaces** for PHP, **2 spaces** for HTML/Tailwind views
+- Keep views **logic-free** — use helpers/components
+- Use the **`e()` helper** for all output escaping
+- Test all changes with the built-in server before submitting
 
 ---
 
-## License
+## 📄 License
 
 **Shola Ghar — Non-Commercial License**
 
 Copyright © 2026 **Omar Khecharem**
 
-This software is licensed for **non-commercial use only**. You are free to use, copy, modify, and distribute this software for personal, educational, or evaluation purposes. **Commercial use** — including but not limited to selling the software, hosting it as a paid service, or using it to operate a revenue-generating business — requires prior written permission from the copyright holder.
+This software is licensed for **non-commercial use only**. You are free to use, copy, modify, and distribute this software for personal, educational, or evaluation purposes. **Commercial use** — including selling, hosting as a paid service, or operating a revenue-generating business — requires prior written permission.
 
 See the [LICENSE](LICENSE) file for full terms.
 
-For commercial licensing inquiries: **khcharem.omar@gmail.com**
+For commercial licensing: **khcharem.omar@gmail.com**
 
 ---
 
-## Contact
+## 📬 Contact
 
-**Omar Khecharem** — Full-Stack Developer & Creator
+**Omar Khecharem** — Full-Stack Developer
 
 <p align="left">
   <a href="mailto:khcharem.omar@gmail.com"><img src="https://img.shields.io/badge/Email-khcharem.omar%40gmail.com-EA4335?style=flat-square&logo=gmail&logoColor=white" alt="Email"></a>
@@ -333,7 +378,7 @@ For commercial licensing inquiries: **khcharem.omar@gmail.com**
 ---
 
 <p align="center">
-  <sub>Built with ❤️ for Bengali weddings — Mukut, Topor &amp; Sholapith artistry.</sub>
+  <sub>Built with ❤️ for Bengali weddings — Mukut, Topor &amp; Sholapith artistry</sub>
   <br>
   <sub>© 2026 Shola Ghar. All rights reserved.</sub>
 </p>

@@ -1,11 +1,5 @@
 <?php
-/**
- * Historique des commandes
- *
- * Variables :
- *   $orders     – tableau de commandes (order_number, created_at, total, order_status, payment_status, payment_method_name)
- *   $pagination – données de pagination (currentPage, totalPages, total, etc.)
- */
+
 
 $orders = $orders ?? [];
 $pagination = $pagination ?? [];
@@ -25,31 +19,31 @@ $statusBadge = function (string $status): string {
 
 $statusLabel = function (string $status): string {
     return match ($status) {
-        'pending'    => 'En attente',
-        'confirmed'  => 'Confirmée',
-        'processing' => 'En cours',
-        'shipped'    => 'Expédiée',
-        'delivered'  => 'Livrée',
-        'cancelled'  => 'Annulée',
-        'refunded'   => 'Remboursée',
+        'pending'    => 'Pending',
+        'confirmed'  => 'Confirmed',
+        'processing' => 'Processing',
+        'shipped'    => 'Shipped',
+        'delivered'  => 'Delivered',
+        'cancelled'  => 'Cancelled',
+        'refunded'   => 'Refunded',
         default      => $status,
     };
 };
 
 $paymentStatusLabel = function (string $status): string {
     return match ($status) {
-        'paid'    => 'Payé',
-        'unpaid'  => 'Impayé',
-        'refunded' => 'Remboursé',
-        'pending' => 'En attente',
+        'paid'    => 'Paid',
+        'unpaid'  => 'Unpaid',
+        'refunded' => 'Refunded',
+        'pending' => 'Pending',
         default   => $status,
     };
 };
 ?>
 
 <?= component('Breadcrumb', ['crumbs' => [
-    ['label' => 'Mon compte', 'url' => url('account')],
-    ['label' => 'Mes commandes', 'url' => null],
+    ['label' => 'My Account', 'url' => url('account')],
+    ['label' => 'My Orders', 'url' => null],
 ]]) ?>
 
 <?php startSection('content') ?>
@@ -60,8 +54,8 @@ $paymentStatusLabel = function (string $status): string {
             <i class="fa-solid fa-box"></i>
         </div>
         <div>
-            <h1 class="text-xl font-bold text-gray-900">Mes commandes</h1>
-            <p class="text-sm text-gray-500">Consultez l'historique de vos commandes</p>
+            <h1 class="text-xl font-bold text-gray-900">My Orders</h1>
+            <p class="text-sm text-gray-500">View your order history</p>
         </div>
     </div>
 
@@ -70,10 +64,10 @@ $paymentStatusLabel = function (string $status): string {
         <div class="text-5xl text-gray-300 mb-5">
             <i class="fa-solid fa-receipt"></i>
         </div>
-        <h2 class="text-lg font-bold text-gray-700 mb-2">Aucune commande</h2>
-        <p class="text-sm text-gray-500 mb-6">Vous n'avez pas encore passé de commande.</p>
+        <h2 class="text-lg font-bold text-gray-700 mb-2">No orders</h2>
+        <p class="text-sm text-gray-500 mb-6">You haven't placed any orders yet.</p>
         <a href="<?= url('products') ?>" class="maroon-btn">
-            <i class="fa-solid fa-bag-shopping mr-1.5"></i> Découvrir nos produits
+            <i class="fa-solid fa-bag-shopping mr-1.5"></i> Browse Products
         </a>
     </div>
     <?php else: ?>
@@ -82,11 +76,11 @@ $paymentStatusLabel = function (string $status): string {
         <table class="w-full text-sm">
             <thead>
                 <tr class="border-b border-gray-200 bg-gray-50">
-                    <th class="text-left px-4 py-3 font-semibold text-gray-600">Commande</th>
+                    <th class="text-left px-4 py-3 font-semibold text-gray-600">Order #</th>
                     <th class="text-left px-4 py-3 font-semibold text-gray-600">Date</th>
                     <th class="text-left px-4 py-3 font-semibold text-gray-600">Total</th>
-                    <th class="text-left px-4 py-3 font-semibold text-gray-600">Statut</th>
-                    <th class="text-left px-4 py-3 font-semibold text-gray-600">Paiement</th>
+                    <th class="text-left px-4 py-3 font-semibold text-gray-600">Status</th>
+                    <th class="text-left px-4 py-3 font-semibold text-gray-600">Payment</th>
                     <th class="text-right px-4 py-3 font-semibold text-gray-600">Actions</th>
                 </tr>
             </thead>
@@ -114,9 +108,9 @@ $paymentStatusLabel = function (string $status): string {
                         <?php endif; ?>
                     </td>
                     <td class="px-4 py-4 text-right">
-                        <a href="<?= url('account/order/' . $order['id']) ?>"
+                        <a href="<?= url('account/orders/' . $order['id']) ?>"
                            class="inline-flex items-center gap-1.5 text-primary-red hover:text-primary-red/80 font-semibold text-xs transition-colors">
-                            Voir <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                            View <i class="fa-solid fa-arrow-right text-[10px]"></i>
                         </a>
                     </td>
                 </tr>

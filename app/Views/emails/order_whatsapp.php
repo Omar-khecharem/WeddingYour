@@ -1,20 +1,20 @@
-🛒 *Nouvelle commande #<?= e($order['order_number']) ?>*
+🛒 *New Order #<?= e($order['order_number']) ?>*
 📅 <?= date('d/m/Y H:i', strtotime($order['created_at'] ?? 'now')) ?>
 
-📦 *Articles commandés :*
+📦 *Ordered Items:*
 <?php foreach ($order['items'] as $item): ?>
-  • <?= e($item['name']) ?> x<?= (int) $item['quantity'] ?> = <?= number_format($item['quantity'] * $item['price'], 2) ?> €
+  • <?= e($item['name']) ?> x<?= (int) $item['quantity'] ?> = <?= number_format($item['quantity'] * $item['price'], 2) ?>  <?= APP_CURRENCY ?>
 <?php endforeach; ?>
 
-💰 *Total :* <?= number_format($order['total'] ?? 0, 2) ?> €
+💰 *Total:* <?= number_format($order['total'] ?? 0, 2) ?>  <?= APP_CURRENCY ?>
 
-📍 *Adresse de livraison :*
+📍 *Shipping Address:*
   <?= e($order['delivery_address']['name']) ?>
   <?= e($order['delivery_address']['street']) ?>
   <?= e($order['delivery_address']['postcode'] ?? '') ?> <?= e($order['delivery_address']['city'] ?? '') ?>
 
-💳 *Paiement :* <?= e($order['payment_method'] ?? 'Non spécifié') ?>
+💳 *Payment:* <?= e($order['payment_method_name'] ?? $order['payment_method'] ?? 'Not specified') ?>
 <?php if (!empty($order['notes'])): ?>
 
-📝 *Notes :* <?= e($order['notes']) ?>
+📝 *Notes:* <?= e($order['notes']) ?>
 <?php endif; ?>

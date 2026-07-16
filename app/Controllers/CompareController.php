@@ -15,9 +15,9 @@ class CompareController extends Controller
         $products = Compare::getList($userId, $sessionId);
         $count = Compare::getCount($userId, $sessionId);
 
-        $this->setMeta('Comparer des produits - Shola Ghar', 'Comparez vos produits favoris côte à côte.');
+        $this->setMeta('Compare Products - Shola Ghar', 'Compare your favorite products side by side.');
         $this->setBreadcrumb([
-            ['label' => 'Accueil', 'url' => url('/')],
+            ['label' => 'Home', 'url' => url('/')],
             ['label' => 'Comparer'],
         ]);
 
@@ -28,7 +28,7 @@ class CompareController extends Controller
     {
         $productId = (int)$request->input('product_id', 0);
         if (!$productId) {
-            $this->json(['success' => false, 'message' => 'Produit invalide.']);
+            $this->json(['success' => false, 'message' => 'Invalid product.']);
             return;
         }
 

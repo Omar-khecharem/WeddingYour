@@ -42,13 +42,7 @@
         <aside x-cloak :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'" class="fixed lg:static inset-y-0 left-0 z-30 w-64 bg-white border-r border-gray-200 flex-shrink-0 overflow-y-auto sidebar-panel lg:translate-x-0">
             <div class="p-5 border-b border-gray-100">
                 <div class="flex items-center justify-between">
-                    <a href="<?= url('admin') ?>" class="flex items-center gap-3">
-                        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-primary-red to-red-600 flex items-center justify-center text-white font-bold text-sm shadow-md shadow-red-200">A</div>
-                        <div>
-                            <span class="font-bold text-gray-800 text-sm tracking-tight">Admin Panel</span>
-                            <p class="text-[10px] text-gray-400 font-medium">Control Center</p>
-                        </div>
-                    </a>
+                  
                     <button @click="sidebarOpen = false" class="lg:hidden w-7 h-7 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400">
                         <i class="fa-solid fa-xmark text-lg"></i>
                     </button>
@@ -78,6 +72,7 @@
                     ['url' => url('admin/orders'), 'label' => 'Orders', 'icon' => 'fa-truck'],
                     ['url' => url('admin/users'), 'label' => 'Users', 'icon' => 'fa-users'],
                     ['url' => url('admin/reviews'), 'label' => 'Reviews', 'icon' => 'fa-star'],
+                    ['url' => url('admin/coupons'), 'label' => 'Coupons', 'icon' => 'fa-tag'],
 
                     ['url' => url('admin/banners'), 'label' => 'Banners', 'icon' => 'fa-images'],
                     ['url' => url('admin/deals'), 'label' => 'Best Deals', 'icon' => 'fa-percent'],

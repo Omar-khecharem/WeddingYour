@@ -34,17 +34,17 @@ echo \App\Core\View::include('layouts.navbar', [
                     <?php
                     $currentUri = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
                     $links = [
-                        ['label' => 'Tableau de bord', 'url' => url('account'), 'icon' => 'fa-gauge-high'],
-                        ['label' => 'Mon profil', 'url' => url('account/profile'), 'icon' => 'fa-user'],
-                        ['label' => 'Mes commandes', 'url' => url('account/orders'), 'icon' => 'fa-box'],
-                        ['label' => 'Ma liste d\'envies', 'url' => url('account/wishlist'), 'icon' => 'fa-heart'],
-                        ['label' => 'Mes adresses', 'url' => url('account/addresses'), 'icon' => 'fa-location-dot'],
-                        ['label' => 'Mot de passe', 'url' => url('account/change-password'), 'icon' => 'fa-lock'],
-                        ['label' => 'Déconnexion', 'url' => url('logout'), 'icon' => 'fa-right-from-bracket'],
+                        ['label' => 'Dashboard', 'url' => url('account'), 'icon' => 'fa-gauge-high'],
+                        ['label' => 'My Profile', 'url' => url('account/profile'), 'icon' => 'fa-user'],
+                        ['label' => 'My Orders', 'url' => url('account/orders'), 'icon' => 'fa-box'],
+                        ['label' => 'My Wishlist', 'url' => url('account/wishlist'), 'icon' => 'fa-heart'],
+                        ['label' => 'My Addresses', 'url' => url('account/addresses'), 'icon' => 'fa-location-dot'],
+                        ['label' => 'Password', 'url' => url('account/change-password'), 'icon' => 'fa-lock'],
+                        ['label' => 'Logout', 'url' => url('logout'), 'icon' => 'fa-right-from-bracket'],
                     ];
                     foreach ($links as $link):
                         $active = strpos($currentUri, $link['url']) === 0;
-                        $isLogout = $link['label'] === 'Déconnexion';
+                        $isLogout = $link['label'] === 'Logout';
                     ?>
                     <a href="<?= $link['url'] ?>"
                        class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm transition-all

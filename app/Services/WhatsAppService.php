@@ -20,25 +20,25 @@ class WhatsAppService
     public static function formatOrderMessage(array $order): string
     {
         $lines = [];
-        $lines[] = "🛒 *Nouvelle commande #{$order['order_number']}*";
+        $lines[] = "🛒 *New Order #{$order['order_number']}*";
         $lines[] = "📅 " . date('d/m/Y H:i', strtotime($order['created_at'] ?? 'now'));
         $lines[] = "";
 
         if (!empty($order['items'])) {
-            $lines[] = "📦 *Articles commandés :*";
+            $lines[] = "📦 *Ordered Items:*";
             foreach ($order['items'] as $item) {
                 $subtotal = $item['quantity'] * $item['price'];
-                $lines[] = "  • {$item['name']} x{$item['quantity']} = " . number_format($subtotal, 2) . " €";
+                $lines[] = "  • {$item['name']} x{$item['quantity']} = " . number_format($subtotal, 2) . " " . APP_CURRENCY;
             }
             $lines[] = "";
         }
 
-        $lines[] = "💰 *Total :* " . number_format($order['total'] ?? 0, 2) . " €";
+        $lines[] = "💰 *Total:* " . number_format($order['total'] ?? 0, 2) . " " . APP_CURRENCY;
 
         if (!empty($order['delivery_address'])) {
             $addr = $order['delivery_address'];
             $lines[] = "";
-            $lines[] = "📍 *Adresse de livraison :*";
+            $lines[] = "📍 *Shipping Address:*";
             $lines[] = "  {$addr['name']}";
             $lines[] = "  {$addr['street']}";
             if (!empty($addr['city'])) {
@@ -48,7 +48,7 @@ class WhatsAppService
 
         if (!empty($order['payment_method'])) {
             $lines[] = "";
-            $lines[] = "💳 *Paiement :* {$order['payment_method']}";
+            $lines[] = "💳 *Payment:* {$order['payment_method']}";
         }
 
         if (!empty($order['notes'])) {
@@ -72,7 +72,7 @@ class WhatsAppService
         $number = self::getNumber();
 
         $lines = [];
-        $lines[] = "🔄 *Mise à jour commande #{$order['order_number']}*";
+        $lines[] = "🔄 *Order Update #{$order['order_number']}*";
         $lines[] = "📅 " . date('d/m/Y H:i');
         $lines[] = "";
         $lines[] = "📌 *Statut :* {$order['status']}";

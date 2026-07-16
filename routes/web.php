@@ -66,15 +66,15 @@ Router::group('/account', ['middleware' => [AuthMiddleware::class]], function ()
     Router::get('/change-password', [AccountController::class, 'changePasswordForm'])->name('account.password');
     Router::post('/change-password', [AccountController::class, 'changePassword'])->name('account.password.update');
     Router::get('/orders', [AccountController::class, 'orders'])->name('account.orders');
-    Router::get('/order/{id}', [AccountController::class, 'orderDetail'])->name('account.order');
-    Router::post('/order/cancel', [AccountController::class, 'cancelOrder'])->name('account.order.cancel');
+    Router::get('/orders/{id}', [AccountController::class, 'orderDetail'])->name('account.order');
+    Router::post('/orders/cancel', [AccountController::class, 'cancelOrder'])->name('account.order.cancel');
     Router::get('/wishlist', [AccountController::class, 'wishlist'])->name('account.wishlist');
     Router::post('/wishlist/add', [AccountController::class, 'addWishlist'])->name('account.wishlist.add');
     Router::get('/addresses', [AccountController::class, 'addresses'])->name('account.addresses');
     Router::post('/addresses', [AccountController::class, 'saveAddress'])->name('account.addresses.save');
     Router::post('/addresses/delete', [AccountController::class, 'deleteAddress'])->name('account.addresses.delete');
     Router::post('/addresses/default', [AccountController::class, 'setDefaultAddress'])->name('account.addresses.default');
-    Router::get('/order/{id}/invoice', [AccountController::class, 'downloadInvoice'])->name('account.order.invoice');
+    Router::get('/orders/{id}/invoice', [AccountController::class, 'downloadInvoice'])->name('account.order.invoice');
 });
 
 // ---- Compare ----
@@ -85,14 +85,17 @@ Router::post('/compare/clear', [CompareController::class, 'clear'])->name('compa
 
 // ---- Static pages ----
 Router::get('/about', function () {
-    $controller = new \App\Core\Controller();
-    return $controller->view('pages.about');
+    return \App\Core\View::render('pages.about');
 })->name('about');
 
 Router::get('/contact', function () {
-    $controller = new \App\Core\Controller();
-    return $controller->view('pages.contact');
+    return \App\Core\View::render('pages.contact');
 })->name('contact');
+
+Router::get('/outlets', function () {
+    $outlets = \App\Models\Outlet::getActive();
+    return \App\Core\View::render('pages.outlets', ['outlets' => $outlets]);
+})->name('outlets');
 
 Router::get('/outlets/{slug}', function (array $params) {
     $slug = $params['slug'] ?? '';
@@ -105,20 +108,17 @@ Router::get('/outlets/{slug}', function (array $params) {
 })->name('outlet');
 
 Router::get('/gallery', function () {
-    $controller = new \App\Core\Controller();
     $galleryItems = \App\Models\GalleryItem::getActive(null, 30);
-    return $controller->view('pages.gallery', ['galleryItems' => $galleryItems]);
+    return \App\Core\View::render('pages.gallery', ['galleryItems' => $galleryItems]);
 })->name('gallery');
 
 Router::get('/blog', function () {
-    $controller = new \App\Core\Controller();
-    return $controller->view('pages.blog');
+    return \App\Core\View::render('pages.blog');
 })->name('blog');
 
 Router::get('/categories', function () {
-    $controller = new \App\Core\Controller();
     $categories = \App\Models\Category::getActiveWithProductCount();
-    return $controller->view('pages.categories', ['categories' => $categories]);
+    return \App\Core\View::render('pages.categories', ['categories' => $categories]);
 })->name('categories');
 
 Router::get('/category/{slug}', function ($params) {
@@ -141,14 +141,12 @@ Router::get('/page/{slug}', function ($params) {
         exit;
     }
 
-    $controller = new \App\Core\Controller();
-    return $controller->view('pages.page', ['page' => $page]);
+    return \App\Core\View::render('pages.page', ['page' => $page]);
 })->name('page');
 
 // ---- Order tracking ----
 Router::get('/order/track', function () {
-    $controller = new \App\Core\Controller();
-    return $controller->view('pages.track-order');
+    return \App\Core\View::render('pages.track-order');
 })->name('track.order');
 
 Router::post('/order/track', function () {
@@ -156,12 +154,10 @@ Router::post('/order/track', function () {
     if ($orderNumber) {
         $order = \App\Models\Order::findByNumber($orderNumber);
         if ($order) {
-            $controller = new \App\Core\Controller();
-            return $controller->view('pages.track-order', ['tracked_order' => $order]);
+            return \App\Core\View::render('pages.track-order', ['tracked_order' => $order]);
         }
     }
-    $controller = new \App\Core\Controller();
-    return $controller->view('pages.track-order', ['error' => 'Order not found.']);
+    return \App\Core\View::render('pages.track-order', ['error' => 'Order not found.']);
 })->name('track.order.post');
 
 // ---- Newsletter ----

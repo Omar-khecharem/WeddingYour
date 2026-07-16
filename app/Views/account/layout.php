@@ -1,9 +1,9 @@
 <?php
 /**
- * Mise en page du compte client
+ * Account layout
  *
- * Barre latérale de navigation + zone de contenu.
- * Les pages enfants utilisent startSection('content') / endSection().
+ * Sidebar navigation + content area.
+ * Child pages use startSection('content') / endSection().
  */
 
 $authUser = $authUser ?? null;
@@ -30,13 +30,30 @@ echo \App\Core\View::include('layouts.navbar', $navbarData);
 
 <?= \App\Components\Alert::renderFlash() ?>
 
-<div class="max-w-[1200px] mx-auto my-8 px-4">
-    <div class="flex gap-8">
+<div class="max-w-[1200px] mx-auto my-4 sm:my-8 px-4">
+    <div class="flex flex-col lg:flex-row gap-6 lg:gap-8">
 
-        <!-- Sidebar -->
-        <aside class="w-full lg:w-64 flex-shrink-0">
+        <!-- Mobile nav: horizontal scroll on small screens -->
+        <div class="lg:hidden -mx-4 px-4 overflow-x-auto scrollbar-hide">
+            <div class="flex gap-2 pb-2 min-w-max">
+                <?php foreach ($links as $link):
+                    $active = strpos($currentUri, $link['url']) === 0;
+                    $isLogout = $link['label'] === 'Logout';
+                ?>
+                <a href="<?= $link['url'] ?>"
+                   class="flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-all
+                          <?= $active ? 'bg-primary-red/10 text-primary-red font-bold' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' ?>">
+                    <i class="fa-solid <?= $link['icon'] ?>"></i>
+                    <span><?= $link['label'] ?></span>
+                </a>
+                <?php endforeach; ?>
+            </div>
+        </div>
+
+        <!-- Sidebar: hidden on mobile, sticky on desktop -->
+        <aside class="hidden lg:block lg:w-64 flex-shrink-0">
             <div class="bg-white rounded-xl border border-gray-200 overflow-hidden sticky top-28">
-                <!-- Profil user -->
+                <!-- User profile -->
                 <div class="bg-primary-red p-5 text-white text-center">
                     <div class="w-14 h-14 rounded-full bg-white/20 mx-auto flex items-center justify-center text-xl font-bold mb-2">
                         <?= e(strtoupper(mb_substr($authUser['name'] ?? 'U', 0, 1))) ?>
@@ -46,20 +63,9 @@ echo \App\Core\View::include('layouts.navbar', $navbarData);
                 </div>
 
                 <nav class="p-3 space-y-0.5">
-                    <?php
-                    $links = [
-                        ['label' => 'Tableau de bord', 'url' => url('account'), 'icon' => 'fa-gauge-high'],
-                        ['label' => 'Mon profil', 'url' => url('account/profile'), 'icon' => 'fa-user'],
-                        ['label' => 'Mes commandes', 'url' => url('account/orders'), 'icon' => 'fa-box'],
-                        ['label' => 'Ma liste d\'envies', 'url' => url('account/wishlist'), 'icon' => 'fa-heart'],
-                        ['label' => 'Mes adresses', 'url' => url('account/addresses'), 'icon' => 'fa-location-dot'],
-                        ['label' => 'Mot de passe', 'url' => url('account/change-password'), 'icon' => 'fa-lock'],
-                        ['label' => 'Déconnexion', 'url' => url('logout'), 'icon' => 'fa-right-from-bracket'],
-                    ];
-
-                    foreach ($links as $link):
+                    <?php foreach ($links as $link):
                         $active = strpos($currentUri, $link['url']) === 0;
-                        $isLogout = $link['label'] === 'Déconnexion';
+                        $isLogout = $link['label'] === 'Logout';
                     ?>
                     <a href="<?= $link['url'] ?>"
                        class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm transition-all
@@ -73,7 +79,7 @@ echo \App\Core\View::include('layouts.navbar', $navbarData);
             </div>
         </aside>
 
-        <!-- Contenu principal -->
+        <!-- Main content -->
         <div class="flex-1 min-w-0">
             <?= section('content') ?>
         </div>

@@ -88,7 +88,7 @@
         }
     </script>
 
-    <script>window.CSRF_TOKEN = '<?= \App\Helpers\Session::csrfToken() ?>';</script>
+    <script>window.CSRF_TOKEN = '<?= \App\Helpers\Session::csrfToken() ?>'; window.APP_CURRENCY = '<?= APP_CURRENCY ?>';</script>
     
     <!-- Custom Styles -->
     <style>

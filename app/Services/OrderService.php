@@ -47,22 +47,26 @@ class OrderService
             $stmt = $pdo->prepare("
                 INSERT INTO sg_orders (
                     order_number, user_id, email, phone,
-                    billing_name, billing_address, billing_city, billing_state, billing_pincode,
-                    shipping_name, shipping_address, shipping_city, shipping_state, shipping_pincode,
+                    billing_name, billing_address, billing_city, billing_state, billing_postal, billing_country,
+                    shipping_name, shipping_address, shipping_city, shipping_state, shipping_postal, shipping_country,
                     subtotal, discount, tax, shipping_cost, total,
                     coupon_code, coupon_discount,
-                    payment_method, payment_status, order_status,
+                    payment_method_name, payment_status, order_status,
+                    currency_code, currency_rate,
                     is_paid, invoice_number, created_at
                 ) VALUES (
                     :order_number, :user_id, :email, :phone,
-                    :billing_name, :billing_address, :billing_city, :billing_state, :billing_pincode,
-                    :shipping_name, :shipping_address, :shipping_city, :shipping_state, :shipping_pincode,
+                    :billing_name, :billing_address, :billing_city, :billing_state, :billing_postal, :billing_country,
+                    :shipping_name, :shipping_address, :shipping_city, :shipping_state, :shipping_postal, :shipping_country,
                     :subtotal, :discount, :tax, :shipping_cost, :total,
                     :coupon_code, :coupon_discount,
-                    :payment_method, :payment_status, :order_status,
+                    :payment_method_name, :payment_status, :order_status,
+                    :currency_code, :currency_rate,
                     :is_paid, :invoice_number, NOW()
                 )
             ");
+
+            $currency = defined('APP_CURRENCY') ? APP_CURRENCY : 'INR';
 
             $orderData = [
                 ':order_number' => $orderNumber,
@@ -73,12 +77,14 @@ class OrderService
                 ':billing_address' => $billing['address'] . ($billing['address2'] ? ', ' . $billing['address2'] : ''),
                 ':billing_city' => $billing['city'],
                 ':billing_state' => $billing['state'],
-                ':billing_pincode' => $billing['pincode'],
+                ':billing_postal' => $billing['pincode'],
+                ':billing_country' => $billing['country'] ?? '',
                 ':shipping_name' => $shipping['name'],
                 ':shipping_address' => $shipping['address'] . ($shipping['address2'] ? ', ' . $shipping['address2'] : ''),
                 ':shipping_city' => $shipping['city'],
                 ':shipping_state' => $shipping['state'],
-                ':shipping_pincode' => $shipping['pincode'],
+                ':shipping_postal' => $shipping['pincode'],
+                ':shipping_country' => $shipping['country'] ?? '',
                 ':subtotal' => $cart['subtotal'],
                 ':discount' => $cart['discount'],
                 ':tax' => $cart['tax'],
@@ -86,9 +92,11 @@ class OrderService
                 ':total' => $cart['total'],
                 ':coupon_code' => $cart['coupon_code'],
                 ':coupon_discount' => $cart['discount'],
-                ':payment_method' => $paymentMethod,
+                ':payment_method_name' => $paymentMethod === 'cod' ? 'Cash on Delivery' : ($paymentMethod === 'razorpay' ? 'Online Payment' : $paymentMethod),
                 ':payment_status' => $paymentMethod === 'cod' ? 'pending' : 'pending',
                 ':order_status' => 'pending',
+                ':currency_code' => $currency,
+                ':currency_rate' => 1.000000,
                 ':is_paid' => $paymentMethod === 'cod' ? 0 : 0,
                 ':invoice_number' => generateInvoiceNumber(),
             ];
@@ -139,7 +147,7 @@ class OrderService
         } catch (\Exception $e) {
             $pdo->rollBack();
             error_log('Order creation failed: ' . $e->getMessage());
-            return ['success' => false, 'message' => 'Failed to create order. Please try again.'];
+            return ['success' => false, 'message' => 'Failed to create order: ' . $e->getMessage()];
         }
     }
 
@@ -255,17 +263,33 @@ class OrderService
     /**
      * Get all orders (admin)
      */
-    public function getAllOrders(int $page = 1, int $perPage = 20, ?string $status = null): array
+    public function getAllOrders(int $page = 1, int $perPage = 20, ?string $status = null, ?string $search = null, ?string $dateFrom = null, ?string $dateTo = null): array
     {
         $offset = ($page - 1) * $perPage;
         $pdo = $this->db->getConnection();
 
-        $where = '';
+        $conditions = [];
         $params = [];
         if ($status) {
-            $where = " WHERE order_status = :status";
+            $conditions[] = "order_status = :status";
             $params[':status'] = $status;
         }
+        if ($search) {
+            $conditions[] = "(order_number LIKE :search OR billing_name LIKE :search2 OR billing_email LIKE :search3)";
+            $params[':search'] = "%{$search}%";
+            $params[':search2'] = "%{$search}%";
+            $params[':search3'] = "%{$search}%";
+        }
+        if ($dateFrom) {
+            $conditions[] = "DATE(created_at) >= :date_from";
+            $params[':date_from'] = $dateFrom;
+        }
+        if ($dateTo) {
+            $conditions[] = "DATE(created_at) <= :date_to";
+            $params[':date_to'] = $dateTo;
+        }
+
+        $where = $conditions ? ' WHERE ' . implode(' AND ', $conditions) : '';
 
         $countStmt = $pdo->prepare("SELECT COUNT(*) FROM sg_orders{$where}");
         $countStmt->execute($params);
@@ -306,5 +330,36 @@ class OrderService
         $stats['month_revenue'] = (float)$pdo->query("SELECT COALESCE(SUM(total), 0) FROM sg_orders WHERE MONTH(created_at) = MONTH(CURDATE()) AND YEAR(created_at) = YEAR(CURDATE()) AND order_status NOT IN ('cancelled', 'refunded')")->fetchColumn();
 
         return $stats;
+    }
+
+    /**
+     * Get order stats for a specific user
+     */
+    public function getUserStats(int $userId): array
+    {
+        $pdo = $this->db->getConnection();
+
+        $stmt = $pdo->prepare("SELECT COUNT(*) FROM sg_orders WHERE user_id = :uid");
+        $stmt->execute([':uid' => $userId]);
+        $totalOrders = (int)$stmt->fetchColumn();
+
+        $stmt = $pdo->prepare("SELECT COALESCE(SUM(total), 0) FROM sg_orders WHERE user_id = :uid AND order_status NOT IN ('cancelled', 'refunded')");
+        $stmt->execute([':uid' => $userId]);
+        $totalSpent = (float)$stmt->fetchColumn();
+
+        $stmt = $pdo->prepare("SELECT COUNT(*) FROM sg_orders WHERE user_id = :uid AND order_status = 'pending'");
+        $stmt->execute([':uid' => $userId]);
+        $pendingOrders = (int)$stmt->fetchColumn();
+
+        $stmt = $pdo->prepare("SELECT COUNT(*) FROM sg_orders WHERE user_id = :uid AND order_status = 'delivered'");
+        $stmt->execute([':uid' => $userId]);
+        $deliveredOrders = (int)$stmt->fetchColumn();
+
+        return [
+            'total_orders' => $totalOrders,
+            'total_spent' => $totalSpent,
+            'pending_orders' => $pendingOrders,
+            'delivered_orders' => $deliveredOrders,
+        ];
     }
 }

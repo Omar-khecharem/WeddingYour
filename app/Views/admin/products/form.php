@@ -120,9 +120,14 @@ $p = $isEdit ? $product : null;
                     <p class="text-sm font-medium text-gray-700 mb-2">Current Images</p>
                     <div class="grid grid-cols-3 gap-3">
                         <?php foreach ($imgs as $img): ?>
-                        <div class="relative group aspect-square rounded-xl overflow-hidden border border-gray-200 bg-gray-50 shadow-sm hover:shadow-md transition-shadow">
+                        <div class="relative group aspect-square rounded-xl overflow-hidden border border-gray-200 bg-gray-50 shadow-sm hover:shadow-md transition-shadow <?= !empty($img['is_primary']) ? 'ring-2 ring-red-500' : '' ?>">
                             <img src="<?= e($img['url'] ?? '') ?>" alt="" class="w-full h-full object-cover" loading="lazy">
-                            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                                <?php if (empty($img['is_primary'])): ?>
+                                <button type="button" onclick="setPrimaryImage(<?= $img['id'] ?>)" class="w-8 h-8 bg-yellow-500 text-white rounded-full flex items-center justify-center text-sm hover:bg-yellow-600 transition-colors shadow-lg" title="Set as primary">
+                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                                </button>
+                                <?php endif; ?>
                                 <button type="button" onclick="deleteProductImage(<?= $img['id'] ?>)" class="w-8 h-8 bg-red-600 text-white rounded-full flex items-center justify-center text-sm hover:bg-red-700 transition-colors shadow-lg" title="Delete image">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
                                 </button>
@@ -237,6 +242,17 @@ function deleteProductImage(id){
   f.appendChild(inp);
   var pid=document.createElement('input'); pid.type='hidden'; pid.name='product_id'; pid.value='<?= $p->id ?? 0 ?>';
   f.appendChild(pid);
+  document.body.appendChild(f); f.submit();
+}
+
+// Set image as primary
+function setPrimaryImage(id) {
+  if(!confirm('Set this image as the primary thumbnail?')) return;
+  var f=document.createElement('form'); f.method='POST';
+  f.action='<?= url('admin/products/set-primary-image') ?>';
+  f.innerHTML='<?= \App\Helpers\Security::csrfField() ?>';
+  var inp=document.createElement('input'); inp.type='hidden'; inp.name='id'; inp.value=id;
+  f.appendChild(inp);
   document.body.appendChild(f); f.submit();
 }
 

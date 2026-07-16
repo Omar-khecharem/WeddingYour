@@ -394,7 +394,7 @@ $videoShowcaseBg = $videoShowcaseBg ?? '';
             <?php endif; ?>
           </div>
           <span class="text-sm font-bold text-slate-800"><?= e($oName) ?></span>
-          <a href="<?= url('contact') ?>" class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-4 py-2 rounded transition-colors w-full max-w-[160px]">Get Direction &rarr;</a>
+          <a href="<?= url('outlets/' . e($oSlug)) ?>" class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-4 py-2 rounded transition-colors w-full max-w-[160px] text-center block">View Details &rarr;</a>
         </div>
         <?php endforeach; ?>
         <?php else: ?>

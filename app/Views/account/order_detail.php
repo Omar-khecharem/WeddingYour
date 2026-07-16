@@ -1,16 +1,5 @@
 <?php
-/**
- * Détail d'une commande
- *
- * Variables :
- *   $order – tableau complet de la commande
- *     - order_number, created_at, total, subtotal, shipping_cost, tax, discount
- *     - order_status, payment_status, payment_method_name
- *     - billing_name, billing_email, billing_phone, billing_address, billing_address2, billing_city, billing_state, billing_postal_code
- *     - shipping_name, shipping_phone, shipping_address, shipping_address2, shipping_city, shipping_state, shipping_postal_code
- *     - notes, coupon_code
- *     - items[] : product_name, product_sku, variant_name, quantity, unit_price, total_price, image
- */
+
 
 $order = $order ?? [];
 
@@ -29,23 +18,23 @@ $statusBadge = function (string $status): string {
 
 $statusLabel = function (string $status): string {
     return match ($status) {
-        'pending'    => 'En attente',
-        'confirmed'  => 'Confirmée',
-        'processing' => 'En cours',
-        'shipped'    => 'Expédiée',
-        'delivered'  => 'Livrée',
-        'cancelled'  => 'Annulée',
-        'refunded'   => 'Remboursée',
+        'pending'    => 'Pending',
+        'confirmed'  => 'Confirmed',
+        'processing' => 'Processing',
+        'shipped'    => 'Shipped',
+        'delivered'  => 'Delivered',
+        'cancelled'  => 'Cancelled',
+        'refunded'   => 'Refunded',
         default      => $status,
     };
 };
 
 $timelineSteps = [
-    'pending'    => ['label' => 'Commande passée',      'icon' => 'fa-file-invoice',     'key' => 'created_at'],
-    'confirmed'  => ['label' => 'Confirmée',             'icon' => 'fa-check-circle',     'key' => 'confirmed_at'],
-    'processing' => ['label' => 'En cours de traitement','icon' => 'fa-spinner',          'key' => 'processed_at'],
-    'shipped'    => ['label' => 'Expédiée',              'icon' => 'fa-truck',            'key' => 'shipped_at'],
-    'delivered'  => ['label' => 'Livrée',                'icon' => 'fa-circle-check',     'key' => 'delivered_at'],
+    'pending'    => ['label' => 'Order placed',      'icon' => 'fa-file-invoice',     'key' => 'created_at'],
+    'confirmed'  => ['label' => 'Confirmed',             'icon' => 'fa-check-circle',     'key' => 'confirmed_at'],
+    'processing' => ['label' => 'Processing','icon' => 'fa-spinner',          'key' => 'processed_at'],
+    'shipped'    => ['label' => 'Shipped',              'icon' => 'fa-truck',            'key' => 'shipped_at'],
+    'delivered'  => ['label' => 'Delivered',                'icon' => 'fa-circle-check',     'key' => 'delivered_at'],
 ];
 
 $currentStatus = $order['order_status'] ?? 'pending';
@@ -53,14 +42,14 @@ $reached = false;
 ?>
 
 <?= component('Breadcrumb', ['crumbs' => [
-    ['label' => 'Mon compte', 'url' => url('account')],
-    ['label' => 'Mes commandes', 'url' => url('account/orders')],
-    ['label' => 'Commande #' . ($order['order_number'] ?? ''), 'url' => null],
+    ['label' => 'My Account', 'url' => url('account')],
+    ['label' => 'My Orders', 'url' => url('account/orders')],
+    ['label' => 'Order #' . ($order['order_number'] ?? ''), 'url' => null],
 ]]) ?>
 
 <?php startSection('content') ?>
 
-<!-- En-tête -->
+<!-- Header -->
 <div class="bg-white rounded-xl border border-gray-200 p-6 lg:p-8 mb-6">
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div class="flex items-center gap-3">
@@ -68,17 +57,17 @@ $reached = false;
                 <i class="fa-solid fa-receipt"></i>
             </div>
             <div>
-                <h1 class="text-xl font-bold text-gray-900">Commande #<?= e($order['order_number'] ?? '') ?></h1>
-                <p class="text-sm text-gray-500">Passée le <?= formatDate($order['created_at'] ?? '', 'd/m/Y à H:i') ?></p>
+                <h1 class="text-xl font-bold text-gray-900">Order #<?= e($order['order_number'] ?? '') ?></h1>
+                <p class="text-sm text-gray-500">Placed on <?= formatDate($order['created_at'] ?? '', 'd/m/Y \a\t H:i') ?></p>
             </div>
         </div>
         <div class="flex items-center gap-3">
             <span class="inline-block text-sm font-bold px-3 py-1.5 rounded-full border <?= $statusBadge($currentStatus) ?>">
                 <?= $statusLabel($currentStatus) ?>
             </span>
-            <a href="<?= url('account/order/' . $order['id'] . '/invoice') ?>"
+            <a href="<?= url('account/orders/' . $order['id'] . '/invoice') ?>"
                class="inline-flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors">
-                <i class="fa-solid fa-file-pdf"></i> Télécharger la facture
+                <i class="fa-solid fa-file-pdf"></i> Download Invoice
             </a>
         </div>
     </div>
@@ -91,7 +80,7 @@ $reached = false;
 
         <!-- Timeline -->
         <div class="bg-white rounded-xl border border-gray-200 p-6">
-            <h2 class="font-bold text-gray-900 mb-5">Suivi de commande</h2>
+            <h2 class="font-bold text-gray-900 mb-5">Order Tracking</h2>
             <div class="relative">
                 <?php foreach ($timelineSteps as $status => $step):
                     $timestamp = $order[$step['key']] ?? null;
@@ -124,7 +113,7 @@ $reached = false;
                             <?= $step['label'] ?>
                         </p>
                         <?php if ($timestamp): ?>
-                        <p class="text-xs text-gray-500 mt-0.5"><?= formatDate($timestamp, 'd/m/Y à H:i') ?></p>
+                        <p class="text-xs text-gray-500 mt-0.5"><?= formatDate($timestamp, 'd/m/Y \a\t H:i') ?></p>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -137,10 +126,10 @@ $reached = false;
                     </div>
                     <div class="flex-1 pt-1">
                         <p class="text-sm font-semibold text-gray-900">
-                            <?= $currentStatus === 'cancelled' ? 'Annulée' : 'Remboursée' ?>
+                            <?= $currentStatus === 'cancelled' ? 'Cancelled' : 'Refunded' ?>
                         </p>
                         <?php if (!empty($order['cancelled_at'])): ?>
-                        <p class="text-xs text-gray-500 mt-0.5"><?= formatDate($order['cancelled_at'], 'd/m/Y à H:i') ?></p>
+                        <p class="text-xs text-gray-500 mt-0.5"><?= formatDate($order['cancelled_at'], 'd/m/Y \a\t H:i') ?></p>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -150,15 +139,15 @@ $reached = false;
 
         <!-- Articles -->
         <div class="bg-white rounded-xl border border-gray-200 p-6">
-            <h2 class="font-bold text-gray-900 mb-5">Articles commandés</h2>
+            <h2 class="font-bold text-gray-900 mb-5">Ordered Items</h2>
             <div class="overflow-x-auto">
                 <table class="w-full text-sm">
                     <thead>
                         <tr class="border-b border-gray-200 bg-gray-50">
-                            <th class="text-left px-3 py-3 font-semibold text-gray-600">Produit</th>
+                            <th class="text-left px-3 py-3 font-semibold text-gray-600">Product</th>
                             <th class="text-left px-3 py-3 font-semibold text-gray-600">SKU</th>
-                            <th class="text-center px-3 py-3 font-semibold text-gray-600">Qté</th>
-                            <th class="text-right px-3 py-3 font-semibold text-gray-600">Prix unitaire</th>
+                            <th class="text-center px-3 py-3 font-semibold text-gray-600">Qty</th>
+                            <th class="text-right px-3 py-3 font-semibold text-gray-600">Unit Price</th>
                             <th class="text-right px-3 py-3 font-semibold text-gray-600">Total</th>
                         </tr>
                     </thead>
@@ -175,7 +164,7 @@ $reached = false;
                                     <div>
                                         <p class="font-semibold text-gray-900"><?= e($item['product_name'] ?? '') ?></p>
                                         <?php if (!empty($item['variant_name'])): ?>
-                                        <p class="text-xs text-gray-500 mt-0.5">Variante : <?= e($item['variant_name']) ?></p>
+                                        <p class="text-xs text-gray-500 mt-0.5">Variant: <?= e($item['variant_name']) ?></p>
                                         <?php endif; ?>
                                     </div>
                                 </div>
@@ -194,29 +183,29 @@ $reached = false;
             <div class="flex justify-end mt-4">
                 <div class="w-full sm:w-72 space-y-2 text-sm">
                     <div class="flex justify-between">
-                        <span class="text-gray-600">Sous-total</span>
+                        <span class="text-gray-600">Subtotal</span>
                         <span class="font-semibold text-gray-900"><?= formatPrice((float)($order['subtotal'] ?? 0)) ?></span>
                     </div>
                     <?php if (!empty($order['discount']) && (float)$order['discount'] > 0): ?>
                     <div class="flex justify-between text-green-600">
-                        <span>Réduction</span>
+                        <span>Discount</span>
                         <span class="font-semibold">-<?= formatPrice((float)$order['discount']) ?></span>
                     </div>
                     <?php endif; ?>
                     <?php if (!empty($order['coupon_code'])): ?>
                     <div class="flex justify-between text-gray-500 text-xs">
-                        <span>Code promo</span>
+                        <span>Coupon Code</span>
                         <span><?= e($order['coupon_code']) ?></span>
                     </div>
                     <?php endif; ?>
                     <div class="flex justify-between">
-                        <span class="text-gray-600">Livraison</span>
+                        <span class="text-gray-600">Shipping</span>
                         <span class="font-semibold text-gray-900">
-                            <?= (float)($order['shipping_cost'] ?? 0) > 0 ? formatPrice((float)$order['shipping_cost']) : '<span class="text-green-600">Gratuite</span>' ?>
+                            <?= (float)($order['shipping_cost'] ?? 0) > 0 ? formatPrice((float)$order['shipping_cost']) : '<span class="text-green-600">Free</span>' ?>
                         </span>
                     </div>
                     <div class="flex justify-between">
-                        <span class="text-gray-600">TVA</span>
+                        <span class="text-gray-600">Tax</span>
                         <span class="font-semibold text-gray-900"><?= formatPrice((float)($order['tax'] ?? 0)) ?></span>
                     </div>
                     <hr class="border-gray-200">
@@ -230,13 +219,13 @@ $reached = false;
 
     </div>
 
-    <!-- Colonne latérale -->
+    <!-- Side column -->
     <div class="space-y-6">
 
-        <!-- Adresse de facturation -->
+        <!-- Billing Address -->
         <div class="bg-white rounded-xl border border-gray-200 p-6">
             <h3 class="font-bold text-gray-900 mb-3 flex items-center gap-2">
-                <i class="fa-solid fa-file-invoice text-gray-400"></i> Facturation
+                <i class="fa-solid fa-file-invoice text-gray-400"></i> Billing
             </h3>
             <div class="text-sm text-gray-600 space-y-1">
                 <p class="font-semibold text-gray-900"><?= e($order['billing_name'] ?? '') ?></p>
@@ -252,19 +241,19 @@ $reached = false;
             <hr class="border-gray-200 my-3">
 
             <div class="flex items-center justify-between text-sm">
-                <span class="text-gray-600">Paiement</span>
+                <span class="text-gray-600">Payment</span>
                 <span class="font-semibold text-gray-900"><?= e($order['payment_method_name'] ?? '') ?></span>
             </div>
             <div class="flex items-center justify-between text-sm mt-1">
-                <span class="text-gray-600">Statut</span>
-                <span class="font-semibold <?= ($order['payment_status'] ?? '') === 'paid' ? 'text-green-600' : 'text-red-500' ?>">
+                <span class="text-gray-600">Status</span>
+                <span class="font-semibold <?= in_array($order['payment_status'] ?? '', ['paid', 'completed']) ? 'text-green-600' : 'text-red-500' ?>">
                     <?php
                     $ps = $order['payment_status'] ?? '';
                     echo match ($ps) {
-                        'paid' => 'Payé',
-                        'unpaid' => 'Impayé',
-                        'refunded' => 'Remboursé',
-                        'pending' => 'En attente',
+                        'paid', 'completed' => 'Paid',
+                        'unpaid' => 'Unpaid',
+                        'refunded' => 'Refunded',
+                        'pending' => 'Pending',
                         default => $ps,
                     };
                     ?>
@@ -272,11 +261,11 @@ $reached = false;
             </div>
         </div>
 
-        <!-- Adresse de livraison -->
+        <!-- Shipping Address -->
         <?php if (!empty($order['shipping_name']) || !empty($order['shipping_address'])): ?>
         <div class="bg-white rounded-xl border border-gray-200 p-6">
             <h3 class="font-bold text-gray-900 mb-3 flex items-center gap-2">
-                <i class="fa-solid fa-truck text-gray-400"></i> Livraison
+                <i class="fa-solid fa-truck text-gray-400"></i> Shipping
             </h3>
             <div class="text-sm text-gray-600 space-y-1">
                 <p class="font-semibold text-gray-900"><?= e($order['shipping_name'] ?? '') ?></p>

@@ -31,24 +31,24 @@ class ProductController extends Controller
         $result = Product::getFiltered($filters, $page, PAGINATION_PER_PAGE);
         $filterOptions = Product::getFilterOptions();
 
-        $title = 'Tous nos produits';
-        $description = 'Découvrez notre collection complète de mukut, topor et accessoires de mariage.';
+        $title = 'All Products';
+        $description = 'Discover our complete collection of mukut, topor and wedding accessories.';
         if ($filters['category']) {
             $cat = Category::findBySlug($filters['category']);
             if ($cat) {
                 $title = $cat['name'];
                 $description = $cat['description'] ?: $description;
                 $this->setBreadcrumb([
-                    ['label' => 'Accueil', 'url' => url('/')],
+                    ['label' => 'Home', 'url' => url('/')],
                     ['label' => $cat['name']],
                 ]);
             }
         } elseif ($filters['search']) {
-            $title = 'Recherche : ' . e($filters['search']);
+            $title = 'Search: ' . e($filters['search']);
         } else {
             $this->setBreadcrumb([
-                ['label' => 'Accueil', 'url' => url('/')],
-                ['label' => 'Boutique'],
+                ['label' => 'Home', 'url' => url('/')],
+                ['label' => 'Shop'],
             ]);
         }
 
@@ -76,7 +76,7 @@ class ProductController extends Controller
         $product = Product::findBySlug($slug);
 
         if (!$product) {
-            $this->notFound('Produit introuvable');
+            $this->notFound('Product not found');
         }
 
         $this->setMeta(
@@ -86,8 +86,8 @@ class ProductController extends Controller
         );
 
         $this->setBreadcrumb([
-            ['label' => 'Accueil', 'url' => url('/')],
-            ['label' => 'Boutique', 'url' => url('products')],
+            ['label' => 'Home', 'url' => url('/')],
+            ['label' => 'Shop', 'url' => url('products')],
             ['label' => $product['category_name'] ?? '', 'url' => url('products?category=' . ($product['category_slug'] ?? ''))],
             ['label' => $product['name']],
         ]);
@@ -119,7 +119,7 @@ class ProductController extends Controller
         $id = (int)$request->query('id');
         $product = Product::find($id);
         if (!$product) {
-            $this->json(['error' => 'Produit introuvable'], 404);
+            $this->json(['error' => 'Product not found'], 404);
             return;
         }
         $this->json(['product' => $product->toArray()]);

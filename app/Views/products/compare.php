@@ -18,14 +18,14 @@ $count = $count ?? 0;
 
     <div class="flex flex-wrap items-center justify-between gap-4 mb-8">
         <div>
-            <h1 class="section-title">Comparaison de produits</h1>
-            <p class="section-subtitle"><?= $count ?> produit<?= $count > 1 ? 's' : '' ?> sélectionné<?= $count > 1 ? 's' : '' ?></p>
+            <h1 class="section-title">Product Comparison</h1>
+            <p class="section-subtitle"><?= $count ?> product<?= $count > 1 ? 's' : '' ?> selected</p>
         </div>
         <?php if ($count > 0): ?>
             <a href="<?= url('compare/clear') ?>"
                class="bg-red-500 hover:bg-red-600 text-white text-sm font-bold px-5 py-2.5 rounded-lg transition-all"
-               onclick="return confirm('Voulez-vous vraiment effacer tous les produits de la comparaison ?')">
-                <i class="fa-solid fa-trash-can mr-1.5"></i> Tout effacer
+               onclick="return confirm('Are you sure you want to clear all products from comparison?')">
+                <i class="fa-solid fa-trash-can mr-1.5"></i> Clear All
             </a>
         <?php endif; ?>
     </div>
@@ -35,12 +35,12 @@ $count = $count ?? 0;
             <div class="text-6xl text-gray-300 mb-6">
                 <i class="fa-solid fa-scale-balanced"></i>
             </div>
-            <h2 class="text-xl font-bold text-gray-700 mb-3">Aucun produit à comparer</h2>
+            <h2 class="text-xl font-bold text-gray-700 mb-3">No products to compare</h2>
             <p class="text-gray-500 text-sm mb-6">
-                Ajoutez des produits à la comparaison pour voir leurs différences.
+                Add products to compare to see their differences.
             </p>
             <a href="<?= url('products') ?>" class="maroon-btn">
-                Voir la boutique <i class="fa-solid fa-angles-right ml-1.5"></i>
+                View Shop <i class="fa-solid fa-angles-right ml-1.5"></i>
             </a>
         </div>
     <?php else: ?>
@@ -67,7 +67,7 @@ $count = $count ?? 0;
                     <!-- Name -->
                     <tr>
                         <td class="py-4 px-5 font-bold text-gray-600 bg-gray-50 align-middle">
-                            Nom
+                            Name
                         </td>
                         <?php foreach ($products as $product): ?>
                             <td class="p-4 text-center align-middle">
@@ -82,7 +82,7 @@ $count = $count ?? 0;
                     <!-- Price -->
                     <tr>
                         <td class="py-4 px-5 font-bold text-gray-600 bg-gray-50 align-middle">
-                            Prix
+                            Price
                         </td>
                         <?php foreach ($products as $product): ?>
                             <td class="p-4 text-center align-middle">
@@ -104,7 +104,7 @@ $count = $count ?? 0;
                     <!-- Rating -->
                     <tr>
                         <td class="py-4 px-5 font-bold text-gray-600 bg-gray-50 align-middle">
-                            Avis
+                            Reviews
                         </td>
                         <?php foreach ($products as $product): ?>
                             <td class="p-4 text-center align-middle">
@@ -116,7 +116,7 @@ $count = $count ?? 0;
                                 </div>
                                 <span class="text-gray-500 text-xs">
                                     <?= number_format($product['rating_avg'] ?? 0, 1) ?>
-                                    (<?= (int) ($product['rating_count'] ?? 0) ?> avis)
+                                    (<?= (int) ($product['rating_count'] ?? 0) ?> reviews)
                                 </span>
                             </td>
                         <?php endforeach; ?>
@@ -125,21 +125,21 @@ $count = $count ?? 0;
                     <!-- Stock -->
                     <tr>
                         <td class="py-4 px-5 font-bold text-gray-600 bg-gray-50 align-middle">
-                            Disponibilité
+                            Availability
                         </td>
                         <?php foreach ($products as $product): ?>
                             <td class="p-4 text-center align-middle">
                                 <?php if (($product['stock_status'] ?? '') === 'in_stock'): ?>
                                     <span class="inline-flex items-center gap-1 text-green-600 font-bold text-xs">
-                                        <i class="fa-solid fa-circle-check"></i> En stock
+                                        <i class="fa-solid fa-circle-check"></i> In Stock
                                     </span>
                                 <?php elseif (($product['stock_status'] ?? '') === 'out_of_stock'): ?>
                                     <span class="inline-flex items-center gap-1 text-red-500 font-bold text-xs">
-                                        <i class="fa-solid fa-circle-xmark"></i> Rupture de stock
+                                        <i class="fa-solid fa-circle-xmark"></i> Out of Stock
                                     </span>
                                 <?php else: ?>
                                     <span class="inline-flex items-center gap-1 text-orange-500 font-bold text-xs">
-                                        <i class="fa-solid fa-clock"></i> Sur commande
+                                        <i class="fa-solid fa-clock"></i> On Order
                                     </span>
                                 <?php endif; ?>
                             </td>
@@ -149,7 +149,7 @@ $count = $count ?? 0;
                     <!-- Category -->
                     <tr>
                         <td class="py-4 px-5 font-bold text-gray-600 bg-gray-50 align-middle">
-                            Catégorie
+                            Category
                         </td>
                         <?php foreach ($products as $product): ?>
                             <td class="p-4 text-center align-middle">
@@ -163,7 +163,7 @@ $count = $count ?? 0;
                     <!-- Brand -->
                     <tr>
                         <td class="py-4 px-5 font-bold text-gray-600 bg-gray-50 align-middle">
-                            Marque
+                            Brand
                         </td>
                         <?php foreach ($products as $product): ?>
                             <td class="p-4 text-center align-middle">
@@ -197,7 +197,7 @@ $count = $count ?? 0;
                             <td class="p-4 text-center align-middle">
                                 <a href="<?= url('compare/remove/' . $product['slug']) ?>"
                                    class="inline-flex items-center gap-1.5 text-red-500 hover:text-red-700 text-xs font-bold transition-colors">
-                                    <i class="fa-solid fa-xmark"></i> Retirer
+                                    <i class="fa-solid fa-xmark"></i> Remove
                                 </a>
                             </td>
                         <?php endforeach; ?>

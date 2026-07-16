@@ -24,7 +24,7 @@ class Newsletter extends Model
         }
         $stmt = $db->prepare("INSERT INTO sg_newsletter (email, name) VALUES (:e, :n)");
         $stmt->execute([':e' => $email, ':n' => $name]);
-        return ['success' => true, 'message' => 'Merci pour votre abonnement !'];
+        return ['success' => true, 'message' => 'Thank you for subscribing!'];
     }
 
     public static function unsubscribe(string $email): bool

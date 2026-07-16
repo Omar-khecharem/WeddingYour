@@ -50,10 +50,12 @@ class AccountController extends Controller
         $user = $this->viewData['authUser'];
 
         $recentOrders = $this->orderService->getUserOrders($user['id'], 1, 5);
+        $stats = $this->orderService->getUserStats($user['id']);
 
         return $this->view('account.index', [
             'user' => $user,
             'recentOrders' => $recentOrders['orders'] ?? [],
+            'stats' => $stats,
         ]);
     }
 

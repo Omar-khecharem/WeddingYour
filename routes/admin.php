@@ -11,6 +11,7 @@ use App\Controllers\Admin\OutletController;
 use App\Controllers\Admin\DealController;
 use App\Controllers\Admin\CategoryCardController;
 use App\Controllers\Admin\SubcategoryController;
+use App\Controllers\Admin\CouponController;
 use App\Middleware\AdminMiddleware;
 
 Router::group('/admin', ['middleware' => [AdminMiddleware::class]], function () {
@@ -28,6 +29,7 @@ Router::group('/admin', ['middleware' => [AdminMiddleware::class]], function () 
     Router::post('/products/update/{id}', [AdminProductController::class, 'update'])->name('admin.products.update');
     Router::post('/products/delete', [AdminProductController::class, 'destroy'])->name('admin.products.delete');
     Router::post('/products/delete-image', [AdminProductController::class, 'deleteImage'])->name('admin.products.delete-image');
+    Router::post('/products/set-primary-image', [AdminProductController::class, 'setPrimaryImage'])->name('admin.products.set-primary-image');
 
     // Categories
     Router::get('/categories', [CategoryController::class, 'index'])->name('admin.categories');
@@ -39,20 +41,32 @@ Router::group('/admin', ['middleware' => [AdminMiddleware::class]], function () 
 
     // Orders
     Router::get('/orders', function () {
-        $c = new DashboardController();
         $orderService = new \App\Services\OrderService();
         $page = max(1, (int)($_GET['page'] ?? 1));
         $status = $_GET['status'] ?? null;
-        $orders = $orderService->getAllOrders($page, 20, $status);
-        return $c->view('admin.orders.index', ['orders' => $orders]);
+        $search = $_GET['search'] ?? null;
+        $dateFrom = $_GET['date_from'] ?? null;
+        $dateTo = $_GET['date_to'] ?? null;
+        $result = $orderService->getAllOrders($page, 20, $status, $search, $dateFrom, $dateTo);
+        return \App\Core\View::render('admin.orders.index', [
+            'orders' => $result['orders'],
+            'pagination' => [
+                'currentPage' => $result['page'],
+                'totalPages' => $result['totalPages'],
+                'totalItems' => $result['total'],
+                'hasPrev' => $result['page'] > 1,
+                'hasNext' => $result['page'] < $result['totalPages'],
+                'prevPage' => $result['page'] - 1,
+                'nextPage' => $result['page'] + 1,
+            ],
+        ], 'admin');
     })->name('admin.orders');
 
     Router::get('/orders/{id}', function ($params) {
-        $c = new DashboardController();
         $orderService = new \App\Services\OrderService();
         $order = $orderService->getOrder((int)$params['id']);
         if (!$order) { http_response_code(404); exit; }
-        return $c->view('admin.orders.show', ['order' => $order]);
+        return \App\Core\View::render('admin.orders.show', ['order' => $order], 'admin');
     })->name('admin.orders.show');
 
     Router::post('/orders/status', function () {
@@ -61,10 +75,51 @@ Router::group('/admin', ['middleware' => [AdminMiddleware::class]], function () 
         $status = $_POST['status'] ?? '';
         $tracking = $_POST['tracking_number'] ?? null;
         $orderService->updateStatus($orderId, $status, $tracking);
+
+        // Update payment status if provided
+        $paymentStatus = $_POST['payment_status'] ?? '';
+        if ($paymentStatus) {
+            $pdo = \App\Core\Database::getInstance()->getConnection();
+            $stmt = $pdo->prepare("UPDATE sg_orders SET payment_status = :ps WHERE id = :id");
+            $stmt->execute([':ps' => $paymentStatus, ':id' => $orderId]);
+        }
+
         \App\Helpers\Session::flash('success', 'Order status updated.');
         header('Location: ' . ($_SERVER['HTTP_REFERER'] ?? url('admin/orders')));
         exit;
     })->name('admin.orders.status');
+
+    Router::get('/orders/{id}/invoice', function ($params) {
+        $orderService = new \App\Services\OrderService();
+        $order = $orderService->getOrder((int)$params['id']);
+        if (!$order) { http_response_code(404); exit; }
+        \App\Services\InvoiceService::generate($order, true);
+        exit;
+    })->name('admin.orders.invoice');
+
+    Router::get('/orders/{id}/print', function ($params) {
+        $orderService = new \App\Services\OrderService();
+        $order = $orderService->getOrder((int)$params['id']);
+        if (!$order) { http_response_code(404); exit; }
+        echo '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Order #' . e($order['order_number'] ?? $order['id']) . '</title>';
+        echo '<style>body{font-family:Arial,sans-serif;padding:30px;color:#333}table{width:100%;border-collapse:collapse;margin:15px 0}th,td{padding:10px 12px;text-align:left;border-bottom:1px solid #ddd}th{background:#f5f5f5}.totals{width:300px;margin-left:auto}.totals td{padding:6px 12px}.grand-total td{font-weight:bold;font-size:16px;border-top:2px solid #333}.header{display:flex;justify-content:space-between;align-items:start;margin-bottom:20px;border-bottom:2px solid #333;padding-bottom:15px}.address-box{padding:15px;background:#f9f9f9;border:1px solid #ddd;border-radius:6px}.grid{display:flex;gap:20px;margin-bottom:20px}.grid>div{flex:1}@media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact}.no-print{display:none}}</style>';
+        echo '</head><body><div class="no-print" style="text-align:right;margin-bottom:20px"><button onclick="window.print()" style="padding:8px 20px;background:#1e293b;color:#fff;border:none;border-radius:4px;cursor:pointer">Print</button></div>';
+        echo \App\Services\InvoiceService::renderHtml($order);
+        echo '</body></html>';
+        exit;
+    })->name('admin.orders.print');
+
+    Router::post('/orders/delete', function () {
+        $orderId = (int)($_POST['id'] ?? 0);
+        if ($orderId) {
+            $pdo = \App\Core\Database::getInstance()->getConnection();
+            $pdo->prepare("DELETE FROM sg_order_items WHERE order_id = :id")->execute([':id' => $orderId]);
+            $pdo->prepare("DELETE FROM sg_orders WHERE id = :id")->execute([':id' => $orderId]);
+            \App\Helpers\Session::flash('success', 'Order deleted successfully.');
+        }
+        header('Location: ' . url('admin/orders'));
+        exit;
+    })->name('admin.orders.delete');
 
     // Users
     Router::get('/users', function () {
@@ -136,4 +191,10 @@ Router::group('/admin', ['middleware' => [AdminMiddleware::class]], function () 
     Router::get('/subcategories/edit/{id}', [SubcategoryController::class, 'edit'])->name('admin.subcategories.edit');
     Router::post('/subcategories/update/{id}', [SubcategoryController::class, 'update'])->name('admin.subcategories.update');
     Router::post('/subcategories/delete', [SubcategoryController::class, 'destroy'])->name('admin.subcategories.delete');
+
+    // Coupons
+    Router::get('/coupons', [CouponController::class, 'index'])->name('admin.coupons');
+    Router::post('/coupons/store', [CouponController::class, 'store'])->name('admin.coupons.store');
+    Router::post('/coupons/update/{id}', [CouponController::class, 'update'])->name('admin.coupons.update');
+    Router::post('/coupons/delete', [CouponController::class, 'destroy'])->name('admin.coupons.delete');
 });
