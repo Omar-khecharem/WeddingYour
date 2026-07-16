@@ -172,7 +172,8 @@ class View
         if (empty($errors)) return '';
 
         if ($field && isset($errors[$field])) {
-            return '<span class="text-red-500 text-xs mt-1">' . htmlspecialchars($errors[$field]) . '</span>';
+            $msg = is_array($errors[$field]) ? implode('<br>', $errors[$field]) : $errors[$field];
+            return '<span class="text-red-500 text-xs mt-1">' . htmlspecialchars($msg) . '</span>';
         }
 
         if (!$field) {

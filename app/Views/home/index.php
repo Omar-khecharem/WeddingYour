@@ -105,6 +105,7 @@ $videoShowcaseBg = $videoShowcaseBg ?? '';
         <?php $pCat = is_array($product) ? ($product['category_name'] ?? '') : ($product->category_name ?? ''); ?>
         <?php $pSub = is_array($product) ? ($product['subcategory_name'] ?? '') : ($product->subcategory_name ?? ''); ?>
         <?php $pId = is_array($product) ? ($product['id'] ?? 0) : ($product->id ?? 0); ?>
+        <?php $rAvg = $homeRatings[$pId]['average'] ?? 0; $rTot = $homeRatings[$pId]['total'] ?? 0; ?>
         <div onclick="window.location='<?= url('product/' . e($pSlug)) ?>'" class="cursor-pointer group relative bg-white border border-red-100 hover:border-red-400 rounded-xl overflow-hidden transition-all duration-300 shadow-sm hover:shadow-lg flex flex-col">
           <?php if ($pDisc): ?>
           <span class="absolute top-2 left-2 bg-red-600 text-white text-xs font-black px-2 py-0.5 rounded-md z-20">-<?= (int)$pDisc ?>%</span>
@@ -115,6 +116,8 @@ $videoShowcaseBg = $videoShowcaseBg ?? '';
           <div class="absolute inset-0 bg-black/75 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-center items-center p-3 text-white text-center z-10">
             <h4 class="text-xs font-black uppercase tracking-wide"><?= e($pName) ?></h4>
             <p class="text-[10px] text-red-300 font-semibold mt-0.5"><?= e($pCat) ?>, <?= e($pSub) ?></p>
+            <?= renderStars($rAvg) ?>
+            <?php if ($rTot > 0): ?><span class="text-[10px] text-gray-400">(<?= $rTot ?>)</span><?php endif; ?>
             <span class="text-[10px] text-emerald-300 font-bold mt-0.5">In stock</span>
             <div class="mt-1">
               <span class="text-sm font-black text-white"><?= formatPrice($pSale ?: $pReg) ?></span>
@@ -292,7 +295,7 @@ $videoShowcaseBg = $videoShowcaseBg ?? '';
           <?php foreach ($rp as $p): ?>
           <?php $pn = is_array($p) ? ($p['name']??'') : ($p->name??''); $pc = is_array($p) ? ($p['category_name']??'') : ($p->category_name??''); $ps = is_array($p) ? ($p['subcategory_name']??'') : ($p->subcategory_name??''); $pt = is_array($p) ? ($p['tags']??'') : ($p->tags??''); ?>
           <?php $pr = is_array($p) ? ($p['regular_price']??0) : ($p->regular_price??0); $psl = is_array($p) ? ($p['sale_price']??0) : ($p->sale_price??0); $pd = is_array($p) ? ($p['discount_percent']??0) : ($p->discount_percent??0); ?>
-          <?php $pimg = is_array($p) ? ($p['image']??'') : ($p->image??''); $pSlug = is_array($p) ? ($p['slug']??'#') : ($p->slug??'#'); $pId = is_array($p) ? ($p['id']??0) : ($p->id??0); ?>
+          <?php $pimg = is_array($p) ? ($p['image']??'') : ($p->image??''); $pSlug = is_array($p) ? ($p['slug']??'#') : ($p->slug??'#'); $pId = is_array($p) ? ($p['id']??0) : ($p->id??0); $rAvg = $homeRatings[$pId]['average'] ?? 0; $rTot = $homeRatings[$pId]['total'] ?? 0; ?>
           <div class="w-1/2 md:w-1/3 lg:w-1/6 flex-shrink-0 px-1.5 md:px-2">
           <div class="bg-slate-100 border border-red-100 rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow flex flex-col h-full">
             <div class="relative group/img">
@@ -313,7 +316,7 @@ $videoShowcaseBg = $videoShowcaseBg ?? '';
                 <button onclick="quickView(<?= $pId ?>)" class="w-8 h-8 bg-white rounded-full flex items-center justify-center text-slate-700 hover:bg-red-600 hover:text-white transition-colors shadow-md hidden md:flex" title="Quick view">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
                 </button>
-                <button onclick="toggleCompare(<?= $pId ?>)" class="w-8 h-8 bg-white rounded-full flex items-center justify-center text-slate-700 hover:bg-red-600 hover:text-white transition-colors shadow-md hidden md:flex" title="Compare">
+                <button data-compare="<?= $pId ?>" onclick="addToCompare(<?= $pId ?>)" class="w-8 h-8 bg-white rounded-full flex items-center justify-center text-slate-700 hover:bg-red-600 hover:text-white transition-colors shadow-md hidden md:flex" title="Compare">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
                 </button>
                 <button data-wishlist="<?= $pId ?>" onclick="toggleWishlist(<?= $pId ?>)" class="w-8 h-8 bg-white rounded-full flex items-center justify-center text-slate-700 hover:bg-red-600 hover:text-white transition-colors shadow-md" title="Wishlist">
@@ -330,11 +333,8 @@ $videoShowcaseBg = $videoShowcaseBg ?? '';
               <span class="text-[10px] text-emerald-600 font-bold flex items-center gap-1">
                 <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span> In stock
               </span>
-              <div class="flex items-center gap-0.5">
-                <?php for($s=0;$s<5;$s++): ?>
-                <svg class="w-3 h-3 fill-amber-400 text-amber-400" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-                <?php endfor; ?>
-              </div>
+              <?= renderStars($rAvg) ?>
+              <?php if ($rTot > 0): ?><span class="text-[10px] text-gray-400">(<?= $rTot ?>)</span><?php endif; ?>
               <div class="flex items-center gap-2">
                 <span class="text-sm font-black text-red-600"><?= formatPrice($psl ?: $pr) ?></span>
                 <?php if ($psl): ?>
@@ -409,28 +409,7 @@ $videoShowcaseBg = $videoShowcaseBg ?? '';
       </div>
     </section>
 
-    <section class="space-y-6">
-      <h2 class="text-xl md:text-2xl font-black text-slate-800 tracking-tight text-center">Reviews on Google</h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <?php if (!empty($reviews)): ?>
-        <?php foreach (array_slice($reviews, 0, 6) as $rv): $rvt = is_array($rv) ? ($rv['text']??'') : ($rv->text??''); $rvn = is_array($rv) ? ($rv['name']??'') : ($rv->name??''); $rvr = is_array($rv) ? ($rv['rating']??5) : ($rv->rating??5); ?>
-        <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm">
-          <div class="flex items-center gap-1 mb-2"><?php for($s=0;$s<5;$s++): ?><svg class="w-4 h-4 <?= $s<$rvr?'fill-amber-400':'fill-slate-200' ?> text-amber-400" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg><?php endfor; ?></div>
-          <p class="text-sm text-slate-700 leading-relaxed"><?= e($rvt) ?></p>
-          <p class="text-xs font-bold text-slate-500 mt-3">- <?= e($rvn) ?></p>
-        </div>
-        <?php endforeach; ?>
-        <?php else: ?>
-        <?php for($i=0;$i<3;$i++): ?>
-        <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm">
-          <div class="flex items-center gap-1 mb-2"><?php for($s=0;$s<5;$s++): ?><svg class="w-4 h-4 fill-amber-400 text-amber-400" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg><?php endfor; ?></div>
-          <p class="text-sm text-slate-700">Amazing collection, great service, highly recommend for wedding shopping!</p>
-          <p class="text-xs font-bold text-slate-500 mt-3">- Happy Customer</p>
-        </div>
-        <?php endfor; ?>
-        <?php endif; ?>
-      </div>
-    </section>
+
   </main>
 </div>
 <script>

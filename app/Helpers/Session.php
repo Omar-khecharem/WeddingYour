@@ -12,10 +12,18 @@ namespace App\Helpers;
 class Session
 {
     /**
-     * Get a session value
+     * Get a session value (supports dot notation for nested arrays)
      */
     public static function get(string $key, mixed $default = null): mixed
     {
+        $parts = explode('.', $key, 2);
+        if (count($parts) === 2) {
+            $value = $_SESSION[$parts[0]] ?? null;
+            if (is_array($value) && array_key_exists($parts[1], $value)) {
+                return $value[$parts[1]];
+            }
+            return $default;
+        }
         return $_SESSION[$key] ?? $default;
     }
 

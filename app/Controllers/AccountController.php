@@ -29,6 +29,13 @@ class AccountController extends Controller
     public function __construct()
     {
         parent::__construct();
+
+        // Admin users should not access customer account pages
+        if (($this->viewData['authUser']['role'] ?? '') === 'admin') {
+            header('Location: ' . APP_URL . '/admin');
+            exit;
+        }
+
         $this->authService = new AuthService();
         $this->orderService = new OrderService();
     }
@@ -51,6 +58,8 @@ class AccountController extends Controller
 
         $recentOrders = $this->orderService->getUserOrders($user['id'], 1, 5);
         $stats = $this->orderService->getUserStats($user['id']);
+        $wishlistCount = Wishlist::getCount($user['id']);
+        Session::set('wishlist.count', $wishlistCount);
 
         return $this->view('account.index', [
             'user' => $user,
@@ -100,7 +109,7 @@ class AccountController extends Controller
     public function changePasswordForm(Request $request, Response $response): string
     {
         $this->setMeta('Change Password');
-        return $this->view('account.change-password', [
+        return $this->view('account.change_password', [
             'user' => $this->viewData['authUser'],
         ]);
     }
@@ -162,7 +171,7 @@ class AccountController extends Controller
         }
 
         $this->setMeta('Order #' . $order['order_number']);
-        return $this->view('account.order-detail', ['order' => $order]);
+        return $this->view('account.order_detail', ['order' => $order]);
     }
 
     /**
@@ -217,6 +226,23 @@ class AccountController extends Controller
         Session::set('wishlist.count', $result['count']);
 
         $this->json($result);
+    }
+
+    /**
+     * Get wishlist product IDs for current user (AJAX)
+     */
+    public function wishlistIds(Request $request, Response $response): void
+    {
+        $user = $this->viewData['authUser'];
+        $ids = [];
+        if ($user) {
+            $pdo = \App\Core\Database::getInstance()->getConnection();
+            $stmt = $pdo->prepare("SELECT product_id FROM sg_wishlists WHERE user_id = :uid");
+            $stmt->execute([':uid' => $user['id']]);
+            $ids = $stmt->fetchAll(\PDO::FETCH_COLUMN);
+            $ids = array_map('intval', $ids);
+        }
+        $this->json(['success' => true, 'ids' => $ids, 'count' => count($ids)]);
     }
 
     /**

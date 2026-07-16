@@ -71,9 +71,9 @@ Built entirely from scratch without any external PHP framework, this platform de
 
 | Category | Features |
 |----------|----------|
-| **Homepage** | Dynamic hero with video/image banners • Category step-carousel (8 per slide) • Popular products with image cycling • Flash sale banners • Video showcase • Google Reviews carousel • Recent products slider • Outlets drag-scroll • Coupon marquee bar • WhatsApp floating button |
-| **Product Catalog** | Filterable grid (category, subcategory, price range, rating, stock) • Sortable (price, name, popularity, discount) • AJAX instant search (300 ms debounce) • 4-column responsive layout • Per-page selector |
-| **Product Detail** | Vertical thumbnail gallery (desktop) / horizontal strip (mobile) • Price with discount badge • Specs table • Quantity selector • Pincode availability checker • Compare / Wishlist / Share • "People watching" live counter • 3-tab layout (Description / Specs / Reviews) • Star-rating distribution • Related products • JSON-LD structured data |
+| **Homepage** | Dynamic hero with video/image banners • Category step-carousel (8 per slide) • Popular products with hover overlay • Flash sale banners • Video showcase • Recent products slider with dynamic ratings • Outlets drag-scroll • Coupon marquee bar • WhatsApp floating button |
+| **Product Catalog** | Filterable grid (category, subcategory, price range, rating, stock) • Sortable (price, name, popularity, discount) • AJAX instant search (300 ms debounce) • 4-column responsive layout • Per-page selector • Dynamic star ratings on every product card |
+| **Product Detail** | Vertical thumbnail gallery (desktop) / horizontal strip (mobile) • Price with discount badge • Specs table • Quantity selector • Pincode availability checker • Compare / Wishlist / Share • 3-tab layout (Description / Specs / Reviews) • Star-rating distribution with dynamic averages • Customer review submission form • Related products • JSON-LD structured data |
 | **Cart** | Full AJAX • Quantity +/- • Coupon codes • Real-time price summary |
 | **Checkout** | Multi-step (shipping → payment) • Order confirmation • PDF invoice |
 | **Compare** | Side-by-side product comparison • Toggle remove • Count badge |
@@ -94,7 +94,9 @@ Built entirely from scratch without any external PHP framework, this platform de
 | **Categories** | Hierarchical CRUD • Image upload • SEO meta |
 | **Banners** | 4 positions: hero_left (video), hero_right (image carousel), promotional (image), bride_video (video) |
 | **Coupons** | Discount codes (percentage, fixed amount, free shipping) |
-| **Reviews** | Approve / reject / delete customer reviews |
+| **Reviews** | Approve / reject / delete customer reviews submitted from product pages |
+| **Pages** | CMS-like static page management (About, Contact, custom pages) |
+| **Blog** | Full blog post management with categories, featured image upload, SEO |
 | **Users** | Customer list with order history |
 | **Outlets** | Physical store CRUD with Google Maps |
 | **Deals** | Flash sale management |

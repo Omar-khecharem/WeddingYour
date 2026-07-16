@@ -56,7 +56,7 @@ class CompareController extends Controller
 
     private function getUserId(): ?int
     {
-        return \App\Helpers\Session::get('user_id') ?: null;
+        return \App\Helpers\Session::get('user.id') ?: null;
     }
 
     private function getSessionId(): ?string

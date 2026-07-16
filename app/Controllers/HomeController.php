@@ -49,10 +49,18 @@ class HomeController extends Controller
         $heroButtonText = Setting::get('hero_button_text', 'Shop Now');
         $heroButtonLink = Setting::get('hero_button_link', '/products');
 
+        $allProductIds = array_merge(
+            array_column($recentProducts, 'id'),
+            array_column($featuredProducts, 'id'),
+            array_column($trendingProducts, 'id')
+        );
+        $homeRatings = \App\Models\Review::getBatchRatings($allProductIds);
+
         return $this->view('home.index', compact(
             'categories', 'subcategories', 'recentProducts', 'featuredProducts', 'trendingProducts', 'reviews',
             'banners', 'deals', 'categoryCards', 'galleryItems', 'outlets',
-            'whatsappNumber', 'heroTitle', 'heroSubtitle', 'heroDescription', 'heroButtonText', 'heroButtonLink'
+            'whatsappNumber', 'heroTitle', 'heroSubtitle', 'heroDescription', 'heroButtonText', 'heroButtonLink',
+            'homeRatings'
         ));
     }
 }

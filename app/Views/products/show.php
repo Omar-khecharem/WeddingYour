@@ -160,15 +160,9 @@ $subName = $product['subcategory_name'] ?? '';
 
         <!-- Action links -->
         <div class="flex flex-wrap gap-4 text-sm text-gray-600">
-          <button onclick="addToCompare(<?= $product['id'] ?>)" class="hover:text-red-600 flex items-center gap-1.5"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg> Add to compare</button>
+          <button data-compare="<?= $product['id'] ?>" onclick="addToCompare(<?= $product['id'] ?>)" class="hover:text-red-600 flex items-center gap-1.5"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg> Add to compare</button>
           <button data-wishlist="<?= $product['id'] ?>" onclick="toggleWishlist(<?= $product['id'] ?>)" class="hover:text-red-600 flex items-center gap-1.5"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg> Add to wishlist</button>
           <span class="flex items-center gap-1.5"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg> Share</span>
-        </div>
-
-        <!-- People watching -->
-        <div class="bg-green-50 border border-green-200 rounded-lg px-4 py-2.5 flex items-center gap-2 text-sm text-green-800">
-          <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-          <span class="font-medium"><span id="watcherCount">15</span> People watching this product now!</span>
         </div>
 
       </div>
@@ -272,6 +266,51 @@ $subName = $product['subcategory_name'] ?? '';
           <p class="text-sm mt-1">Be the first to review "<?= e($product['name']) ?>"</p>
         </div>
         <?php endif; ?>
+
+        <!-- Review Form -->
+        <div class="mt-8 border-t border-gray-200 pt-8">
+          <h3 class="text-lg font-bold text-gray-800 mb-4">Write a Review</h3>
+          <form method="POST" action="<?= url('product/' . e($product['slug']) . '/review') ?>" class="max-w-2xl space-y-4">
+            <?= \App\Helpers\Security::csrfField() ?>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Rating</label>
+              <div class="flex items-center gap-1 star-rating">
+                <?php for ($s = 5; $s >= 1; $s--): ?>
+                <input type="radio" name="rating" value="<?= $s ?>" id="star<?= $s ?>" class="hidden" required>
+                <label for="star<?= $s ?>" class="cursor-pointer text-gray-300 hover:text-yellow-400 transition-colors">
+                  <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                </label>
+                <?php endfor; ?>
+              </div>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Title (optional)</label>
+              <input type="text" name="title" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary-red/20 focus:border-primary-red outline-none" placeholder="Summarize your review">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Review <span class="text-red-500">*</span></label>
+              <textarea name="comment" rows="4" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary-red/20 focus:border-primary-red outline-none" placeholder="Share your experience with this product" required></textarea>
+            </div>
+            <div class="flex items-center gap-3">
+              <input type="text" name="name" value="<?= e(\App\Helpers\Session::get('user')['name'] ?? '') ?>" class="flex-1 border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary-red/20 focus:border-primary-red outline-none" placeholder="Your name" required>
+              <input type="email" name="email" value="<?= e(\App\Helpers\Session::get('user')['email'] ?? '') ?>" class="flex-1 border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary-red/20 focus:border-primary-red outline-none" placeholder="Your email">
+            </div>
+            <button type="submit" class="bg-primary-red text-white px-6 py-2.5 rounded-lg text-sm font-semibold hover:opacity-90 transition-all">Submit Review</button>
+          </form>
+        </div>
+
+        <script>
+        document.querySelectorAll('.star-rating label').forEach(function(label) {
+          label.addEventListener('click', function() {
+            var all = document.querySelectorAll('.star-rating label svg');
+            var clicked = Array.from(all).indexOf(this.querySelector('svg'));
+            all.forEach(function(svg, i) {
+              svg.classList.toggle('text-yellow-400', i >= clicked);
+              svg.classList.toggle('text-gray-300', i < clicked);
+            });
+          });
+        });
+        </script>
       </div>
     </div>
 
@@ -345,11 +384,6 @@ $subName = $product['subcategory_name'] ?? '';
     });
   });
 
-  // People watching randomizer
-  setInterval(function(){
-    var el = document.getElementById('watcherCount');
-    if(el) el.textContent = Math.floor(Math.random() * 10) + 12;
-  }, 8000);
 })();
 
 function buyNow(id){

@@ -43,6 +43,7 @@ Router::get('/products/{slug}', [ProductController::class, 'show'])->name('produ
 Router::get('/search', [ProductController::class, 'search'])->name('search');
 Router::get('/api/product', [ProductController::class, 'getProduct'])->name('api.product');
 Router::get('/api/check-pincode', [ProductController::class, 'checkPincode'])->name('api.pincode');
+Router::post('/product/{slug}/review', [ProductController::class, 'submitReview'])->name('product.review');
 
 // ---- Cart ----
 Router::get('/cart', [CartController::class, 'index'])->name('cart');
@@ -69,6 +70,7 @@ Router::group('/account', ['middleware' => [AuthMiddleware::class]], function ()
     Router::get('/orders/{id}', [AccountController::class, 'orderDetail'])->name('account.order');
     Router::post('/orders/cancel', [AccountController::class, 'cancelOrder'])->name('account.order.cancel');
     Router::get('/wishlist', [AccountController::class, 'wishlist'])->name('account.wishlist');
+    Router::get('/wishlist/ids', [AccountController::class, 'wishlistIds'])->name('account.wishlist.ids');
     Router::post('/wishlist/add', [AccountController::class, 'addWishlist'])->name('account.wishlist.add');
     Router::get('/addresses', [AccountController::class, 'addresses'])->name('account.addresses');
     Router::post('/addresses', [AccountController::class, 'saveAddress'])->name('account.addresses.save');
@@ -81,14 +83,74 @@ Router::group('/account', ['middleware' => [AuthMiddleware::class]], function ()
 Router::get('/compare', [CompareController::class, 'index'])->name('compare');
 Router::post('/compare/toggle', [CompareController::class, 'toggle'])->name('compare.toggle');
 Router::get('/compare/count', [CompareController::class, 'count'])->name('compare.count');
-Router::post('/compare/clear', [CompareController::class, 'clear'])->name('compare.clear');
+Router::match(['GET', 'POST'], '/compare/clear', function () {
+    $pdo = \App\Core\Database::getInstance()->getConnection();
+    $userId = \App\Helpers\Session::get('user.id');
+    $sessionId = session_id();
+    if ($userId) {
+        $pdo->prepare("DELETE FROM sg_compare WHERE user_id = :u")->execute([':u' => $userId]);
+    } else {
+        $pdo->prepare("DELETE FROM sg_compare WHERE session_id = :s")->execute([':s' => $sessionId]);
+    }
+    \App\Helpers\Session::flash('success', 'Compare list cleared.');
+    header('Location: ' . url('compare'));
+    exit;
+})->name('compare.clear');
+Router::get('/compare/remove/{slug}', function ($params) {
+    $pdo = \App\Core\Database::getInstance()->getConnection();
+    $stmt = $pdo->prepare("SELECT id FROM sg_products WHERE slug = :slug LIMIT 1");
+    $stmt->execute([':slug' => $params['slug']]);
+    $product = $stmt->fetch();
+    if ($product) {
+        $userId = \App\Helpers\Session::get('user.id');
+        $sessionId = session_id();
+        if ($userId) {
+            $pdo->prepare("DELETE FROM sg_compare WHERE user_id = :u AND product_id = :p")->execute([':u' => $userId, ':p' => $product['id']]);
+        } else {
+            $pdo->prepare("DELETE FROM sg_compare WHERE session_id = :s AND product_id = :p")->execute([':s' => $sessionId, ':p' => $product['id']]);
+        }
+    }
+    \App\Helpers\Session::flash('success', 'Product removed from compare.');
+    header('Location: ' . url('compare'));
+    exit;
+})->name('compare.remove');
 
 // ---- Static pages ----
 Router::get('/about', function () {
+    $pdo = \App\Core\Database::getInstance()->getConnection();
+    $stmt = $pdo->prepare("SELECT * FROM sg_pages WHERE slug = :s AND status = 1 LIMIT 1");
+    $stmt->execute([':s' => 'about']);
+    $page = $stmt->fetch();
+    if ($page) {
+        return \App\Core\View::render('pages.page', ['page' => $page]);
+    }
     return \App\Core\View::render('pages.about');
 })->name('about');
 
-Router::get('/contact', function () {
+Router::match(['GET', 'POST'], '/contact', function () {
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $name = $_POST['name'] ?? '';
+        $email = $_POST['email'] ?? '';
+        $message = $_POST['message'] ?? '';
+        if ($name && $email && $message) {
+            $pdo = \App\Core\Database::getInstance()->getConnection();
+            $stmt = $pdo->prepare("INSERT INTO sg_contact_messages (name, email, message) VALUES (:n, :e, :m)");
+            $stmt->execute([':n' => $name, ':e' => $email, ':m' => $message]);
+            \App\Helpers\Session::flash('success', 'Message sent successfully! We will get back to you soon.');
+        } else {
+            \App\Helpers\Session::flash('error', 'Please fill in all required fields.');
+        }
+        header('Location: ' . url('contact'));
+        exit;
+    }
+
+    $pdo = \App\Core\Database::getInstance()->getConnection();
+    $stmt = $pdo->prepare("SELECT * FROM sg_pages WHERE slug = :s AND status = 1 LIMIT 1");
+    $stmt->execute([':s' => 'contact']);
+    $page = $stmt->fetch();
+    if ($page) {
+        return \App\Core\View::render('pages.page', ['page' => $page]);
+    }
     return \App\Core\View::render('pages.contact');
 })->name('contact');
 
@@ -113,8 +175,23 @@ Router::get('/gallery', function () {
 })->name('gallery');
 
 Router::get('/blog', function () {
-    return \App\Core\View::render('pages.blog');
+    $pdo = \App\Core\Database::getInstance()->getConnection();
+    $stmt = $pdo->query("SELECT b.*, bc.name AS category_name, bc.slug AS category_slug FROM sg_blogs b LEFT JOIN sg_blog_categories bc ON bc.id = b.category_id WHERE b.is_published = 1 ORDER BY b.published_at DESC");
+    $posts = $stmt->fetchAll();
+    return \App\Core\View::render('pages.blog', ['posts' => $posts]);
 })->name('blog');
+
+Router::get('/blog/{slug}', function ($params) {
+    $pdo = \App\Core\Database::getInstance()->getConnection();
+    $stmt = $pdo->prepare("SELECT b.*, bc.name AS category_name, bc.slug AS category_slug FROM sg_blogs b LEFT JOIN sg_blog_categories bc ON bc.id = b.category_id WHERE b.slug = :slug AND b.is_published = 1 LIMIT 1");
+    $stmt->execute([':slug' => $params['slug']]);
+    $post = $stmt->fetch();
+    if (!$post) {
+        http_response_code(404);
+        return \App\Core\View::render('errors.404');
+    }
+    return \App\Core\View::render('pages.blog-detail', ['post' => $post]);
+})->name('blog.detail');
 
 Router::get('/categories', function () {
     $categories = \App\Models\Category::getActiveWithProductCount();

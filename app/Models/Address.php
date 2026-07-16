@@ -16,7 +16,7 @@ class Address extends Model
     public static function getUserAddresses(int $userId): array
     {
         $db = self::db();
-        $stmt = $db->prepare("SELECT a.*, c.name AS country_name FROM sg_addresses a LEFT JOIN countries c ON a.country_id = c.id WHERE a.user_id = :uid ORDER BY a.is_default DESC, a.created_at DESC");
+        $stmt = $db->prepare("SELECT a.*, c.name AS country_name FROM sg_addresses a LEFT JOIN sg_countries c ON a.country_id = c.id WHERE a.user_id = :uid ORDER BY a.is_default DESC, a.created_at DESC");
         $stmt->execute([':uid' => $userId]);
         return $stmt->fetchAll();
     }

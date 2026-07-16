@@ -12,6 +12,8 @@ use App\Controllers\Admin\DealController;
 use App\Controllers\Admin\CategoryCardController;
 use App\Controllers\Admin\SubcategoryController;
 use App\Controllers\Admin\CouponController;
+use App\Controllers\Admin\PageController;
+use App\Controllers\Admin\BlogController;
 use App\Middleware\AdminMiddleware;
 
 Router::group('/admin', ['middleware' => [AdminMiddleware::class]], function () {
@@ -126,14 +128,63 @@ Router::group('/admin', ['middleware' => [AdminMiddleware::class]], function () 
         $c = new DashboardController();
         $pdo = \App\Core\Database::getInstance()->getConnection();
         $users = $pdo->query("SELECT * FROM sg_users ORDER BY created_at DESC")->fetchAll();
-        return $c->view('admin.users.index', ['users' => $users]);
+        return \App\Core\View::render('admin.users.index', ['users' => $users], 'admin');
     })->name('admin.users');
+
+    Router::get('/users/{id}/edit', function ($params) {
+        $pdo = \App\Core\Database::getInstance()->getConnection();
+        $stmt = $pdo->prepare("SELECT * FROM sg_users WHERE id = :id LIMIT 1");
+        $stmt->execute([':id' => (int)$params['id']]);
+        $user = $stmt->fetch();
+        if (!$user) { http_response_code(404); exit; }
+        return \App\Core\View::render('admin.users.form', ['user' => $user], 'admin');
+    })->name('admin.users.edit');
+
+    Router::post('/users/update/{id}', function ($params) {
+        $pdo = \App\Core\Database::getInstance()->getConnection();
+        $id = (int)$params['id'];
+        $name = $_POST['name'] ?? '';
+        $email = $_POST['email'] ?? '';
+        $role = $_POST['role'] ?? 'customer';
+        $status = (int)($_POST['status'] ?? 1);
+        $phone = $_POST['phone'] ?? '';
+
+        $stmt = $pdo->prepare("UPDATE sg_users SET name = :n, email = :e, role = :r, status = :s, phone = :p WHERE id = :id");
+        $stmt->execute([':n' => $name, ':e' => $email, ':r' => $role, ':s' => $status, ':p' => $phone, ':id' => $id]);
+
+        if (!empty($_POST['password'])) {
+            $hashed = password_hash($_POST['password'], PASSWORD_DEFAULT);
+            $pdo->prepare("UPDATE sg_users SET password = :p WHERE id = :id")->execute([':p' => $hashed, ':id' => $id]);
+        }
+
+        \App\Helpers\Session::flash('success', 'User updated successfully.');
+        header('Location: ' . url('admin/users'));
+        exit;
+    })->name('admin.users.update');
+
+    Router::match(['GET', 'POST'], '/users/{id}/ban', function ($params) {
+        $pdo = \App\Core\Database::getInstance()->getConnection();
+        $id = (int)$params['id'];
+        $stmt = $pdo->prepare("SELECT status FROM sg_users WHERE id = :id LIMIT 1");
+        $stmt->execute([':id' => $id]);
+        $user = $stmt->fetch();
+        if (!$user) { http_response_code(404); exit; }
+
+        if ($user['status'] == 1) {
+            $pdo->prepare("UPDATE sg_users SET status = 0 WHERE id = :id")->execute([':id' => $id]);
+            \App\Helpers\Session::flash('success', 'User banned successfully.');
+        } else {
+            $pdo->prepare("UPDATE sg_users SET status = 1 WHERE id = :id")->execute([':id' => $id]);
+            \App\Helpers\Session::flash('success', 'User unbanned successfully.');
+        }
+        header('Location: ' . url('admin/users'));
+        exit;
+    })->name('admin.users.ban');
 
     // Reviews
     Router::get('/reviews', function () {
-        $c = new DashboardController();
         $reviews = \App\Models\Review::getPending();
-        return $c->view('admin.reviews.index', ['reviews' => $reviews]);
+        return \App\Core\View::render('admin.reviews.index', ['reviews' => $reviews], 'admin');
     })->name('admin.reviews');
 
     Router::post('/reviews/approve', function () {
@@ -197,4 +248,20 @@ Router::group('/admin', ['middleware' => [AdminMiddleware::class]], function () 
     Router::post('/coupons/store', [CouponController::class, 'store'])->name('admin.coupons.store');
     Router::post('/coupons/update/{id}', [CouponController::class, 'update'])->name('admin.coupons.update');
     Router::post('/coupons/delete', [CouponController::class, 'destroy'])->name('admin.coupons.delete');
+
+    // Pages
+    Router::get('/pages', [PageController::class, 'index'])->name('admin.pages');
+    Router::get('/pages/create', [PageController::class, 'create'])->name('admin.pages.create');
+    Router::post('/pages', [PageController::class, 'store'])->name('admin.pages.store');
+    Router::get('/pages/edit/{id}', [PageController::class, 'edit'])->name('admin.pages.edit');
+    Router::post('/pages/update/{id}', [PageController::class, 'update'])->name('admin.pages.update');
+    Router::post('/pages/delete', [PageController::class, 'destroy'])->name('admin.pages.delete');
+
+    // Blog
+    Router::get('/blog', [BlogController::class, 'index'])->name('admin.blog');
+    Router::get('/blog/create', [BlogController::class, 'create'])->name('admin.blog.create');
+    Router::post('/blog', [BlogController::class, 'store'])->name('admin.blog.store');
+    Router::get('/blog/edit/{id}', [BlogController::class, 'edit'])->name('admin.blog.edit');
+    Router::post('/blog/update/{id}', [BlogController::class, 'update'])->name('admin.blog.update');
+    Router::post('/blog/delete', [BlogController::class, 'destroy'])->name('admin.blog.delete');
 });

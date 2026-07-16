@@ -4,6 +4,7 @@ $footerName = \App\Models\Setting::get('site_name', 'Shola Ghar');
 $footerTagline = \App\Models\Setting::get('site_tagline', '');
 $siteLogo = \App\Models\Setting::get('site_logo', '');
 if (empty($siteLogo) && file_exists(PUBLIC_DIR . DS . 'uploads' . DS . 'site_logo.png')) $siteLogo = 'site_logo.png';
+$isAdmin = \App\Helpers\Session::has('user') && (\App\Helpers\Session::get('user')['role'] ?? '') === 'admin';
 ?>
 <!-- ============================================ -->
 <!-- FOOTER - RED THEME -->
@@ -42,10 +43,15 @@ if (empty($siteLogo) && file_exists(PUBLIC_DIR . DS . 'uploads' . DS . 'site_log
           <li><a href="<?= url('contact') ?>" class="text-xs text-white/70 hover:text-white transition-colors">Contact Us</a></li>
           <li><a href="#" class="text-xs text-white/70 hover:text-white transition-colors">FAQs</a></li>
           <li><a href="<?= url('products') ?>" class="text-xs text-white/70 hover:text-white transition-colors">Shop</a></li>
+          <?php if ($isAdmin): ?>
+          <li><a href="<?= url('admin') ?>" class="text-xs text-white/70 hover:text-white transition-colors">Admin Dashboard</a></li>
+          <?php else: ?>
           <li><a href="<?= url('account') ?>" class="text-xs text-white/70 hover:text-white transition-colors">My Profile</a></li>
+          <?php endif; ?>
         </ul>
       </div>
 
+      <?php if (!$isAdmin): ?>
       <!-- My Account -->
       <div>
         <h4 class="text-sm font-bold text-white mb-4 uppercase tracking-wider">My Account</h4>
@@ -56,6 +62,7 @@ if (empty($siteLogo) && file_exists(PUBLIC_DIR . DS . 'uploads' . DS . 'site_log
           <li><a href="<?= url('account/wishlist') ?>" class="text-xs text-white/70 hover:text-white transition-colors">Wishlist</a></li>
         </ul>
       </div>
+      <?php endif; ?>
 
       <!-- Quick Links -->
       <div>
@@ -122,6 +129,19 @@ if (empty($siteLogo) && file_exists(PUBLIC_DIR . DS . 'uploads' . DS . 'site_log
 <!-- GLOBAL JAVASCRIPT -->
 <!-- ============================================ -->
 <script>
+<?php
+$wishlistProductIds = [];
+if (\App\Helpers\Session::has('user')) {
+    $uid = \App\Helpers\Session::get('user')['id'] ?? 0;
+    if ($uid) {
+        $pdo = \App\Core\Database::getInstance()->getConnection();
+        $stmt = $pdo->prepare("SELECT product_id FROM sg_wishlists WHERE user_id = :uid");
+        $stmt->execute([':uid' => $uid]);
+        $wishlistProductIds = $stmt->fetchAll(\PDO::FETCH_COLUMN);
+    }
+}
+?>
+window._wishlistIds = <?= json_encode(array_map('intval', $wishlistProductIds)) ?>;
 function toggleMobileMenu() {
     document.querySelector('.nav-links .flex.items-center.gap-6').classList.toggle('hidden');
 }
@@ -165,17 +185,39 @@ function addToWishlist(productId) {
     .catch(function() { showToast('Failed to add to wishlist.', 'error'); });
 }
 function addToCompare(productId) {
+    var btn = document.querySelector('[data-compare="' + productId + '"]');
     var formData = new FormData();
-    formData.append('action', 'add_to_compare');
     formData.append('product_id', productId);
     formData.append('_csrf_token', '<?= \App\Helpers\Session::csrfToken() ?>');
-    fetch('<?= url('compare/add') ?>', {
+    fetch('<?= url('compare/toggle') ?>', {
         method: 'POST', body: formData,
         headers: { 'X-Requested-With': 'XMLHttpRequest' }
     })
     .then(function(r) { return r.json(); })
-    .then(function(d) { showToast(d.message, d.success ? 'success' : 'error'); })
-    .catch(function() { showToast('Failed to add to compare.', 'error'); });
+    .then(function(d) {
+        if (d.success) {
+            var compare = JSON.parse(localStorage.getItem('compare') || '[]');
+            if (d.action === 'added') {
+                if (compare.indexOf(productId) === -1) compare.push(productId);
+            } else {
+                compare = compare.filter(function(id) { return id !== productId; });
+            }
+            localStorage.setItem('compare', JSON.stringify(compare));
+            if (btn) {
+                btn.classList.toggle('is-active', d.action === 'added');
+                btn.classList.toggle('is-inactive', d.action === 'removed');
+            }
+            if (typeof d.count === 'number') updateCompareCount(d.count);
+            showToast(d.action === 'added' ? 'Added to compare' : 'Removed from compare', 'success');
+        } else {
+            showToast(d.message || 'Error', 'error');
+        }
+    })
+    .catch(function() { showToast('Failed to update compare.', 'error'); });
+}
+function updateCompareCount(count) {
+    var badges = document.querySelectorAll('.compare-count');
+    badges.forEach(function(b) { b.textContent = count; b.style.display = count > 0 ? 'flex' : 'none'; });
 }
 function updateCartCount(count) {
     var badges = document.querySelectorAll('.cart-count, .cart-count-mobile');
@@ -197,15 +239,19 @@ function toggleWishlist(productId) {
         headers: { 'X-Requested-With': 'XMLHttpRequest' }
     })
     .then(function(r) {
-        console.log('toggleWishlist status:', r.status, r.statusText);
         return r.json().catch(function(e) {
-            console.error('toggleWishlist JSON parse error:', e);
             return r.text().then(function(t) { console.error('Response text:', t.substring(0, 500)); throw e; });
         });
     })
     .then(function(data) {
-        console.log('toggleWishlist data:', JSON.stringify(data));
         if (data.success) {
+            var wishlist = window._wishlistIds || [];
+            if (data.action === 'added') {
+                if (wishlist.indexOf(productId) === -1) wishlist.push(productId);
+            } else {
+                wishlist = wishlist.filter(function(id) { return id !== productId; });
+            }
+            window._wishlistIds = wishlist;
             if (btn) {
                 btn.classList.toggle('is-active', data.action === 'added');
                 btn.classList.toggle('is-inactive', data.action === 'removed');
@@ -218,6 +264,24 @@ function toggleWishlist(productId) {
     })
     .catch(function(e) { console.error('toggleWishlist caught:', e); showToast('Network error', 'error'); });
 }
+document.addEventListener('DOMContentLoaded', function() {
+    var wishlist = window._wishlistIds || [];
+    wishlist.forEach(function(id) {
+        var btn = document.querySelector('[data-wishlist="' + id + '"]');
+        if (btn) {
+            btn.classList.add('is-active');
+            btn.classList.remove('is-inactive');
+        }
+    });
+    var compare = JSON.parse(localStorage.getItem('compare') || '[]');
+    compare.forEach(function(id) {
+        var btn = document.querySelector('[data-compare="' + id + '"]');
+        if (btn) {
+            btn.classList.add('is-active');
+            btn.classList.remove('is-inactive');
+        }
+    });
+});
 function updateWishlistCount(count) {
     var badges = document.querySelectorAll('.wishlist-count');
     badges.forEach(function(b) { b.textContent = count; b.style.display = count > 0 ? 'flex' : 'none'; });

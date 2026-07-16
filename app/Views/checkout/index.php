@@ -226,6 +226,16 @@
 </div>
 <?php endif; ?>
 
+<div class="max-w-6xl mx-auto mt-4 px-4">
+    <div class="bg-green-50 border border-green-200 rounded-xl p-4 flex items-center gap-3 text-sm text-green-800">
+        <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+        <div>
+            <span class="font-semibold">Pay Online (Card/UPI/Net Banking)</span>
+            <span class="text-green-600"> — Secure payment via Razorpay</span>
+        </div>
+    </div>
+</div>
+
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     const checkbox = document.getElementById('same-shipping');

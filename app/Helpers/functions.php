@@ -266,7 +266,21 @@ function paginationLinks(array $pagination, string $baseUrl = ''): string
 }
 
 /**
- * Get star rating HTML
+ * Render SVG star rating
+ */
+function renderStars(float $rating, int $max = 5): string
+{
+    $html = '<div class="flex items-center gap-0.5">';
+    for ($i = 1; $i <= $max; $i++) {
+        $fill = $i <= round($rating) ? 'fill-amber-400 text-amber-400' : 'fill-gray-300 text-gray-300';
+        $html .= '<svg class="w-3 h-3 ' . $fill . '" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>';
+    }
+    $html .= '</div>';
+    return $html;
+}
+
+/**
+ * Get star rating HTML (FontAwesome)
  */
 function starRating(int $rating, int $max = 5): string
 {

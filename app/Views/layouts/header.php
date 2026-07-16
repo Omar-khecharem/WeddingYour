@@ -41,7 +41,16 @@
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>.scrollbar-hide::-webkit-scrollbar{display:none}</style>
+    <style>.scrollbar-hide::-webkit-scrollbar{display:none}
+    [data-wishlist].is-active{color:#e11d48 !important}
+    [data-wishlist].is-active svg{fill:currentColor !important}
+    [data-wishlist].is-inactive{color:inherit !important}
+    [data-wishlist].is-inactive svg{fill:none !important}
+    [data-compare].is-active{color:#e11d48 !important}
+    [data-compare].is-active svg{fill:currentColor !important}
+    [data-compare].is-inactive{color:inherit !important}
+    [data-compare].is-inactive svg{fill:none !important}
+    </style>
     <script>
         tailwind.config = {
             theme: {

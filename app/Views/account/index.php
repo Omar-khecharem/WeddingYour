@@ -13,59 +13,59 @@ $wishlistCount = \App\Helpers\Session::get('wishlist.count', 0);
         </p>
     </div>
 
-    <div class="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        <div class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm transition-shadow hover:shadow-md">
-            <div class="flex items-center gap-4">
-                <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-indigo-100 text-indigo-600">
-                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <div class="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div class="rounded-xl border border-gray-200 bg-white p-4 lg:p-5 shadow-sm transition-shadow hover:shadow-md">
+            <div class="flex items-center gap-3 lg:gap-4">
+                <div class="flex h-10 w-10 lg:h-11 lg:w-11 items-center justify-center rounded-lg bg-indigo-100 text-indigo-600 flex-shrink-0">
+                    <svg class="h-5 w-5 lg:h-5 lg:w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                     </svg>
                 </div>
-                <div>
-                    <p class="text-sm font-medium text-gray-500">Total Orders</p>
-                    <p class="text-2xl font-bold text-gray-900"><?= (int)($stats['total_orders'] ?? 0) ?></p>
+                <div class="min-w-0">
+                    <p class="text-xs lg:text-sm font-medium text-gray-500 truncate">Total Orders</p>
+                    <p class="text-lg lg:text-xl xl:text-2xl font-bold text-gray-900"><?= (int)($stats['total_orders'] ?? 0) ?></p>
                 </div>
             </div>
         </div>
 
-        <div class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm transition-shadow hover:shadow-md">
-            <div class="flex items-center gap-4">
-                <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-emerald-100 text-emerald-600">
-                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="rounded-xl border border-gray-200 bg-white p-4 lg:p-5 shadow-sm transition-shadow hover:shadow-md">
+            <div class="flex items-center gap-3 lg:gap-4">
+                <div class="flex h-10 w-10 lg:h-11 lg:w-11 items-center justify-center rounded-lg bg-emerald-100 text-emerald-600 flex-shrink-0">
+                    <svg class="h-5 w-5 lg:h-5 lg:w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                 </div>
-                <div>
-                    <p class="text-sm font-medium text-gray-500">Total Spent</p>
-                    <p class="text-2xl font-bold text-gray-900"><?= formatPrice((float)($stats['total_spent'] ?? 0)) ?></p>
+                <div class="min-w-0">
+                    <p class="text-xs lg:text-sm font-medium text-gray-500 truncate">Total Spent</p>
+                    <p class="text-lg lg:text-xl xl:text-2xl font-bold text-gray-900"><?= formatPrice((float)($stats['total_spent'] ?? 0)) ?></p>
                 </div>
             </div>
         </div>
 
-        <div class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm transition-shadow hover:shadow-md">
-            <div class="flex items-center gap-4">
-                <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-rose-100 text-rose-600">
-                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="rounded-xl border border-gray-200 bg-white p-4 lg:p-5 shadow-sm transition-shadow hover:shadow-md">
+            <div class="flex items-center gap-3 lg:gap-4">
+                <div class="flex h-10 w-10 lg:h-11 lg:w-11 items-center justify-center rounded-lg bg-rose-100 text-rose-600 flex-shrink-0">
+                    <svg class="h-5 w-5 lg:h-5 lg:w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                     </svg>
                 </div>
-                <div>
-                    <p class="text-sm font-medium text-gray-500">Wishlist</p>
-                    <p class="text-2xl font-bold text-gray-900"><?= (int)$wishlistCount ?></p>
+                <div class="min-w-0">
+                    <p class="text-xs lg:text-sm font-medium text-gray-500 truncate">Wishlist</p>
+                    <p class="text-lg lg:text-xl xl:text-2xl font-bold text-gray-900"><?= (int)$wishlistCount ?></p>
                 </div>
             </div>
         </div>
 
-        <div class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm transition-shadow hover:shadow-md">
-            <div class="flex items-center gap-4">
-                <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-amber-100 text-amber-600">
-                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="rounded-xl border border-gray-200 bg-white p-4 lg:p-5 shadow-sm transition-shadow hover:shadow-md">
+            <div class="flex items-center gap-3 lg:gap-4">
+                <div class="flex h-10 w-10 lg:h-11 lg:w-11 items-center justify-center rounded-lg bg-amber-100 text-amber-600 flex-shrink-0">
+                    <svg class="h-5 w-5 lg:h-5 lg:w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                 </div>
-                <div>
-                    <p class="text-sm font-medium text-gray-500">Pending Orders</p>
-                    <p class="text-2xl font-bold text-gray-900"><?= (int)($stats['pending_orders'] ?? 0) ?></p>
+                <div class="min-w-0">
+                    <p class="text-xs lg:text-sm font-medium text-gray-500 truncate">Pending Orders</p>
+                    <p class="text-lg lg:text-xl xl:text-2xl font-bold text-gray-900"><?= (int)($stats['pending_orders'] ?? 0) ?></p>
                 </div>
             </div>
         </div>

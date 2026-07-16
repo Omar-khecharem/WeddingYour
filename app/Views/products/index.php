@@ -196,6 +196,8 @@ $end = min($page * $perPage, $total);
           $pDiscount = $product['discount_percent'] ?? ($pRegular > 0 ? round((1 - $pSale / $pRegular) * 100) : 0);
           $pStock = $product['stock_status'] ?? 'in_stock';
           $pId = $product['id'] ?? 0;
+          $rAvg = $productRatings[$pId]['average'] ?? 0;
+          $rTot = $productRatings[$pId]['total'] ?? 0;
         ?>
         <div class="bg-white border border-slate-100 rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow flex flex-col group/card">
           <div class="relative overflow-hidden bg-slate-50">
@@ -213,7 +215,7 @@ $end = min($page * $perPage, $total);
               <button class="w-7 h-7 bg-white rounded-full flex items-center justify-center text-slate-600 hover:bg-red-600 hover:text-white transition-colors shadow hidden sm:flex" title="Quick view">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
               </button>
-              <button class="w-7 h-7 bg-white rounded-full flex items-center justify-center text-slate-600 hover:bg-red-600 hover:text-white transition-colors shadow hidden sm:flex" title="Compare">
+              <button data-compare="<?= $pId ?>" onclick="addToCompare(<?= $pId ?>)" class="w-7 h-7 bg-white rounded-full flex items-center justify-center text-slate-600 hover:bg-red-600 hover:text-white transition-colors shadow hidden sm:flex" title="Compare">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
               </button>
               <button data-wishlist="<?= $pId ?>" onclick="toggleWishlist(<?= $pId ?>)" class="w-7 h-7 bg-white rounded-full flex items-center justify-center text-slate-600 hover:bg-red-600 hover:text-white transition-colors shadow" title="Wishlist">
@@ -228,6 +230,10 @@ $end = min($page * $perPage, $total);
               <span><?= e($pSubcategory) ?></span>
               <?php if ($pTags): ?><span class="text-slate-200">,</span><span><?= e(is_array($pTags) ? implode(', ', $pTags) : $pTags) ?></span><?php endif; ?>
             </p>
+            <div class="flex items-center gap-1">
+              <?= renderStars($rAvg) ?>
+              <?php if ($rTot > 0): ?><span class="text-[10px] text-gray-400">(<?= $rTot ?>)</span><?php endif; ?>
+            </div>
             <span class="text-[10px] text-emerald-600 font-bold flex items-center gap-1">
               <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span> In stock
             </span>

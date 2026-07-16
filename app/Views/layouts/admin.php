@@ -73,6 +73,8 @@
                     ['url' => url('admin/users'), 'label' => 'Users', 'icon' => 'fa-users'],
                     ['url' => url('admin/reviews'), 'label' => 'Reviews', 'icon' => 'fa-star'],
                     ['url' => url('admin/coupons'), 'label' => 'Coupons', 'icon' => 'fa-tag'],
+                    ['url' => url('admin/pages'), 'label' => 'Pages', 'icon' => 'fa-file-lines'],
+                    ['url' => url('admin/blog'), 'label' => 'Blog', 'icon' => 'fa-newspaper'],
 
                     ['url' => url('admin/banners'), 'label' => 'Banners', 'icon' => 'fa-images'],
                     ['url' => url('admin/deals'), 'label' => 'Best Deals', 'icon' => 'fa-percent'],

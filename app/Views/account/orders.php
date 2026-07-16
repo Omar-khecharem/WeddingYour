@@ -72,7 +72,8 @@ $paymentStatusLabel = function (string $status): string {
     </div>
     <?php else: ?>
 
-    <div class="overflow-x-auto">
+    <!-- Desktop table -->
+    <div class="hidden sm:block overflow-x-auto">
         <table class="w-full text-sm">
             <thead>
                 <tr class="border-b border-gray-200 bg-gray-50">
@@ -117,6 +118,32 @@ $paymentStatusLabel = function (string $status): string {
                 <?php endforeach; ?>
             </tbody>
         </table>
+    </div>
+
+    <!-- Mobile cards -->
+    <div class="sm:hidden divide-y divide-gray-100 border-t border-gray-100">
+        <?php foreach ($orders as $order): ?>
+        <a href="<?= url('account/orders/' . $order['id']) ?>" class="block px-1 py-4 hover:bg-gray-50/50 transition-colors">
+            <div class="flex items-center justify-between mb-2">
+                <span class="font-bold text-gray-900 text-sm">#<?= e($order['order_number']) ?></span>
+                <span class="inline-block text-xs font-bold px-2.5 py-1 rounded-full border <?= $statusBadge($order['order_status'] ?? '') ?>">
+                    <?= $statusLabel($order['order_status'] ?? '') ?>
+                </span>
+            </div>
+            <div class="flex items-center justify-between text-xs text-gray-500">
+                <span><?= formatDate($order['created_at'], 'd/m/Y') ?></span>
+                <span class="font-semibold text-gray-900"><?= formatPrice((float)($order['total'] ?? 0)) ?></span>
+            </div>
+            <?php if (!empty($order['payment_method_name'])): ?>
+            <div class="mt-1.5 text-xs text-gray-400">
+                Payment: <?= $paymentStatusLabel($order['payment_status'] ?? '') ?> &middot; <?= e($order['payment_method_name']) ?>
+            </div>
+            <?php endif; ?>
+            <div class="mt-2 flex items-center text-xs font-semibold text-primary-red">
+                View Details <i class="fa-solid fa-chevron-right ml-1 text-[10px]"></i>
+            </div>
+        </a>
+        <?php endforeach; ?>
     </div>
 
     <?php if (($pagination['totalPages'] ?? 1) > 1): ?>

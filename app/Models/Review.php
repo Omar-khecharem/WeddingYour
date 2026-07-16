@@ -62,6 +62,26 @@ class Review extends Model
     }
 
     /**
+     * Get average ratings for multiple products at once
+     * Returns [product_id => ['average' => float, 'total' => int], ...]
+     */
+    public static function getBatchRatings(array $productIds): array
+    {
+        if (empty($productIds)) return [];
+        $pdo = Database::getInstance()->getConnection();
+        $ids = implode(',', array_map('intval', $productIds));
+        $stmt = $pdo->query("SELECT product_id, AVG(rating) as avg_rating, COUNT(*) as total FROM sg_reviews WHERE product_id IN ($ids) AND is_approved = 1 GROUP BY product_id");
+        $result = [];
+        foreach ($stmt->fetchAll() as $row) {
+            $result[(int)$row['product_id']] = [
+                'average' => round((float)$row['avg_rating'], 1),
+                'total' => (int)$row['total'],
+            ];
+        }
+        return $result;
+    }
+
+    /**
      * Get product average rating
      */
     public static function getAverageRating(int $productId): float

@@ -8,6 +8,7 @@ use App\Models\Product;
 use App\Models\Category;
 use App\Models\Brand;
 use App\Models\Review;
+use App\Helpers\Session;
 
 class ProductController extends Controller
 {
@@ -60,11 +61,15 @@ class ProductController extends Controller
             $subcategories = $pdo->query("SELECT sc.id, sc.name, sc.slug, sc.image, sc.category_id, c.slug AS cat_slug FROM sg_subcategories sc JOIN sg_categories c ON c.id = sc.category_id WHERE sc.status = 1 ORDER BY c.sort_order, sc.sort_order, sc.name")->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {}
 
+        $productIds = array_column($result['products'] ?? [], 'id');
+        $ratings = Review::getBatchRatings($productIds);
+
         return $this->view('products.index', array_merge($result, [
             'filterOptions' => $filterOptions,
             'filters' => $filters,
             'currentCategory' => $filters['category'] ?: '',
             'searchQuery' => $filters['search'] ?: '',
+            'productRatings' => $ratings,
             'sortBy' => $filters['sort'],
             'subcategories' => $subcategories,
         ]));
@@ -139,5 +144,35 @@ class ProductController extends Controller
         } else {
             $this->json(['available' => false, 'message' => '✗ We do not deliver to ' . e($pincode) . ' yet.']);
         }
+    }
+
+    public function submitReview(Request $request, Response $response): void
+    {
+        $slug = $request->param('slug');
+        $product = Product::findBySlug($slug);
+        if (!$product) {
+            http_response_code(404);
+            require VIEWS_DIR . DS . 'errors' . DS . '404.php';
+            exit;
+        }
+
+        $user = $this->viewData['authUser'];
+        $result = Review::submit([
+            'product_id' => $product['id'],
+            'user_id' => $user['id'] ?? null,
+            'name' => $request->input('name', 'Anonymous'),
+            'email' => $request->input('email', ''),
+            'rating' => (int)$request->input('rating', 5),
+            'title' => $request->input('title', ''),
+            'comment' => $request->input('comment', ''),
+        ]);
+
+        if ($result['success']) {
+            Session::flash('success', $result['message']);
+        } else {
+            Session::flash('error', 'Failed to submit review. Please try again.');
+        }
+
+        $this->redirect(url('product/' . e($product['slug'])));
     }
 }

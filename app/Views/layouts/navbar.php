@@ -17,6 +17,8 @@ $wishlistCount = $wishlistCount ?? 0;
 $compareCount = $compareCount ?? 0;
 $isLoggedIn = $isLoggedIn ?? false;
 $authUser = $authUser ?? null;
+$isAdmin = $isLoggedIn && ($authUser['role'] ?? '') === 'admin';
+$profileUrl = $isAdmin ? url('admin') : url('account');
 $appName = \App\Models\Setting::get('site_name', 'Shola Ghar');
 $appTagline = \App\Models\Setting::get('site_tagline', APP_TAGLINE);
 $facebookUrl = $facebookUrl ?? SOCIAL_FACEBOOK;
@@ -86,11 +88,12 @@ try {
         </a>
         <div class="flex items-center gap-2.5 shrink-0">
           <!-- Profile -->
-          <a href="<?= $isLoggedIn ? url('account') : url('login') ?>" class="w-9 h-9 rounded-full bg-white text-slate-700 hover:bg-slate-100 flex items-center justify-center transition-colors shadow-sm border border-gray-200" aria-label="Profile">
+          <a href="<?= $isLoggedIn ? $profileUrl : url('login') ?>" class="w-9 h-9 rounded-full bg-white text-slate-700 hover:bg-slate-100 flex items-center justify-center transition-colors shadow-sm border border-gray-200" aria-label="Profile">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
             </svg>
           </a>
+          <?php if (!$isAdmin): ?>
           <!-- Wishlist -->
           <a href="<?= url('account/wishlist') ?>" class="relative w-9 h-9 rounded-full bg-white text-slate-700 hover:bg-slate-100 flex items-center justify-center transition-colors shadow-sm border border-gray-200" aria-label="Wishlist">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -98,6 +101,7 @@ try {
             </svg>
             <span class="absolute -top-1.5 -right-1.5 bg-[#B10912] text-white text-[9px] font-black w-4.5 h-4.5 px-1 rounded-full flex items-center justify-center border border-white wishlist-count"><?= $wishlistCount ?></span>
           </a>
+          <?php endif; ?>
           <!-- Cart -->
           <a href="<?= url('cart') ?>" class="relative w-9 h-9 rounded-full bg-white text-slate-700 hover:bg-slate-100 flex items-center justify-center transition-colors shadow-sm border border-gray-200" aria-label="Cart">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -252,7 +256,7 @@ try {
       <!-- Action Buttons -->
       <div class="flex items-center gap-3 pr-4 py-2 shrink-0">
         <!-- Profile -->
-        <a href="<?= $isLoggedIn ? url('account') : url('login') ?>" class="w-9 h-9 rounded-full bg-white text-slate-700 hover:bg-slate-100 flex items-center justify-center transition-colors shadow-sm" aria-label="Profile">
+        <a href="<?= $isLoggedIn ? $profileUrl : url('login') ?>" class="w-9 h-9 rounded-full bg-white text-slate-700 hover:bg-slate-100 flex items-center justify-center transition-colors shadow-sm" aria-label="Profile">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
           </svg>
@@ -266,6 +270,7 @@ try {
           <span class="absolute -top-1.5 -right-1.5 bg-[#B10912] text-white text-[9px] font-black w-4.5 h-4.5 px-1 rounded-full flex items-center justify-center border border-white compare-count"><?= $compareCount ?></span>
         </a>
 
+        <?php if (!$isAdmin): ?>
         <!-- Wishlist -->
         <a href="<?= url('account/wishlist') ?>" class="relative w-9 h-9 rounded-full bg-white text-slate-700 hover:bg-slate-100 flex items-center justify-center transition-colors shadow-sm" aria-label="Wishlist">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -273,6 +278,7 @@ try {
           </svg>
           <span class="absolute -top-1.5 -right-1.5 bg-[#B10912] text-white text-[9px] font-black w-4.5 h-4.5 px-1 rounded-full flex items-center justify-center border border-white wishlist-count"><?= $wishlistCount ?></span>
         </a>
+        <?php endif; ?>
 
         <!-- Cart Pill -->
         <a href="<?= url('cart') ?>" class="flex items-center gap-2 bg-[#B10912] hover:bg-[#90070e] px-3.5 py-2 rounded-full cursor-pointer transition-colors shadow-md">
@@ -349,19 +355,26 @@ try {
           Our Contacts
         </a>
 
+        <?php if ($isAdmin): ?>
+        <a href="<?= url('admin') ?>" class="flex items-center gap-3 px-5 py-3 text-sm font-bold text-slate-800 hover:bg-red-50 hover:text-red-600 transition-colors border-b border-gray-100">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h12a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V6z"/></svg>
+          Admin Dashboard
+        </a>
+        <?php else: ?>
         <a href="<?= url('account/wishlist') ?>" class="flex items-center gap-3 px-5 py-3 text-sm font-bold text-slate-800 hover:bg-red-50 hover:text-red-600 transition-colors border-b border-gray-100">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
           Wishlist
         </a>
+        <?php endif; ?>
 
         <a href="<?= url('compare') ?>" class="flex items-center gap-3 px-5 py-3 text-sm font-bold text-slate-800 hover:bg-red-50 hover:text-red-600 transition-colors border-b border-gray-100">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
           Compare
         </a>
 
-        <a href="<?= $isLoggedIn ? url('account') : url('login') ?>" class="flex items-center gap-3 px-5 py-3 text-sm font-bold text-red-600 hover:bg-red-50 transition-colors">
+        <a href="<?= $isLoggedIn ? $profileUrl : url('login') ?>" class="flex items-center gap-3 px-5 py-3 text-sm font-bold text-red-600 hover:bg-red-50 transition-colors">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
-          <?= $isLoggedIn ? 'My Account' : 'Login / Register' ?>
+          <?= $isAdmin ? 'Admin Dashboard' : ($isLoggedIn ? 'My Account' : 'Login / Register') ?>
         </a>
       </div>
     </div>

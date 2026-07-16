@@ -47,6 +47,22 @@ $count = $count ?? 0;
         <div class="overflow-x-auto bg-white rounded-xl border border-gray-200 shadow-sm">
             <table class="w-full text-sm">
                 <tbody class="divide-y divide-gray-100">
+                    <!-- Remove -->
+                    <tr>
+                        <td class="w-48 py-3 px-5 font-bold text-gray-600 bg-gray-50 align-middle">
+                            Actions
+                        </td>
+                        <?php foreach ($products as $product): ?>
+                            <td class="p-3 text-center align-middle">
+                                <a href="<?= url('compare/remove/' . e($product['slug'] ?? '')) ?>"
+                                   class="inline-flex items-center gap-1 text-xs font-semibold text-red-500 hover:text-red-600 transition-colors"
+                                   onclick="return confirm('Remove this product from comparison?')">
+                                    <i class="fa-solid fa-xmark"></i> Remove
+                                </a>
+                            </td>
+                        <?php endforeach; ?>
+                    </tr>
+
                     <!-- Image -->
                     <tr>
                         <td class="w-48 py-4 px-5 font-bold text-gray-600 bg-gray-50 align-middle">
@@ -55,7 +71,7 @@ $count = $count ?? 0;
                         <?php foreach ($products as $product): ?>
                             <td class="p-4 text-center min-w-[200px] align-middle">
                                 <div class="w-32 h-32 mx-auto rounded-lg overflow-hidden bg-gray-100">
-                                    <img src="<?= e(uploadUrl($product['image'])) ?>"
+                                    <img src="<?= e(uploadUrl($product['primary_image'] ?? '')) ?>"
                                          alt="<?= e($product['name']) ?>"
                                          class="w-full h-full object-cover"
                                          loading="lazy">

@@ -475,14 +475,22 @@
 
     // Read initial count from server for wishlist & compare badges
     if (document.querySelector('.wishlist-count')) {
-      apiGet('/account/wishlist/count')
+      apiGet('/account/wishlist/ids')
         .then(function (d) {
-          if (typeof d.count === 'number') {
+          if (d.success && typeof d.count === 'number') {
+            window._wishlistIds = d.ids || [];
             var el = document.querySelector('.wishlist-count');
             if (el) {
               el.textContent = d.count;
               el.style.display = d.count > 0 ? '' : 'none';
             }
+            (d.ids || []).forEach(function (id) {
+              var btn = document.querySelector('[data-wishlist="' + id + '"]');
+              if (btn) {
+                btn.classList.add('is-active');
+                btn.classList.remove('is-inactive');
+              }
+            });
           }
         })
         .catch(function () {});
