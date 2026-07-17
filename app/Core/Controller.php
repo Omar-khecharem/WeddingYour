@@ -44,7 +44,22 @@ abstract class Controller
         // Cart count
         $this->viewData['cartCount'] = Session::get('cart.count', 0);
         $this->viewData['wishlistCount'] = Session::get('wishlist.count', 0);
-        $this->viewData['compareCount'] = Session::get('compare.count', 0);
+        // Compute compare count from DB
+        try {
+            $pdo = \App\Core\Database::getInstance()->getConnection();
+            $userId = Session::get('user.id');
+            if ($userId) {
+                $stmt = $pdo->prepare("SELECT COUNT(*) FROM sg_compare WHERE user_id = :u");
+                $stmt->execute([':u' => $userId]);
+            } else {
+                $stmt = $pdo->prepare("SELECT COUNT(*) FROM sg_compare WHERE session_id = :s");
+                $stmt->execute([':s' => session_id()]);
+            }
+            $compareCount = (int)$stmt->fetchColumn();
+        } catch (\Exception $e) {
+            $compareCount = 0;
+        }
+        $this->viewData['compareCount'] = $compareCount;
 
         // Auth user
         $this->viewData['authUser'] = Session::get('user');

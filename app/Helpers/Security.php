@@ -166,7 +166,8 @@ class Security
     public static function checkRateLimit(string $key, int $maxAttempts = 5, int $period = 300): bool
     {
         $storage = DATA_CACHE_DIR . DS . 'ratelimit_' . md5($key) . '.tmp';
-        $data = @file_get_contents($storage) ? unserialize(file_get_contents($storage)) : ['count' => 0, 'reset' => time() + $period];
+        $content = @file_get_contents($storage);
+        $data = $content ? unserialize($content) : ['count' => 0, 'reset' => time() + $period];
 
         if (time() > $data['reset']) {
             $data = ['count' => 0, 'reset' => time() + $period];

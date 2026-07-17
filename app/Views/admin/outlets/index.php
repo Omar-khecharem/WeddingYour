@@ -2,7 +2,7 @@
 <div class="flex items-center justify-between gap-4 mb-6">
     <div>
         <h1 class="text-2xl font-bold text-gray-800">Outlets</h1>
-        <p class="text-sm text-gray-500">Manage <?= e(\App\Models\Setting::get('site_name', 'Shola Ghar')) ?>'s store locations</p>
+        <p class="text-sm text-gray-500">Manage <?= e(\App\Models\Setting::get('site_name', 'WeddingYour')) ?>'s store locations</p>
     </div>
     <a href="<?= url('admin/outlets/create') ?>" class="bg-primary-red text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:opacity-90 transition-all inline-flex items-center gap-2">
         <i class="fa-solid fa-plus"></i> Add Outlet

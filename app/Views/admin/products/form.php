@@ -35,11 +35,17 @@ $p = $isEdit ? $product : null;
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Category <span class="text-red-500">*</span></label>
-                        <select name="category_id" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary-red/20 focus:border-primary-red outline-none" required>
+                        <select name="category_id" id="product-category" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary-red/20 focus:border-primary-red outline-none" required>
                             <option value="">Select Category</option>
                             <?php foreach ($categories as $cat): ?>
                             <option value="<?= $cat['id'] ?>" <?= (old('category_id', $p->category_id ?? '') == $cat['id']) ? 'selected' : '' ?>><?= e($cat['name']) ?></option>
                             <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Subcategory</label>
+                        <select name="subcategory_id" id="product-subcategory" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary-red/20 focus:border-primary-red outline-none">
+                            <option value="">Select Subcategory</option>
                         </select>
                     </div>
                 </div>
@@ -202,6 +208,63 @@ $p = $isEdit ? $product : null;
 </form>
 <?php startSection('scripts') ?>
 <script>
+// Load subcategories on category change
+document.addEventListener('DOMContentLoaded', function() {
+    var catSelect = document.getElementById('product-category');
+    var subcatSelect = document.getElementById('product-subcategory');
+    if (!catSelect || !subcatSelect) return;
+
+    function loadSubcategories(categoryId, selectedSubcatId) {
+        subcatSelect.innerHTML = '<option value="">Loading...</option>';
+        subcatSelect.disabled = true;
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', '<?= url('admin/subcategories/by-category') ?>?category_id=' + categoryId, true);
+        xhr.onload = function() {
+            subcatSelect.innerHTML = '<option value="">Select Subcategory</option>';
+            subcatSelect.disabled = false;
+            if (xhr.status === 200) {
+                try {
+                    var data = JSON.parse(xhr.responseText);
+                    if (data.success && data.subcategories) {
+                        data.subcategories.forEach(function(sub) {
+                            var opt = document.createElement('option');
+                            opt.value = sub.id;
+                            opt.textContent = sub.name;
+                            if (selectedSubcatId && parseInt(selectedSubcatId) === parseInt(sub.id)) {
+                                opt.selected = true;
+                            }
+                            subcatSelect.appendChild(opt);
+                        });
+                    }
+                } catch(e) {}
+            }
+        };
+        xhr.onerror = function() {
+            subcatSelect.innerHTML = '<option value="">Select Subcategory</option>';
+            subcatSelect.disabled = false;
+        };
+        xhr.send();
+    }
+
+    catSelect.addEventListener('change', function() {
+        var catId = this.value;
+        if (catId) {
+            loadSubcategories(catId, '<?= $p->subcategory_id ?? '' ?>');
+        } else {
+            subcatSelect.innerHTML = '<option value="">Select Subcategory</option>';
+        }
+    });
+
+    // Load on page load if category is already selected
+    var initialCat = catSelect.value;
+    var initialSubcat = '<?= $p->subcategory_id ?? '' ?>';
+    if (initialCat && initialSubcat) {
+        loadSubcategories(initialCat, initialSubcat);
+    } else if (initialCat) {
+        loadSubcategories(initialCat);
+    }
+});
+</script>
 // Auto-slug
 document.getElementById('product-name')?.addEventListener('input', function() {
     const slug = this.value.toLowerCase().replace(/[^\w\s-]/g, '').replace(/[\s_]+/g, '-').replace(/^-+|-+$/g, '');

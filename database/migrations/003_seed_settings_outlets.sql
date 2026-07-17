@@ -3,12 +3,12 @@ INSERT IGNORE INTO `sg_settings` (`key`, `value`, `group`, `type`, `sort_order`,
 ('store_name', 'Shola Ghar', 'general', 'text', 1, 1),
 ('store_logo', '', 'general', 'image', 2, 1),
 ('store_favicon', '', 'general', 'image', 3, 0),
-('store_email', 'contact@sholaghar.com', 'general', 'email', 4, 1),
+('store_email', 'contact@weddingyour.com', 'general', 'email', 4, 1),
 ('store_phone', '+33 1 23 45 67 89', 'general', 'text', 5, 1),
 ('store_address', '123 Rue de la Mode, Paris', 'general', 'textarea', 6, 1),
-('social_facebook', 'https://facebook.com/sholaghar', 'social', 'url', 1, 1),
-('social_instagram', 'https://instagram.com/sholaghar', 'social', 'url', 2, 1),
-('social_youtube', 'https://youtube.com/@sholaghar', 'social', 'url', 3, 1),
+('social_facebook', 'https://facebook.com/weddingyour', 'social', 'url', 1, 1),
+('social_instagram', 'https://instagram.com/weddingyour', 'social', 'url', 2, 1),
+('social_youtube', 'https://youtube.com/@weddingyour', 'social', 'url', 3, 1),
 ('social_maps', 'https://maps.google.com/?q=Shola+Ghar+Paris', 'social', 'url', 4, 1),
 ('homepage_video_url', 'https://www.youtube.com/embed/dQw4w9WgXcQ', 'homepage', 'url', 1, 0),
 ('homepage_video_poster', '', 'homepage', 'image', 2, 0),
@@ -23,11 +23,11 @@ INSERT IGNORE INTO `sg_settings` (`key`, `value`, `group`, `type`, `sort_order`,
 
 -- Sample outlets
 INSERT IGNORE INTO `sg_outlets` (`name`, `slug`, `description`, `address`, `city`, `state`, `phone`, `email`, `latitude`, `longitude`, `google_maps_link`, `sort_order`) VALUES
-('Shola Ghar Paris', 'shola-ghar-paris', 'Flagship store in the heart of Paris', '123 Rue de la Mode', 'Paris', 'Île-de-France', '+33 1 23 45 67 89', 'paris@sholaghar.com', 48.8566, 2.3522, 'https://maps.google.com/?q=Shola+Ghar+Paris', 1),
-('Shola Ghar Lyon', 'shola-ghar-lyon', 'Premium wedding accessories boutique', '45 Rue du Commerce', 'Lyon', 'Auvergne-Rhône-Alpes', '+33 4 56 78 90 12', 'lyon@sholaghar.com', 45.7640, 4.8357, 'https://maps.google.com/?q=Shola+Ghar+Lyon', 2),
-('Shola Ghar Marseille', 'shola-ghar-marseille', 'Mediterranean wedding specialists', '78 Canebière', 'Marseille', 'Provence-Alpes-Côte d\'Azur', '+33 4 91 23 45 67', 'marseille@sholaghar.com', 43.2965, 5.3698, 'https://maps.google.com/?q=Shola+Ghar+Marseille', 3),
-('Shola Ghar Bordeaux', 'shola-ghar-bordeaux', 'Elegant bridal collections', '12 Rue Sainte-Catherine', 'Bordeaux', 'Nouvelle-Aquitaine', '+33 5 67 89 01 23', 'bordeaux@sholaghar.com', 44.8378, -0.5792, 'https://maps.google.com/?q=Shola+Ghar+Bordeaux', 4),
-('Shola Ghar Lille', 'shola-ghar-lille', 'Northern France boutique', '56 Rue de Béthune', 'Lille', 'Hauts-de-France', '+33 3 20 12 34 56', 'lille@sholaghar.com', 50.6292, 3.0573, 'https://maps.google.com/?q=Shola+Ghar+Lille', 5);
+('WeddingYour Kolkata', 'weddingyour-kolkata', 'Flagship store in the heart of Kolkata', '123 Park Street', 'Kolkata', 'West Bengal', '+91 33 1234 5678', 'kolkata@weddingyour.com', 22.5726, 88.3639, 'https://maps.google.com/?q=WeddingYour+Kolkata', 1),
+('WeddingYour Delhi', 'weddingyour-delhi', 'Premium wedding accessories boutique', '45 Connaught Place', 'Delhi', 'Delhi', '+91 11 2345 6789', 'delhi@weddingyour.com', 28.6139, 77.2090, 'https://maps.google.com/?q=WeddingYour+Delhi', 2),
+('WeddingYour Mumbai', 'weddingyour-mumbai', 'Mumbai wedding specialists', '78 Linking Road', 'Mumbai', 'Maharashtra', '+91 22 3456 7890', 'mumbai@weddingyour.com', 19.0760, 72.8777, 'https://maps.google.com/?q=WeddingYour+Mumbai', 3),
+('WeddingYour Bangalore', 'weddingyour-bangalore', 'Elegant bridal collections', '12 MG Road', 'Bangalore', 'Karnataka', '+91 80 4567 8901', 'bangalore@weddingyour.com', 12.9716, 77.5946, 'https://maps.google.com/?q=WeddingYour+Bangalore', 4),
+('WeddingYour Hyderabad', 'weddingyour-hyderabad', 'South India boutique', '56 Banjara Hills', 'Hyderabad', 'Telangana', '+91 40 5678 9012', 'hyderabad@weddingyour.com', 17.3850, 78.4867, 'https://maps.google.com/?q=WeddingYour+Hyderabad', 5);
 
 -- Homepage sections config
 INSERT IGNORE INTO `sg_homepage_sections` (`section_key`, `title`, `subtitle`, `type`, `sort_order`, `is_active`) VALUES

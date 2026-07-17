@@ -19,9 +19,9 @@ class HomeController extends Controller
     public function index(Request $request, Response $response): string
     {
         $this->setMeta(
-            'Premium Wedding Mukut, Topor & Wedding Accessories',
-            'India\'s leading designer for premium handmade Sholapith wedding items and bridal accessories.',
-            'shola ghar, wedding mukut, topor, sholapith, wedding accessories'
+            'BengaliWedding - Premium Bengali Wedding Mukut, Topor & Wedding Accessories',
+            'India\'s leading Bengali wedding marketplace for premium handmade Topor, Mukut, bridal accessories, and traditional Bengali wedding items.',
+            'BengaliWedding, Bengali Wedding, Bengali Wedding Planner, Bengali Wedding Photography, Bengali Wedding Dresses, topor, mukut, sholapith, Bengali bride, Bengali groom'
         );
 
         $categories = Category::getActiveWithProductCount();

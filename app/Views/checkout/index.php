@@ -44,7 +44,7 @@
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Phone</label>
-                            <input type="tel" name="billing_phone" value="<?= $defaultAddress['phone'] ?? '' ?>" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-gray-900 focus:border-transparent outline-none" required>
+                            <input type="tel" name="billing_phone" value="<?= $defaultAddress['phone'] ?? ($user['phone'] ?? '') ?>" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-gray-900 focus:border-transparent outline-none" required>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">ZIP Code</label>

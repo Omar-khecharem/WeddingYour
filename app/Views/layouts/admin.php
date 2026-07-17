@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= e($metaTitle ?? 'Admin - ' . \App\Models\Setting::get('site_name', 'Shola Ghar')) ?></title>
+    <title><?= e($metaTitle ?? 'Admin - ' . \App\Models\Setting::get('site_name', 'WeddingYour')) ?></title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        'primary-red': '#b30d1b',
+                        'primary-red': '#E63946',
                         'accent-orange': '#e65100',
                     }
                 }
@@ -75,12 +75,14 @@
                     ['url' => url('admin/coupons'), 'label' => 'Coupons', 'icon' => 'fa-tag'],
                     ['url' => url('admin/pages'), 'label' => 'Pages', 'icon' => 'fa-file-lines'],
                     ['url' => url('admin/blog'), 'label' => 'Blog', 'icon' => 'fa-newspaper'],
+                    ['url' => url('admin/contacts'), 'label' => 'Contact Messages', 'icon' => 'fa-envelope'],
 
                     ['url' => url('admin/banners'), 'label' => 'Banners', 'icon' => 'fa-images'],
                     ['url' => url('admin/deals'), 'label' => 'Best Deals', 'icon' => 'fa-percent'],
                     ['url' => url('admin/category-cards'), 'label' => 'Section Cards', 'icon' => 'fa-layer-group'],
                     ['url' => url('admin/gallery'), 'label' => 'Gallery', 'icon' => 'fa-camera'],
                     ['url' => url('admin/outlets'), 'label' => 'Outlets', 'icon' => 'fa-store'],
+                    ['url' => url('admin/homepage'), 'label' => 'Homepage', 'icon' => 'fa-house-chimney'],
                 ];
                 ?>
                 <div class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider px-3 py-2">Management</div>

@@ -15,7 +15,7 @@ class CompareController extends Controller
         $products = Compare::getList($userId, $sessionId);
         $count = Compare::getCount($userId, $sessionId);
 
-        $this->setMeta('Compare Products - Shola Ghar', 'Compare your favorite products side by side.');
+        $this->setMeta('Compare Products - BengaliWedding', 'Compare your favorite Bengali wedding products side by side.');
         $this->setBreadcrumb([
             ['label' => 'Home', 'url' => url('/')],
             ['label' => 'Comparer'],
@@ -36,6 +36,7 @@ class CompareController extends Controller
         $sessionId = $this->getSessionId();
         $result = Compare::toggle($userId, $sessionId, $productId);
 
+        \App\Helpers\Session::set('compare.count', $result['count']);
         $this->json(['success' => true, 'action' => $result['action'], 'count' => $result['count']]);
     }
 
@@ -44,6 +45,22 @@ class CompareController extends Controller
         $userId = $this->getUserId();
         $sessionId = $this->getSessionId();
         $this->json(['count' => Compare::getCount($userId, $sessionId)]);
+    }
+
+    public function ids(Request $request, Response $response): void
+    {
+        $userId = $this->getUserId();
+        $sessionId = $this->getSessionId();
+        $pdo = \App\Core\Database::getInstance()->getConnection();
+        if ($userId) {
+            $stmt = $pdo->prepare("SELECT product_id FROM sg_compare WHERE user_id = :u");
+            $stmt->execute([':u' => $userId]);
+        } else {
+            $stmt = $pdo->prepare("SELECT product_id FROM sg_compare WHERE session_id = :s");
+            $stmt->execute([':s' => $sessionId]);
+        }
+        $ids = $stmt->fetchAll(\PDO::FETCH_COLUMN);
+        $this->json(['success' => true, 'ids' => array_map('intval', $ids), 'count' => count($ids)]);
     }
 
     public function clear(Request $request, Response $response): void

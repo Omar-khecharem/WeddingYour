@@ -108,6 +108,7 @@ class ProductController extends BaseAdminController
     {
         $data = [
             'category_id' => (int)$request->input('category_id'),
+            'subcategory_id' => $request->input('subcategory_id') ? (int)$request->input('subcategory_id') : null,
             'name' => Security::sanitize($request->input('name', '')),
             'slug' => slugify($request->input('name', '')),
             'short_description' => Security::sanitize($request->input('short_description', '')),
@@ -170,6 +171,7 @@ class ProductController extends BaseAdminController
 
         $data = [
             'category_id' => (int)$request->input('category_id'),
+            'subcategory_id' => $request->input('subcategory_id') ? (int)$request->input('subcategory_id') : null,
             'name' => Security::sanitize($request->input('name', '')),
             'slug' => slugify($request->input('slug', $request->input('name', ''))),
             'short_description' => Security::sanitize($request->input('short_description', '')),

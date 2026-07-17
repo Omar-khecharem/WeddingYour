@@ -94,7 +94,7 @@ $greeting = date('H') < 12 ? 'Good morning' : (date('H') < 18 ? 'Good afternoon'
             $actions = [
                 ['url' => url('admin/products/create'), 'icon' => 'fa-plus', 'icBg' => 'bg-emerald-100', 'icColor' => 'text-emerald-600', 'title' => 'Add Product', 'desc' => 'New catalog item'],
                 ['url' => url('admin/orders'), 'icon' => 'fa-truck', 'icBg' => 'bg-blue-100', 'icColor' => 'text-blue-600', 'title' => 'View Orders', 'desc' => 'Manage transactions'],
-                ['url' => url('admin/coupons/create'), 'icon' => 'fa-tag', 'icBg' => 'bg-amber-100', 'icColor' => 'text-amber-600', 'title' => 'Create Coupon', 'desc' => 'New promotion'],
+                ['url' => url('admin/coupons?action=create'), 'icon' => 'fa-tag', 'icBg' => 'bg-amber-100', 'icColor' => 'text-amber-600', 'title' => 'Create Coupon', 'desc' => 'New promotion'],
                 ['url' => url('admin/banners'), 'icon' => 'fa-images', 'icBg' => 'bg-violet-100', 'icColor' => 'text-violet-600', 'title' => 'Manage Banners', 'desc' => 'Homepage slides'],
                 ['url' => url('admin/settings'), 'icon' => 'fa-gear', 'icBg' => 'bg-gray-200', 'icColor' => 'text-gray-600', 'title' => 'Settings', 'desc' => 'Site configuration'],
             ];

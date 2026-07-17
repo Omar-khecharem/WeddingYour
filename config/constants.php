@@ -1,24 +1,30 @@
 <?php
-/**
- * Application Constants
- * 
- * Path constants and global definitions used throughout the application.
- */
 
-// Directory separator shorthand
 define('DS', DIRECTORY_SEPARATOR);
 
-// Root paths
+// ROOT_DIR is always the directory above config/
 define('ROOT_DIR', dirname(__DIR__));
+
+// Detect public directory:
+// 1. public_html/ (Hostinger with subdirectory)
+// 2. public/ (local dev)
+// 3. ROOT_DIR itself (deploy/ IS the web root)
+define('PUBLIC_DIR', is_dir(ROOT_DIR . DS . 'public_html')
+    ? ROOT_DIR . DS . 'public_html'
+    : (is_dir(ROOT_DIR . DS . 'public')
+        ? ROOT_DIR . DS . 'public'
+        : ROOT_DIR
+    )
+);
+
 define('APP_DIR', ROOT_DIR . DS . 'app');
 define('CONFIG_DIR', ROOT_DIR . DS . 'config');
-define('PUBLIC_DIR', ROOT_DIR . DS . 'public');
 define('ROUTES_DIR', ROOT_DIR . DS . 'routes');
 define('DATABASE_DIR', ROOT_DIR . DS . 'database');
 define('LOGS_DIR', ROOT_DIR . DS . 'logs');
 define('CACHE_DIR', ROOT_DIR . DS . 'cache');
+define('STORAGE_DIR', ROOT_DIR . DS . 'storage');
 
-// App subdirectories
 define('CORE_DIR', APP_DIR . DS . 'Core');
 define('CONTROLLERS_DIR', APP_DIR . DS . 'Controllers');
 define('MODELS_DIR', APP_DIR . DS . 'Models');
@@ -29,7 +35,7 @@ define('SERVICES_DIR', APP_DIR . DS . 'Services');
 define('MIDDLEWARE_DIR', APP_DIR . DS . 'Middleware');
 define('TRAITS_DIR', APP_DIR . DS . 'Traits');
 
-// Public asset paths
+// Public asset paths (relative to web root)
 define('ASSETS_URL', 'assets');
 define('CSS_URL', ASSETS_URL . '/css');
 define('JS_URL', ASSETS_URL . '/js');
@@ -49,7 +55,6 @@ define('PRODUCT_IMAGES_DIR', UPLOADS_DIR . DS . 'products');
 define('CATEGORY_IMAGES_DIR', UPLOADS_DIR . DS . 'categories');
 define('REVIEW_IMAGES_DIR', UPLOADS_DIR . DS . 'reviews');
 
-// Cache paths
 define('VIEW_CACHE_DIR', CACHE_DIR . DS . 'views');
 define('DATA_CACHE_DIR', CACHE_DIR . DS . 'data');
 

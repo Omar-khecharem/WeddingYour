@@ -219,6 +219,7 @@ class AccountController extends Controller
 
         if (!$user) {
             $this->json(['success' => false, 'message' => 'Please login to add items to wishlist.']);
+            return;
         }
 
         $result = Wishlist::toggle($user['id'], $productId);
@@ -237,7 +238,7 @@ class AccountController extends Controller
         $ids = [];
         if ($user) {
             $pdo = \App\Core\Database::getInstance()->getConnection();
-            $stmt = $pdo->prepare("SELECT product_id FROM sg_wishlists WHERE user_id = :uid");
+            $stmt = $pdo->prepare("SELECT product_id FROM sg_wishlist WHERE user_id = :uid");
             $stmt->execute([':uid' => $user['id']]);
             $ids = $stmt->fetchAll(\PDO::FETCH_COLUMN);
             $ids = array_map('intval', $ids);

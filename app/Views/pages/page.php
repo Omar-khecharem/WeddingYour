@@ -1,11 +1,11 @@
 <div class="max-w-5xl mx-auto px-4 py-12">
-    <nav class="flex items-center text-xs sm:text-sm text-gray-500 mb-6 space-x-2">
-        <a href="<?= url('') ?>" class="hover:text-red-600">Home</a>
+    <nav class="flex items-center text-xs sm:text-sm text-premium-taupe mb-6 space-x-2">
+        <a href="<?= url('') ?>" class="hover:text-premium-burgundy transition-colors">Home</a>
         <span>/</span>
-        <span class="text-gray-800 font-medium"><?= e($page['title'] ?? '') ?></span>
+        <span class="text-premium-charcoal font-medium"><?= e($page['title'] ?? '') ?></span>
     </nav>
-    <h1 class="text-3xl font-black text-gray-900 mb-6"><?= e($page['title'] ?? '') ?></h1>
-    <div class="prose prose-gray max-w-none">
-        <?= $page['content'] ?? '<p class="text-gray-400">No content.</p>' ?>
+    <h1 class="heading-serif text-4xl sm:text-5xl text-premium-charcoal mb-6"><?= e($page['title'] ?? '') ?></h1>
+    <div class="prose prose-gray max-w-none text-premium-mink">
+        <?= $page['content'] ?? '<p class="text-premium-taupe">No content.</p>' ?>
     </div>
 </div>

@@ -54,9 +54,9 @@ Router::post('/cart/coupon', [CartController::class, 'applyCoupon'])->name('cart
 Router::post('/cart/coupon/remove', [CartController::class, 'removeCoupon'])->name('cart.coupon.remove');
 Router::get('/cart/count', [CartController::class, 'getCount'])->name('cart.count');
 
-// ---- Checkout ----
-Router::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
-Router::post('/checkout/place-order', [CheckoutController::class, 'placeOrder'])->name('checkout.place');
+// ---- Checkout (login required) ----
+Router::get('/checkout', [CheckoutController::class, 'index'])->name('checkout')->middleware([AuthMiddleware::class]);
+Router::post('/checkout/place-order', [CheckoutController::class, 'placeOrder'])->name('checkout.place')->middleware([AuthMiddleware::class]);
 Router::get('/order/confirmation/{order_number}', [CheckoutController::class, 'confirmation'])->name('order.confirmation');
 
 // ---- Account (protected) ----
@@ -70,8 +70,7 @@ Router::group('/account', ['middleware' => [AuthMiddleware::class]], function ()
     Router::get('/orders/{id}', [AccountController::class, 'orderDetail'])->name('account.order');
     Router::post('/orders/cancel', [AccountController::class, 'cancelOrder'])->name('account.order.cancel');
     Router::get('/wishlist', [AccountController::class, 'wishlist'])->name('account.wishlist');
-    Router::get('/wishlist/ids', [AccountController::class, 'wishlistIds'])->name('account.wishlist.ids');
-    Router::post('/wishlist/add', [AccountController::class, 'addWishlist'])->name('account.wishlist.add');
+
     Router::get('/addresses', [AccountController::class, 'addresses'])->name('account.addresses');
     Router::post('/addresses', [AccountController::class, 'saveAddress'])->name('account.addresses.save');
     Router::post('/addresses/delete', [AccountController::class, 'deleteAddress'])->name('account.addresses.delete');
@@ -79,10 +78,15 @@ Router::group('/account', ['middleware' => [AuthMiddleware::class]], function ()
     Router::get('/orders/{id}/invoice', [AccountController::class, 'downloadInvoice'])->name('account.order.invoice');
 });
 
+// ---- Wishlist AJAX (guest-accessible, controller handles auth) ----
+Router::get('/wishlist/ids', [AccountController::class, 'wishlistIds'])->name('account.wishlist.ids');
+Router::post('/wishlist/add', [AccountController::class, 'addWishlist'])->name('account.wishlist.add');
+
 // ---- Compare ----
 Router::get('/compare', [CompareController::class, 'index'])->name('compare');
 Router::post('/compare/toggle', [CompareController::class, 'toggle'])->name('compare.toggle');
 Router::get('/compare/count', [CompareController::class, 'count'])->name('compare.count');
+Router::get('/compare/ids', [CompareController::class, 'ids'])->name('compare.ids');
 Router::match(['GET', 'POST'], '/compare/clear', function () {
     $pdo = \App\Core\Database::getInstance()->getConnection();
     $userId = \App\Helpers\Session::get('user.id');
@@ -214,6 +218,28 @@ Router::get('/category/{slug}', function ($params) {
     return $controller->index($request, $response);
 })->name('category');
 
+Router::get('/privacy-policy', function () {
+    $pdo = \App\Core\Database::getInstance()->getConnection();
+    $stmt = $pdo->prepare("SELECT * FROM sg_pages WHERE slug = :s AND status = 1 LIMIT 1");
+    $stmt->execute([':s' => 'privacy-policy']);
+    $page = $stmt->fetch();
+    if ($page) {
+        return \App\Core\View::render('pages.page', ['page' => $page]);
+    }
+    return \App\Core\View::render('pages.privacy-policy');
+})->name('privacy-policy');
+
+Router::get('/terms-of-use', function () {
+    $pdo = \App\Core\Database::getInstance()->getConnection();
+    $stmt = $pdo->prepare("SELECT * FROM sg_pages WHERE slug = :s AND status = 1 LIMIT 1");
+    $stmt->execute([':s' => 'terms-of-use']);
+    $page = $stmt->fetch();
+    if ($page) {
+        return \App\Core\View::render('pages.page', ['page' => $page]);
+    }
+    return \App\Core\View::render('pages.terms-of-use');
+})->name('terms-of-use');
+
 Router::get('/page/{slug}', function ($params) {
     $pdo = \App\Core\Database::getInstance()->getConnection();
     $stmt = $pdo->prepare("SELECT * FROM sg_pages WHERE slug = :slug AND status = 1 LIMIT 1");
@@ -256,7 +282,7 @@ Router::post('/newsletter/subscribe', function (\App\Core\Request $request) {
 
     $pdo = \App\Core\Database::getInstance()->getConnection();
     try {
-        $stmt = $pdo->prepare("INSERT IGNORE INTO sg_newsletter_subscribers (email) VALUES (:email)");
+        $stmt = $pdo->prepare("INSERT IGNORE INTO sg_newsletter (email) VALUES (:email)");
         $stmt->execute([':email' => $email]);
         header('Content-Type: application/json');
         echo json_encode(['success' => true, 'message' => 'Thank you for subscribing!']);

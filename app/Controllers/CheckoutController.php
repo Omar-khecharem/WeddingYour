@@ -56,12 +56,23 @@ class CheckoutController extends Controller
         ]);
 
         $user = $this->viewData['authUser'];
+
+        // Load default address for logged-in users
+        $defaultAddress = [];
+        if ($user) {
+            $pdo = Database::getInstance()->getConnection();
+            $stmt = $pdo->prepare("SELECT * FROM sg_addresses WHERE user_id = :uid AND is_default = 1 LIMIT 1");
+            $stmt->execute([':uid' => $user['id']]);
+            $defaultAddress = $stmt->fetch() ?: [];
+        }
+
         $paymentMethods = $this->paymentService->getPaymentMethods();
         $shippingMethods = $this->getShippingMethods();
 
         return $this->view('checkout.index', [
             'cart' => $cart,
             'user' => $user,
+            'defaultAddress' => $defaultAddress,
             'paymentMethods' => $paymentMethods,
             'shippingMethods' => $shippingMethods,
         ]);
@@ -169,10 +180,11 @@ class CheckoutController extends Controller
                 $this->paymentService->processCOD($result['order_id']);
             }
 
-            // Set WhatsApp order link in session
+            // Set WhatsApp order link in session (from admin settings)
             $orderNumber = $result['order_number'];
-            $waMessage = "New order: {$orderNumber} - Total: " . APP_CURRENCY . ' ' . number_format($cart['total'], 2);
-            $waLink = "https://wa.me/" . WHATSAPP_NUMBER . "?text=" . urlencode($waMessage);
+            $waNumber = \App\Models\Setting::get('whatsapp_number', WHATSAPP_NUMBER);
+            $waMessage = "🛒 *New Order #{$orderNumber}*\n💵 Total: " . APP_CURRENCY . ' ' . number_format($cart['total'], 2) . "\n👤 Customer: " . $billing['name'] . "\n📞 Phone: " . $billing['phone'] . "\n📍 Address: " . $billing['address'] . ", " . $billing['city'] . ", " . $billing['state'] . " - " . $billing['pincode'];
+            $waLink = "https://wa.me/" . $waNumber . "?text=" . urlencode($waMessage);
             Session::set('whatsapp_order_link', $waLink);
 
             // Send confirmation email

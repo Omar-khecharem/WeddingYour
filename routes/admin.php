@@ -14,6 +14,8 @@ use App\Controllers\Admin\SubcategoryController;
 use App\Controllers\Admin\CouponController;
 use App\Controllers\Admin\PageController;
 use App\Controllers\Admin\BlogController;
+use App\Controllers\Admin\ContactController;
+use App\Controllers\Admin\HomePageController;
 use App\Middleware\AdminMiddleware;
 
 Router::group('/admin', ['middleware' => [AdminMiddleware::class]], function () {
@@ -145,12 +147,17 @@ Router::group('/admin', ['middleware' => [AdminMiddleware::class]], function () 
         $id = (int)$params['id'];
         $name = $_POST['name'] ?? '';
         $email = $_POST['email'] ?? '';
-        $role = $_POST['role'] ?? 'customer';
+        $roleSlug = $_POST['role'] ?? 'user';
         $status = (int)($_POST['status'] ?? 1);
         $phone = $_POST['phone'] ?? '';
 
-        $stmt = $pdo->prepare("UPDATE sg_users SET name = :n, email = :e, role = :r, status = :s, phone = :p WHERE id = :id");
-        $stmt->execute([':n' => $name, ':e' => $email, ':r' => $role, ':s' => $status, ':p' => $phone, ':id' => $id]);
+        $roleStmt = $pdo->prepare("SELECT id FROM sg_roles WHERE slug = :slug LIMIT 1");
+        $roleStmt->execute([':slug' => $roleSlug]);
+        $roleRow = $roleStmt->fetch();
+        $roleId = $roleRow ? (int)$roleRow['id'] : null;
+
+        $stmt = $pdo->prepare("UPDATE sg_users SET name = :n, email = :e, role_id = :r, status = :s, phone = :p WHERE id = :id");
+        $stmt->execute([':n' => $name, ':e' => $email, ':r' => $roleId, ':s' => $status, ':p' => $phone, ':id' => $id]);
 
         if (!empty($_POST['password'])) {
             $hashed = password_hash($_POST['password'], PASSWORD_DEFAULT);
@@ -212,6 +219,12 @@ Router::group('/admin', ['middleware' => [AdminMiddleware::class]], function () 
     Router::get('/settings', [SettingController::class, 'index'])->name('admin.settings');
     Router::post('/settings', [SettingController::class, 'update'])->name('admin.settings.update');
 
+    // Homepage
+    Router::get('/homepage', [HomePageController::class, 'index'])->name('admin.homepage');
+    Router::post('/homepage/toggle-featured', [HomePageController::class, 'toggleFeatured'])->name('admin.homepage.toggle-featured');
+    Router::post('/homepage/toggle-trending', [HomePageController::class, 'toggleTrending'])->name('admin.homepage.toggle-trending');
+    Router::post('/homepage/settings', [HomePageController::class, 'saveSettings'])->name('admin.homepage.settings');
+
     // Banners
     Router::get('/banners', [BannerController::class, 'index'])->name('admin.banners');
     Router::get('/banners/create', [BannerController::class, 'create'])->name('admin.banners.create');
@@ -251,6 +264,16 @@ Router::group('/admin', ['middleware' => [AdminMiddleware::class]], function () 
 
     // Subcategories (with image support)
     Router::get('/subcategories', [SubcategoryController::class, 'index'])->name('admin.subcategories');
+    Router::get('/subcategories/by-category', function () {
+        $categoryId = (int)($_GET['category_id'] ?? 0);
+        $pdo = \App\Core\Database::getInstance()->getConnection();
+        $stmt = $pdo->prepare("SELECT id, name, slug FROM sg_subcategories WHERE category_id = :cid AND status = 1 ORDER BY sort_order, name");
+        $stmt->execute([':cid' => $categoryId]);
+        $subcategories = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        header('Content-Type: application/json');
+        echo json_encode(['success' => true, 'subcategories' => $subcategories]);
+        exit;
+    })->name('admin.subcategories.by-category');
     Router::get('/subcategories/create/{category_id}', [SubcategoryController::class, 'create'])->name('admin.subcategories.create');
     Router::post('/subcategories', [SubcategoryController::class, 'store'])->name('admin.subcategories.store');
     Router::get('/subcategories/edit/{id}', [SubcategoryController::class, 'edit'])->name('admin.subcategories.edit');
@@ -278,4 +301,10 @@ Router::group('/admin', ['middleware' => [AdminMiddleware::class]], function () 
     Router::get('/blog/edit/{id}', [BlogController::class, 'edit'])->name('admin.blog.edit');
     Router::post('/blog/update/{id}', [BlogController::class, 'update'])->name('admin.blog.update');
     Router::post('/blog/delete', [BlogController::class, 'destroy'])->name('admin.blog.delete');
+
+    // Contact Messages
+    Router::get('/contacts', [ContactController::class, 'index'])->name('admin.contacts');
+    Router::get('/contacts/{id}', [ContactController::class, 'show'])->name('admin.contacts.show');
+    Router::post('/contacts/{id}/reply', [ContactController::class, 'reply'])->name('admin.contacts.reply');
+    Router::post('/contacts/delete', [ContactController::class, 'destroy'])->name('admin.contacts.delete');
 });

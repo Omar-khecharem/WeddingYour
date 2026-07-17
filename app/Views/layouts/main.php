@@ -62,6 +62,9 @@ $footerData = [
     'contactPhone' => $contactPhone ?? CONTACT_PHONE,
     'contactAddress' => $contactAddress ?? CONTACT_ADDRESS,
     'whatsappLink' => $whatsappLink ?? WHATSAPP_LINK,
+    'facebookUrl' => $facebookUrl ?? SOCIAL_FACEBOOK,
+    'instagramUrl' => $instagramUrl ?? SOCIAL_INSTAGRAM,
+    'youtubeUrl' => $youtubeUrl ?? SOCIAL_YOUTUBE,
     'currentYear' => $currentYear ?? date('Y'),
 ];
 echo \App\Core\View::include('layouts.footer', $footerData);

@@ -2,9 +2,12 @@
 $groupLabels = [
     'general' => ['General', 'Store information and branding', 'fa-globe'],
     'social' => ['Social Media', 'Facebook, Instagram, YouTube, Maps links', 'fa-share-nodes'],
+    'contact' => ['Contact', 'Contact information and address', 'fa-address-book'],
     'shipping' => ['Shipping', 'Shipping settings', 'fa-truck'],
+    'tax' => ['Tax', 'Tax rate and name settings', 'fa-percent'],
+    'seo' => ['SEO', 'Meta tags and keywords for SEO', 'fa-magnifying-glass'],
 ];
-unset($groups['tax'], $groups['seo'], $groups['homepage']);
+// unset($groups['tax'], $groups['seo'], $groups['homepage']);
 ?>
 <div class="flex items-center justify-between mb-6">
     <div>

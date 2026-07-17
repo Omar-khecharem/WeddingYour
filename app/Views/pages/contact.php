@@ -6,15 +6,15 @@
       <div class="space-y-4">
         <div class="flex items-start gap-3">
           <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0"><i class="fa-solid fa-envelope text-red-600"></i></div>
-          <div><p class="font-semibold text-gray-900">Email</p><p class="text-sm text-gray-500"><?= e(CONTACT_EMAIL ?? 'support@sholaghar.com') ?></p></div>
+          <div><p class="font-semibold text-gray-900">Email</p><p class="text-sm text-gray-500"><?= e(\App\Models\Setting::get('contact_email', CONTACT_EMAIL)) ?></p></div>
         </div>
         <div class="flex items-start gap-3">
           <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0"><i class="fa-solid fa-phone text-red-600"></i></div>
-          <div><p class="font-semibold text-gray-900">Phone</p><p class="text-sm text-gray-500"><?= e(CONTACT_PHONE ?? '+91 1234567890') ?></p></div>
+          <div><p class="font-semibold text-gray-900">Phone</p><p class="text-sm text-gray-500"><?= e(\App\Models\Setting::get('contact_phone', CONTACT_PHONE)) ?></p></div>
         </div>
         <div class="flex items-start gap-3">
           <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0"><i class="fa-solid fa-location-dot text-red-600"></i></div>
-          <div><p class="font-semibold text-gray-900">Address</p><p class="text-sm text-gray-500"><?= e(CONTACT_ADDRESS ?? 'Kolkata, West Bengal, India') ?></p></div>
+          <div><p class="font-semibold text-gray-900">Address</p><p class="text-sm text-gray-500"><?= e(\App\Models\Setting::get('contact_address', CONTACT_ADDRESS)) ?></p></div>
         </div>
       </div>
     </div>
