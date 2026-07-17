@@ -1,0 +1,62 @@
+# ──────────────────────────────────────────────
+#  WeddingYour — .gitignore
+# ──────────────────────────────────────────────
+
+# ── OS files ──
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*.swo
+*~
+
+# ── IDE / Editor ──
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+.netbeans/
+nbproject/
+
+# ── PHP ──
+*.log
+*.cache
+
+# ── Application runtime ──
+/storage/sessions/*
+!/storage/sessions/.gitkeep
+/cache/views/*
+!/cache/views/.gitkeep
+/cache/data/*
+!/cache/data/.gitkeep
+/logs/*
+!/logs/.gitkeep
+/invoices/*
+!/invoices/.gitkeep
+
+# ── Uploaded files (user content, not committed) ──
+/public/uploads/*
+!/public/uploads/.gitkeep
+
+# ── Composer ──
+/vendor/
+composer.lock
+
+# ── Node (if ever used) ──
+node_modules/
+package-lock.json
+yarn.lock
+
+# ── Environment ──
+.env
+.env.local
+.env.production
+
+# ── Temp / generated ──
+tmp/
+temp/
+*.tmp
+php_errorlog
+_*.php
+_check*
+_fix*
