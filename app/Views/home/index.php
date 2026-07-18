@@ -10,7 +10,6 @@ $categoryCards = $categoryCards ?? [];
 $categoryCardProducts = $categoryCardProducts ?? [];
 $defaultCardFallback = $defaultCardFallback ?? [];
 $galleryItems = $galleryItems ?? [];
-$outlets = $outlets ?? [];
 $whatsappNumber = $whatsappNumber ?? '+919830136355';
 $videoShowcaseBg = $videoShowcaseBg ?? '';
 ?>
@@ -48,9 +47,12 @@ $videoShowcaseBg = $videoShowcaseBg ?? '';
     <!-- ============================================================ -->
     <?php
       $heroLeftBanners = array_filter($banners, fn($b) => ($b['position'] ?? '') === 'hero_left');
-      $heroRightBanners = array_filter($banners, fn($b) => ($b['position'] ?? '') === 'hero_right');
+      $heroRightBanners = array_values(array_filter($banners, fn($b) => ($b['position'] ?? '') === 'hero_right'));
       $heroVideo = $heroLeftBanners ? current($heroLeftBanners) : null;
       $videoUrl = $heroVideo['video'] ?? $heroVideo['image'] ?? '';
+      $heroTitle = $heroVideo['title'] ?? 'Where Heritage Meets<br><span class="text-premium-champagne">Elegance</span>';
+      $heroDesc = $heroVideo['description'] ?? 'Discover handcrafted Bengali wedding treasures, made by master artisans.';
+      $heroLink = $heroVideo['link'] ?? url('products');
     ?>
     <section class="grid grid-cols-1 lg:grid-cols-12 gap-0 lg:gap-6 mb-8">
       <!-- Main Feature -->
@@ -67,10 +69,10 @@ $videoShowcaseBg = $videoShowcaseBg ?? '';
         <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
         <div class="absolute bottom-0 left-0 right-0 p-6 sm:p-8 lg:p-10">
           <span class="inline-block bg-premium-champagne text-premium-charcoal text-[10px] sm:text-xs font-bold px-3 py-1 rounded-full uppercase tracking-widest mb-3">BengaliWedding Collection</span>
-          <h1 class="font-playfair text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold text-white leading-tight max-w-xl">Where Heritage Meets<br><span class="text-premium-champagne">Elegance</span></h1>
-          <p class="text-white/70 text-sm sm:text-base mt-3 max-w-md leading-relaxed">Discover handcrafted Bengali wedding treasures, made by master artisans.</p>
-          <a href="<?= url('products') ?>" class="inline-flex items-center gap-2 mt-5 bg-premium-champagne hover:bg-premium-gold text-premium-charcoal font-bold text-xs sm:text-sm px-6 sm:px-8 py-3 sm:py-3.5 rounded-full transition-all duration-300 hover:shadow-lg hover:shadow-premium-champagne/25">
-            Explore Collection
+          <h1 class="font-playfair text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold text-white leading-tight max-w-xl"><?= $heroTitle ?></h1>
+          <p class="text-white/70 text-sm sm:text-base mt-3 max-w-md leading-relaxed"><?= e($heroDesc) ?></p>
+          <a href="<?= e($heroLink) ?>" class="inline-flex items-center gap-2 mt-5 bg-premium-champagne hover:bg-premium-gold text-premium-charcoal font-bold text-xs sm:text-sm px-6 sm:px-8 py-3 sm:py-3.5 rounded-full transition-all duration-300 hover:shadow-lg hover:shadow-premium-champagne/25">
+            Shop Now
             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
           </a>
         </div>
@@ -78,8 +80,35 @@ $videoShowcaseBg = $videoShowcaseBg ?? '';
 
       <!-- Side panels -->
       <div class="lg:col-span-5 grid grid-cols-2 lg:grid-cols-1 gap-3 sm:gap-4 mt-3 lg:mt-0">
+        <?php if (!empty($heroRightBanners)): ?>
+        <?php foreach (array_slice($heroRightBanners, 0, 3) as $hb):
+          $hbTitle = $hb['title'] ?? 'Collection';
+          $hbDesc = $hb['description'] ?? '';
+          $hbLink = $hb['link'] ?? url('products');
+          $hbImg = $hb['image'] ?? '';
+          $bgColors = ['from-premium-burgundy','from-premium-navy','from-premium-emerald'];
+          $idx = min(array_search($hb, $heroRightBanners), 2);
+        ?>
+        <div class="relative overflow-hidden rounded-2xl min-h-[150px] sm:min-h-[180px] lg:min-h-[232px] p-5 sm:p-6 flex flex-col justify-center group <?= $hbImg ? '' : 'bg-gradient-to-br ' . ($bgColors[$idx] ?? 'from-premium-burgundy') . ' to-black/70' ?>">
+          <?php if ($hbImg): ?>
+          <img src="<?= uploadUrl($hbImg) ?>" alt="" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+          <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
+          <?php endif; ?>
+          <div class="absolute top-3 right-3 w-16 h-16 bg-white/5 rounded-full"></div>
+          <div class="relative z-10">
+            <p class="font-playfair text-white text-lg sm:text-xl font-bold leading-snug"><?= nl2br(e($hbTitle)) ?></p>
+            <?php if ($hbDesc): ?>
+            <p class="text-white/60 text-xs sm:text-sm mt-1"><?= e($hbDesc) ?></p>
+            <?php endif; ?>
+            <a href="<?= e($hbLink) ?>" class="mt-3 text-premium-champagne text-xs font-bold tracking-wider uppercase flex items-center gap-1.5 group-hover:gap-2.5 transition-all">
+              Shop Now <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
+            </a>
+          </div>
+        </div>
+        <?php endforeach; ?>
+        <?php else: ?>
         <!-- Panel 1 -->
-        <div class="relative overflow-hidden rounded-2xl bg-premium-burgundy min-h-[150px] sm:min-h-[180px] lg:min-h-[232px] p-5 sm:p-6 flex flex-col justify-center group">
+        <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-premium-burgundy to-black/70 min-h-[150px] sm:min-h-[180px] lg:min-h-[232px] p-5 sm:p-6 flex flex-col justify-center group">
           <div class="absolute top-3 right-3 w-16 h-16 bg-white/5 rounded-full"></div>
           <p class="font-playfair text-white text-lg sm:text-xl font-bold leading-snug">Bridal<br>Mukut & Crowns</p>
           <p class="text-white/60 text-xs sm:text-sm mt-1">Handcrafted elegance</p>
@@ -88,7 +117,7 @@ $videoShowcaseBg = $videoShowcaseBg ?? '';
           </a>
         </div>
         <!-- Panel 2 -->
-        <div class="relative overflow-hidden rounded-2xl bg-premium-navy min-h-[150px] sm:min-h-[180px] lg:min-h-[232px] p-5 sm:p-6 flex flex-col justify-center group">
+        <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-premium-navy to-black/70 min-h-[150px] sm:min-h-[180px] lg:min-h-[232px] p-5 sm:p-6 flex flex-col justify-center group">
           <p class="font-playfair text-white text-lg sm:text-xl font-bold leading-snug">Groom<br>Topor Sets</p>
           <p class="text-white/60 text-xs sm:text-sm mt-1">Traditional & modern</p>
           <a href="<?= url('products?category=groom') ?>" class="mt-3 text-premium-champagne text-xs font-bold tracking-wider uppercase flex items-center gap-1.5 group-hover:gap-2.5 transition-all">
@@ -96,13 +125,14 @@ $videoShowcaseBg = $videoShowcaseBg ?? '';
           </a>
         </div>
         <!-- Panel 3 -->
-        <div class="relative overflow-hidden rounded-2xl bg-premium-emerald min-h-[150px] sm:min-h-[180px] lg:min-h-[232px] p-5 sm:p-6 flex flex-col justify-center group">
+        <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-premium-emerald to-black/70 min-h-[150px] sm:min-h-[180px] lg:min-h-[232px] p-5 sm:p-6 flex flex-col justify-center group">
           <p class="font-playfair text-white text-lg sm:text-xl font-bold leading-snug">Baby<br>Topor & Accessories</p>
           <p class="text-white/60 text-xs sm:text-sm mt-1">Adorable wedding wear</p>
           <a href="<?= url('products?category=baby') ?>" class="mt-3 text-premium-champagne text-xs font-bold tracking-wider uppercase flex items-center gap-1.5 group-hover:gap-2.5 transition-all">
             Shop Baby <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
           </a>
         </div>
+        <?php endif; ?>
       </div>
     </section>
 
@@ -153,6 +183,7 @@ $videoShowcaseBg = $videoShowcaseBg ?? '';
           <div class="p-4">
             <p class="text-[10px] text-premium-taupe font-semibold uppercase tracking-wider"><?= e($pCat ?: 'Wedding') ?></p>
             <h3 class="text-sm font-bold text-premium-charcoal mt-0.5 leading-tight line-clamp-2 group-hover:text-premium-burgundy transition-colors"><?= e($pName) ?></h3>
+            <?= renderStars($rAvg) ?>
             <div class="flex items-center gap-2 mt-2">
               <span class="text-base font-bold text-premium-burgundy"><?= formatPrice($pSale ?: $pReg) ?></span>
               <?php if ($pDisc > 0): ?>
@@ -190,31 +221,6 @@ $videoShowcaseBg = $videoShowcaseBg ?? '';
       <div class="mt-8 text-center sm:hidden">
         <a href="<?= url('products') ?>" class="inline-flex items-center gap-2 bg-premium-burgundy text-white font-bold text-sm px-6 py-3 rounded-full transition-all hover:bg-premium-cabernet shadow-md">View All Products <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg></a>
       </div>
-    </section>
-
-    <!-- ============================================================ -->
-    <!-- PROMOTIONAL BANNER - Full Width Cinematic                    -->
-    <!-- ============================================================ -->
-    <section class="relative overflow-hidden rounded-2xl group my-6 sm:my-8">
-      <?php $promoBanner = current(array_filter($banners, fn($b)=>($b['position']??'')==='promotional')) ?: null; ?>
-      <a href="<?= e(($promoBanner['link'] ?? '#') ?: url('products?on_sale=1')) ?>" class="block relative min-h-[200px] sm:min-h-[280px] lg:min-h-[340px]">
-        <?php if ($promoBanner && !empty($promoBanner['image'])): ?>
-        <img src="<?= uploadUrl($promoBanner['image']) ?>" alt="Promotion" class="w-full h-full absolute inset-0 object-cover group-hover:scale-105 transition-transform duration-700">
-        <?php else: ?>
-        <div class="w-full h-full absolute inset-0 bg-gradient-to-r from-premium-burgundy via-premium-cabernet to-premium-cabernet"></div>
-        <div class="absolute inset-0 opacity-[0.03]" style="background-image: url('data:image/svg+xml,%3Csvg width=40 height=40 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Ccircle cx=20 cy=20 r=2 fill=white/%3E%3C/svg%3E');"></div>
-        <?php endif; ?>
-        <div class="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent"></div>
-        <div class="relative z-10 h-full flex flex-col justify-center px-6 sm:px-10 lg:px-16 py-8 sm:py-12">
-          <span class="inline-block bg-premium-champagne text-premium-charcoal text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest mb-3 w-fit">Limited Offer</span>
-          <h2 class="font-playfair text-2xl sm:text-3xl lg:text-5xl font-bold text-white leading-tight max-w-xl">Wedding Season<br><span class="text-premium-champagne">Special Deals</span></h2>
-          <p class="text-white/60 text-sm sm:text-base mt-2 max-w-md">Exclusive discounts on handcrafted wedding accessories.</p>
-          <span class="inline-flex items-center gap-2 mt-4 sm:mt-5 bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white font-bold text-xs sm:text-sm px-5 sm:px-7 py-2.5 sm:py-3 rounded-full border border-white/20 w-fit transition-all">
-            Shop Now
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
-          </span>
-        </div>
-      </a>
     </section>
 
     <!-- ============================================================ -->
@@ -291,11 +297,19 @@ $videoShowcaseBg = $videoShowcaseBg ?? '';
           <?php $pr = is_array($p) ? ($p['regular_price']??0) : ($p->regular_price??0); $psl = is_array($p) ? ($p['sale_price']??0) : ($p->sale_price??0); $pd = is_array($p) ? ($p['discount_percent']??0) : ($p->discount_percent??0); ?>
           <?php $pimg = is_array($p) ? ($p['image']??'') : ($p->image??''); $pSlug = is_array($p) ? ($p['slug']??'#') : ($p->slug??'#'); $pId = is_array($p) ? ($p['id']??0) : ($p->id??0); $rAvg = $homeRatings[$pId]['average'] ?? 0; $rTot = $homeRatings[$pId]['total'] ?? 0; ?>
           <div class="w-1/2 md:w-1/3 lg:w-1/5 xl:w-1/6 flex-shrink-0 px-2">
-          <div class="bg-white rounded-2xl overflow-hidden border border-premium-warm-gray group h-full">
+          <a href="<?= url('product/' . e($pSlug)) ?>" class="bg-white rounded-2xl overflow-hidden border border-premium-warm-gray hover:border-premium-champagne/40 hover:shadow-xl hover:shadow-premium-champagne/5 transition-all duration-400 group block h-full">
             <div class="relative aspect-[4/5] overflow-hidden bg-premium-cream">
               <?php if ($pd): ?>
               <span class="absolute top-2.5 left-2.5 bg-premium-burgundy text-white text-[10px] font-bold px-2.5 py-1 rounded-full z-10 shadow-md">-<?= (int)$pd ?>%</span>
               <?php endif; ?>
+              <div class="absolute top-2.5 right-2.5 z-10 flex flex-col gap-1.5 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-2 group-hover:translate-x-0">
+                <button data-wishlist="<?= $pId ?>" onclick="event.preventDefault();event.stopPropagation();toggleWishlist(<?= $pId ?>)" class="w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center text-premium-mink hover:text-premium-burgundy hover:shadow-lg transition-all" title="Wishlist">
+                  <svg class="w-4 h-4" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+                </button>
+                <button data-compare="<?= $pId ?>" onclick="event.preventDefault();event.stopPropagation();addToCompare(<?= $pId ?>)" class="w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center text-premium-mink hover:text-premium-champagne hover:shadow-lg transition-all" title="Compare">
+                  <svg class="w-4 h-4" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5"/></svg>
+                </button>
+              </div>
               <?php if ($pimg): ?>
               <img src="<?= e($pimg) ?>" alt="<?= e($pn) ?>" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy">
               <?php else: ?>
@@ -305,7 +319,7 @@ $videoShowcaseBg = $videoShowcaseBg ?? '';
             </div>
             <div class="p-3 space-y-1">
               <p class="text-[9px] text-premium-taupe font-semibold uppercase tracking-wider"><?= e($pc) ?></p>
-              <h4 class="text-xs font-bold text-premium-charcoal leading-tight line-clamp-2"><?= e($pn) ?></h4>
+              <h4 class="text-xs font-bold text-premium-charcoal leading-tight line-clamp-2 group-hover:text-premium-burgundy transition-colors"><?= e($pn) ?></h4>
               <?= renderStars($rAvg) ?>
               <div class="flex items-center gap-2">
                 <span class="text-sm font-bold text-premium-burgundy"><?= formatPrice($psl ?: $pr) ?></span>
@@ -313,8 +327,12 @@ $videoShowcaseBg = $videoShowcaseBg ?? '';
                 <span class="text-[10px] text-premium-taupe line-through"><?= formatPrice($pr) ?></span>
                 <?php endif; ?>
               </div>
+              <button onclick="event.preventDefault();event.stopPropagation();addToCart(<?= $pId ?>, 1)" class="w-full mt-2 bg-premium-charcoal hover:bg-premium-burgundy text-white text-xs font-bold py-2 rounded-xl transition-all duration-300 flex items-center justify-center gap-2">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"/></svg>
+                Add to Cart
+              </button>
             </div>
-          </div>
+          </a>
           </div>
           <?php endforeach; ?>
         </div>
@@ -370,37 +388,6 @@ $videoShowcaseBg = $videoShowcaseBg ?? '';
           <?php endif; ?>
         </div>
         <?php endforeach; ?>
-      </div>
-    </section>
-
-    <!-- ============================================================ -->
-    <!-- OUTLETS SECTION                                              -->
-    <!-- ============================================================ -->
-    <section class="py-8 sm:py-12 text-center">
-      <span class="text-premium-burgundy text-xs font-bold tracking-[0.2em] uppercase">Visit Us</span>
-      <h2 class="font-playfair text-2xl sm:text-3xl lg:text-4xl font-bold text-premium-charcoal mt-1 mb-8">Our Boutiques</h2>
-      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-5">
-        <?php if (!empty($outlets)): ?>
-        <?php foreach ($outlets as $o): $oName = is_array($o) ? ($o['name']??'') : ($o->name??''); $oImg = is_array($o) ? ($o['image']??'') : ($o->image??''); $oSlug = is_array($o) ? ($o['slug']??'') : ($o->slug??''); ?>
-        <a href="<?= url('outlets/' . e($oSlug)) ?>" class="group">
-          <div class="aspect-square rounded-2xl overflow-hidden border-2 border-premium-warm-gray group-hover:border-premium-champagne transition-all duration-300 shadow-md group-hover:shadow-xl">
-            <?php if ($oImg): ?>
-            <img src="<?= uploadUrl($oImg, 'outlets') ?>" alt="<?= e($oName) ?>" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
-            <?php else: ?>
-            <div class="w-full h-full bg-gradient-to-br from-premium-blush to-premium-cream flex items-center justify-center font-bold text-premium-champagne"><?= e(substr($oName,0,2)) ?></div>
-            <?php endif; ?>
-          </div>
-          <p class="text-sm font-bold text-premium-charcoal mt-2.5 group-hover:text-premium-burgundy transition-colors"><?= e($oName) ?></p>
-        </a>
-        <?php endforeach; ?>
-        <?php else: ?>
-        <?php for($i=0;$i<5;$i++): ?>
-        <div class="group">
-          <div class="aspect-square rounded-2xl overflow-hidden border-2 border-premium-warm-gray group-hover:border-premium-champagne transition-all shadow-md bg-gradient-to-br from-premium-blush to-premium-cream flex items-center justify-center font-bold text-premium-champagne">Store</div>
-          <p class="text-sm font-bold text-premium-charcoal mt-2.5">Our Boutique</p>
-        </div>
-        <?php endfor; ?>
-        <?php endif; ?>
       </div>
     </section>
 

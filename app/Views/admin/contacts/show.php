@@ -36,28 +36,7 @@ $message = $message ?? [];
             </div>
         </div>
 
-        <div class="bg-white rounded-xl border border-gray-200 p-6">
-            <h2 class="text-lg font-bold text-gray-800 mb-4">Send Reply</h2>
-            <form method="POST" action="<?= url('admin/contacts/' . e($message['id']) . '/reply') ?>">
-                <?= \App\Helpers\Security::csrfField() ?>
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Subject</label>
-                    <input type="text" name="subject" value="Re: <?= e($message['subject'] ?? 'Your Inquiry') ?>" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm text-gray-700 focus:ring-2 focus:ring-primary-red/20 focus:border-primary-red outline-none">
-                </div>
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Message <span class="text-red-500">*</span></label>
-                    <textarea name="reply" rows="8" placeholder="Type your reply here..." class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm text-gray-700 focus:ring-2 focus:ring-primary-red/20 focus:border-primary-red outline-none" required></textarea>
-                </div>
-                <div class="flex items-center gap-3">
-                    <button type="submit" class="bg-primary-red text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:opacity-90 transition-all inline-flex items-center gap-2">
-                        <i class="fa-solid fa-reply"></i> Send Reply
-                    </button>
-                    <a href="mailto:<?= e($message['email']) ?>" class="border border-gray-300 text-gray-600 px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-gray-50 transition-all inline-flex items-center gap-2">
-                        <i class="fa-solid fa-external-link-alt"></i> Open in Mail Client
-                    </a>
-                </div>
-            </form>
-        </div>
+        
     </div>
 
     <div class="space-y-6">

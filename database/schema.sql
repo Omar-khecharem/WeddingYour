@@ -928,28 +928,6 @@ CREATE TABLE `sg_deals` (
     INDEX `idx_deal_active` (`is_active`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE `sg_outlets` (
-    `id`          INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    `name`        VARCHAR(100) NOT NULL,
-    `slug`        VARCHAR(120) NOT NULL UNIQUE,
-    `description` TEXT         NULL,
-    `image`       VARCHAR(255) NULL,
-    `address`     VARCHAR(255) NULL,
-    `city`        VARCHAR(100) NULL,
-    `state`       VARCHAR(100) NULL,
-    `phone`       VARCHAR(20)  NULL,
-    `email`       VARCHAR(191) NULL,
-    `latitude`    DECIMAL(10,8) NULL,
-    `longitude`   DECIMAL(11,8) NULL,
-    `google_maps_link` VARCHAR(500) NULL,
-    `is_active`   TINYINT(1)   NOT NULL DEFAULT 1,
-    `sort_order`  INT          NOT NULL DEFAULT 0,
-    `created_at`  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `updated_at`  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    INDEX `idx_outlet_active` (`is_active`),
-    INDEX `idx_outlet_slug` (`slug`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
 CREATE TABLE `sg_homepage_sections` (
     `id`            INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     `section_key`   VARCHAR(50)  NOT NULL UNIQUE,

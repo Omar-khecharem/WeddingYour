@@ -58,7 +58,7 @@ class Alert extends Component
         foreach ($flashTypes as $type) {
             $message = \App\Helpers\Session::flash($type);
             if ($message) {
-                $alert = new self(['type' => $type, 'message' => $message, 'class' => 'fixed top-24 right-5 z-[9999] animate-slideInRight max-w-md']);
+                $alert = new self(['type' => $type, 'message' => $message, 'class' => 'fixed bottom-5 right-5 z-[9999] animate-slideInUp max-w-md']);
                 $html .= $alert->render();
             }
         }

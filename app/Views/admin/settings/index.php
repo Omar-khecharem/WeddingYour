@@ -6,6 +6,7 @@ $groupLabels = [
     'shipping' => ['Shipping', 'Shipping settings', 'fa-truck'],
     'tax' => ['Tax', 'Tax rate and name settings', 'fa-percent'],
     'seo' => ['SEO', 'Meta tags and keywords for SEO', 'fa-magnifying-glass'],
+    'logs' => ['Logs', 'Activity log cleanup settings', 'fa-list'],
 ];
 // unset($groups['tax'], $groups['seo'], $groups['homepage']);
 ?>

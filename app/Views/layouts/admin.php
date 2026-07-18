@@ -4,14 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= e($metaTitle ?? 'Admin - ' . \App\Models\Setting::get('site_name', 'WeddingYour')) ?></title>
+    <link rel="icon" type="image/png" href="<?= e(\App\Models\Setting::get('site_logo', asset('images/favicon.png'))) ?>">
+    <link rel="shortcut icon" href="<?= e(\App\Models\Setting::get('site_logo', asset('images/favicon.png'))) ?>">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        'primary-red': '#E63946',
-                        'accent-orange': '#e65100',
+                        'primary-red': '#B8845A',
+                        'accent-orange': '#9E6F46',
                     }
                 }
             }
@@ -31,7 +33,9 @@
         .sidebar-overlay { transition: opacity 0.3s ease; }
         .sidebar-panel { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes slideInUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         .animate-slideInRight { animation: slideInRight 0.3s ease-out; }
+        .animate-slideInUp { animation: slideInUp 0.3s ease-out; }
     </style>
 </head>
 <body class="bg-gray-50 font-sans antialiased">
@@ -42,11 +46,16 @@
         <aside x-cloak :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'" class="fixed lg:static inset-y-0 left-0 z-30 w-64 bg-white border-r border-gray-200 flex-shrink-0 overflow-y-auto sidebar-panel lg:translate-x-0">
             <div class="p-5 border-b border-gray-100">
                 <div class="flex items-center justify-between">
-                  
+                    <div class="flex items-center gap-3">
+                        <?php $adminLogo = \App\Models\Setting::get('site_logo', ''); if (empty($adminLogo) && file_exists(PUBLIC_DIR . DS . 'uploads' . DS . 'site_logo.png')) $adminLogo = 'site_logo.png'; ?>
+                        <?php if ($adminLogo): ?>
+                        <img src="<?= uploadUrl($adminLogo) ?>" alt="Logo" class="h-8 w-auto object-contain">
+                        <?php else: ?>
+                        <span class="font-bold text-primary-red text-lg"><?= e(substr(\App\Models\Setting::get('site_name', 'WeddingYour'), 0, 2)) ?></span>
+                        <?php endif; ?>
+                        <span class="font-semibold text-gray-800 text-sm"><?= e(\App\Models\Setting::get('site_name', 'WeddingYour')) ?></span>
+                    </div>
                     <button @click="sidebarOpen = false" class="lg:hidden w-7 h-7 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400">
-                        <i class="fa-solid fa-xmark text-lg"></i>
-                    </button>
-                </div>
                 <?php if ($authUser ?? null): ?>
                 <div class="mt-4 flex items-center gap-3 px-3 py-2 bg-gray-50 rounded-lg">
                     <div class="w-8 h-8 rounded-full bg-gradient-to-br from-primary-red to-red-500 flex items-center justify-center text-white font-bold text-xs uppercase shadow-sm"><?= e(substr($authUser['name'] ?? 'Admin', 0, 2)) ?></div>
@@ -81,8 +90,7 @@
                     ['url' => url('admin/deals'), 'label' => 'Best Deals', 'icon' => 'fa-percent'],
                     ['url' => url('admin/category-cards'), 'label' => 'Section Cards', 'icon' => 'fa-layer-group'],
                     ['url' => url('admin/gallery'), 'label' => 'Gallery', 'icon' => 'fa-camera'],
-                    ['url' => url('admin/outlets'), 'label' => 'Outlets', 'icon' => 'fa-store'],
-                    ['url' => url('admin/homepage'), 'label' => 'Homepage', 'icon' => 'fa-house-chimney'],
+
                 ];
                 ?>
                 <div class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider px-3 py-2">Management</div>
@@ -149,6 +157,11 @@
     </div>
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
     <script>if (location.hash) setTimeout(() => document.getElementById(location.hash.slice(1))?.scrollIntoView({ behavior: 'smooth' }), 100);</script>
+    <?= \App\Components\Modal::renderScripts() ?>
     <?= section('scripts') ?>
+    <?php if (isset($exceptionModal)): ?>
+    <?= $exceptionModal ?>
+    <script>document.addEventListener('DOMContentLoaded', function() { var m = document.querySelector('[role="dialog"]'); if(m) openModal(m.id); });</script>
+    <?php endif; ?>
 </body>
 </html>

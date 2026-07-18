@@ -90,13 +90,13 @@ class PaymentService
                 'icon' => 'fa-solid fa-money-bill-wave',
                 'is_active' => true,
             ],
-            [
-                'id' => 'razorpay',
-                'name' => 'Pay Online (Card/UPI/Net Banking)',
-                'description' => 'Secure payment via Razorpay',
-                'icon' => 'fa-solid fa-credit-card',
-                'is_active' => $this->isRazorpayConfigured(),
-            ],
+            // [
+            //     'id' => 'razorpay',
+            //     'name' => 'Pay Online (Card/UPI/Net Banking)',
+            //     'description' => 'Secure payment via Razorpay',
+            //     'icon' => 'fa-solid fa-credit-card',
+            //     'is_active' => $this->isRazorpayConfigured(),
+            // ],
         ];
     }
 

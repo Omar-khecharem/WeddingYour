@@ -14,10 +14,21 @@
                     <label class="block text-sm font-medium text-gray-700 mb-1">Position</label>
                     <select name="position" id="positionSelect" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary-red/20 focus:border-primary-red outline-none">
                         <option value="hero_left" <?= (old('position', $banner['position'] ?? '') === 'hero_left') ? 'selected' : '' ?>>Hero Left (Video)</option>
-                        <option value="hero_right" <?= (old('position', $banner['position'] ?? '') === 'hero_right') ? 'selected' : '' ?>>Hero Right (Image Carousel)</option>
-                        <option value="promotional" <?= (old('position', $banner['position'] ?? '') === 'promotional') ? 'selected' : '' ?>>Promotional Banner (Image)</option>
+                        <option value="hero_right" <?= (old('position', $banner['position'] ?? '') === 'hero_right') ? 'selected' : '' ?>>Hero Right (Image)</option>
                         <option value="bride_video" <?= (old('position', $banner['position'] ?? '') === 'bride_video') ? 'selected' : '' ?>>Bride Video (Video)</option>
                     </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Title</label>
+                    <input type="text" name="title" value="<?= old('title', $banner['title'] ?? '') ?>" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary-red/20 focus:border-primary-red outline-none" placeholder="e.g. Wedding Season Special">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                    <textarea name="description" rows="2" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary-red/20 focus:border-primary-red outline-none" placeholder="Short description for the banner overlay"><?= old('description', $banner['description'] ?? '') ?></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Link URL</label>
+                    <input type="text" name="link" value="<?= old('link', $banner['link'] ?? '') ?>" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary-red/20 focus:border-primary-red outline-none" placeholder="e.g. /products?on_sale=1">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Sort Order</label>
@@ -33,8 +44,8 @@
             </div>
             <div class="space-y-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1" id="uploadLabel">Upload Video</label>
-                    <p class="text-xs text-gray-400 mb-2" id="uploadHint">MP4, WebM, OGG or MOV</p>
+                    <label class="block text-sm font-medium text-gray-700 mb-1" id="uploadLabel">Upload Video / Image</label>
+                    <p class="text-xs text-gray-400 mb-2" id="uploadHint">MP4, WebM, OGG, MOV or JPEG, PNG, WebP</p>
                     <input type="file" name="image" id="fileInput" accept="image/*,video/mp4,video/webm,video/ogg,video/quicktime" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-primary-red/10 file:text-primary-red hover:file:bg-primary-red/20" <?= $isEdit ? '' : 'required' ?>>
                 </div>
                 <!-- Preview -->

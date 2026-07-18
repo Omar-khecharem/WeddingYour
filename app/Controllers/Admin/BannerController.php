@@ -26,12 +26,12 @@ class BannerController extends BaseAdminController
     public function store(Request $request, Response $response): void
     {
         $pos = $request->input('position', 'hero_right');
-        $nameMap = ['hero_left'=>'Hero Video','hero_right'=>'Hero Image','promotional'=>'Promotional Banner','bride_video'=>'Bride Video'];
+        $nameMap = ['hero_left'=>'Hero Video','hero_right'=>'Hero Image','bride_video'=>'Bride Video'];
         $data = [
             'name' => $nameMap[$pos] ?? 'Banner',
-            'title' => '',
-            'description' => '',
-            'link' => '',
+            'title' => $request->input('title', ''),
+            'description' => $request->input('description', ''),
+            'link' => $request->input('link', ''),
             'position' => $pos,
             'sort_order' => (int)$request->input('sort_order', 0),
             'is_active' => (int)(bool)$request->input('is_active', 1),
@@ -75,12 +75,12 @@ class BannerController extends BaseAdminController
     {
         $id = (int)$request->param('id');
         $pos = $request->input('position', 'hero_right');
-        $nameMap = ['hero_left'=>'Hero Video','hero_right'=>'Hero Image','promotional'=>'Promotional Banner','bride_video'=>'Bride Video'];
+        $nameMap = ['hero_left'=>'Hero Video','hero_right'=>'Hero Image','bride_video'=>'Bride Video'];
         $data = [
             'name' => $nameMap[$pos] ?? 'Banner',
-            'title' => '',
-            'description' => '',
-            'link' => '',
+            'title' => $request->input('title', ''),
+            'description' => $request->input('description', ''),
+            'link' => $request->input('link', ''),
             'position' => $pos,
             'sort_order' => (int)$request->input('sort_order', 0),
             'is_active' => (int)(bool)$request->input('is_active', 1),

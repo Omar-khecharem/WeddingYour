@@ -7,7 +7,6 @@ use App\Controllers\Admin\SettingController;
 use App\Controllers\Admin\CategoryController;
 use App\Controllers\Admin\BannerController;
 use App\Controllers\Admin\GalleryController;
-use App\Controllers\Admin\OutletController;
 use App\Controllers\Admin\DealController;
 use App\Controllers\Admin\CategoryCardController;
 use App\Controllers\Admin\SubcategoryController;
@@ -24,6 +23,7 @@ Router::group('/admin', ['middleware' => [AdminMiddleware::class]], function () 
     Router::get('', [DashboardController::class, 'index'])->name('admin.dashboard');
     Router::get('/clear-cache', [DashboardController::class, 'clearCache'])->name('admin.cache');
     Router::get('/logs', [DashboardController::class, 'logs'])->name('admin.logs');
+    Router::post('/logs/clean', [DashboardController::class, 'cleanLogs'])->name('admin.logs.clean');
 
     // Products
     Router::get('/products', [AdminProductController::class, 'index'])->name('admin.products');
@@ -127,10 +127,71 @@ Router::group('/admin', ['middleware' => [AdminMiddleware::class]], function () 
 
     // Users
     Router::get('/users', function () {
-        $c = new DashboardController();
         $pdo = \App\Core\Database::getInstance()->getConnection();
-        $users = $pdo->query("SELECT * FROM sg_users ORDER BY created_at DESC")->fetchAll();
-        return \App\Core\View::render('admin.users.index', ['users' => $users], 'admin');
+
+        $page = max(1, (int)($_GET['page'] ?? 1));
+        $perPage = 20;
+        $search = $_GET['search'] ?? '';
+        $role = $_GET['role'] ?? '';
+        $status = $_GET['status'] ?? '';
+
+        $conditions = [];
+        $params = [];
+
+        if ($search) {
+            $conditions[] = "(u.name LIKE :search OR u.email LIKE :search2 OR u.phone LIKE :search3)";
+            $searchTerm = "%$search%";
+            $params[':search'] = $searchTerm;
+            $params[':search2'] = $searchTerm;
+            $params[':search3'] = $searchTerm;
+        }
+
+        if ($role) {
+            $conditions[] = "r.slug = :role";
+            $params[':role'] = $role;
+        }
+
+        if ($status !== '') {
+            $conditions[] = "u.status = :status";
+            $params[':status'] = (int)$status;
+        }
+
+        $whereClause = '';
+        if (!empty($conditions)) {
+            $whereClause = 'WHERE ' . implode(' AND ', $conditions);
+        }
+
+        $countStmt = $pdo->prepare("SELECT COUNT(*) FROM sg_users u LEFT JOIN sg_roles r ON u.role_id = r.id $whereClause");
+        $countStmt->execute($params);
+        $totalItems = (int)$countStmt->fetchColumn();
+        $totalPages = max(1, (int)ceil($totalItems / $perPage));
+        if ($page > $totalPages) $page = $totalPages;
+        $offset = ($page - 1) * $perPage;
+
+        $stmt = $pdo->prepare("SELECT u.*, r.name as role, r.slug as role_slug FROM sg_users u LEFT JOIN sg_roles r ON u.role_id = r.id $whereClause ORDER BY u.created_at DESC LIMIT :limit OFFSET :offset");
+        $stmt->bindValue(':limit', $perPage, \PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, \PDO::PARAM_INT);
+        foreach ($params as $key => $val) {
+            $stmt->bindValue($key, $val);
+        }
+        $stmt->execute();
+        $users = $stmt->fetchAll();
+
+        return \App\Core\View::render('admin.users.index', [
+            'users' => $users,
+            'pagination' => [
+                'currentPage' => $page,
+                'totalPages' => $totalPages,
+                'hasPrev' => $page > 1,
+                'hasNext' => $page < $totalPages,
+                'prevPage' => $page - 1,
+                'nextPage' => $page + 1,
+                'totalItems' => $totalItems,
+            ],
+            'search' => $search,
+            'role' => $role,
+            'status' => $status,
+        ], 'admin');
     })->name('admin.users');
 
     Router::get('/users/{id}/edit', function ($params) {
@@ -240,14 +301,6 @@ Router::group('/admin', ['middleware' => [AdminMiddleware::class]], function () 
     Router::get('/gallery/edit/{id}', [GalleryController::class, 'edit'])->name('admin.gallery.edit');
     Router::post('/gallery/update/{id}', [GalleryController::class, 'update'])->name('admin.gallery.update');
     Router::post('/gallery/delete', [GalleryController::class, 'destroy'])->name('admin.gallery.delete');
-
-    // Outlets
-    Router::get('/outlets', [OutletController::class, 'index'])->name('admin.outlets');
-    Router::get('/outlets/create', [OutletController::class, 'create'])->name('admin.outlets.create');
-    Router::post('/outlets', [OutletController::class, 'store'])->name('admin.outlets.store');
-    Router::get('/outlets/edit/{id}', [OutletController::class, 'edit'])->name('admin.outlets.edit');
-    Router::post('/outlets/update/{id}', [OutletController::class, 'update'])->name('admin.outlets.update');
-    Router::post('/outlets/delete', [OutletController::class, 'destroy'])->name('admin.outlets.delete');
 
     // Deals
     Router::get('/deals', [DealController::class, 'index'])->name('admin.deals');

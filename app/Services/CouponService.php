@@ -93,7 +93,7 @@ class CouponService
     }
 
     /**
-     * Get active coupons
+     * Get active coupons (frontend)
      */
     public function getActiveCoupons(): array
     {
@@ -103,6 +103,19 @@ class CouponService
             WHERE is_active = 1 
             AND (expires_at IS NULL OR expires_at > NOW()) 
             AND (starts_at IS NULL OR starts_at <= NOW())
+            ORDER BY created_at DESC
+        ");
+        return $stmt->fetchAll();
+    }
+
+    /**
+     * Get all coupons (admin)
+     */
+    public function getAllCoupons(): array
+    {
+        $pdo = $this->db->getConnection();
+        $stmt = $pdo->query("
+            SELECT * FROM sg_coupons 
             ORDER BY created_at DESC
         ");
         return $stmt->fetchAll();
@@ -124,12 +137,20 @@ class CouponService
     public function create(array $data): array
     {
         $pdo = $this->db->getConnection();
+        $code = strtoupper($data['code']);
+
+        $check = $pdo->prepare("SELECT id FROM sg_coupons WHERE code = :code");
+        $check->execute([':code' => $code]);
+        if ($check->fetch()) {
+            return ['success' => false, 'message' => 'A coupon with this code already exists.'];
+        }
+
         $stmt = $pdo->prepare("
             INSERT INTO sg_coupons (code, type, value, min_order_amount, max_discount, usage_limit, usage_per_user, is_active, starts_at, expires_at, description)
             VALUES (:code, :type, :value, :min_order, :max_discount, :usage_limit, :usage_per_user, :is_active, :starts_at, :expires_at, :description)
         ");
         $stmt->execute([
-            ':code' => strtoupper($data['code']),
+            ':code' => $code,
             ':type' => $data['type'],
             ':value' => $data['value'],
             ':min_order' => $data['min_order_amount'] ?? null,
@@ -142,7 +163,7 @@ class CouponService
             ':description' => $data['description'] ?? '',
         ]);
 
-        return ['success' => true, 'id' => (int)$pdo->lastInsertId()];
+        return ['success' => true, 'id' => (int)$pdo->lastInsertId(), 'code' => $code];
     }
 
     /**

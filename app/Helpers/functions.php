@@ -31,6 +31,7 @@ function asset(string $path): string
 function uploadUrl(string $path, string $subdir = ''): string
 {
     if (empty($path)) return '';
+    $path = str_replace('\\', '/', $path);
     $subdir = trim($subdir, '/');
     if ($subdir && str_starts_with($path, $subdir . '/')) {
         return url('uploads/' . ltrim($path, '/'));
@@ -118,7 +119,7 @@ function strRandom(int $length = 32): string
  */
 function generateOrderNumber(): string
 {
-    return 'SG-' . date('Ymd') . '-' . strtoupper(substr(str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'), 0, 6));
+    return 'WY-' . date('Ymd') . '-' . strtoupper(substr(str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'), 0, 6));
 }
 
 /**
@@ -126,7 +127,7 @@ function generateOrderNumber(): string
  */
 function generateInvoiceNumber(): string
 {
-    return 'INV-' . date('Ymd') . '-' . strtoupper(substr(str_shuffle('0123456789'), 0, 6));
+    return 'WY-INV-' . date('Ymd') . '-' . strtoupper(substr(str_shuffle('0123456789'), 0, 6));
 }
 
 /**

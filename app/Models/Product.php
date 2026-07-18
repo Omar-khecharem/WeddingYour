@@ -23,7 +23,7 @@ class Product extends Model
         $pdo = Database::getInstance()->getConnection();
         $stmt = $pdo->prepare("
             SELECT p.*, c.name AS category_name, c.slug AS category_slug,
-                   sc.name AS subcategory_name, b.name AS brand_name, b.slug AS brand_slug
+                   sc.name AS subcategory_name, sc.slug AS subcategory_slug, b.name AS brand_name, b.slug AS brand_slug
             FROM sg_products p
             LEFT JOIN sg_categories c ON c.id = p.category_id
             LEFT JOIN sg_subcategories sc ON sc.id = p.subcategory_id
@@ -352,7 +352,9 @@ class Product extends Model
     private static function resolveImageUrl(string $path, string $subdir = 'products'): string
     {
         if (empty($path)) return asset('images/placeholder.png');
-        if (!file_exists(UPLOADS_DIR . DS . $path)) return asset('images/placeholder.png');
+        $path = str_replace('\\', '/', $path);
+        $checkPath = UPLOADS_DIR . DS . str_replace('/', DS, $path);
+        if (!file_exists($checkPath)) return asset('images/placeholder.png');
         return uploadUrl($path, $subdir);
     }
 

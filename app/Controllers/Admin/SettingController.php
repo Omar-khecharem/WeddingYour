@@ -18,6 +18,9 @@ class SettingController extends BaseAdminController
         $this->ensureFileSetting($pdo, 'site_favicon', 'site_favicon.png');
         $this->ensureFileSetting($pdo, 'header_coupon_code', 'SGTM20');
         $this->ensureFileSetting($pdo, 'header_coupon_text', 'Get FLAT 20% OFF On Topor Mukut set. Use Code -');
+        $this->ensureSetting($pdo, 'log_cleanup_enabled', '0', 'logs', 'boolean', 1, 1);
+        $this->ensureSetting($pdo, 'log_cleanup_period', 'weekly', 'logs', 'select', 2, 1, json_encode(['daily' => 'Daily', 'weekly' => 'Weekly', 'monthly' => 'Monthly']));
+        $this->ensureSetting($pdo, 'tax_enabled', '1', 'tax', 'boolean', 9, 1);
 
         $stmt = $pdo->query("SELECT * FROM sg_settings ORDER BY `group`, sort_order");
         $settings = $stmt->fetchAll(\PDO::FETCH_ASSOC);
@@ -25,6 +28,7 @@ class SettingController extends BaseAdminController
         $groups = [];
         foreach ($settings as $s) {
             $g = $s['group'];
+            if ($g === 'homepage') continue;
             if (!isset($groups[$g])) $groups[$g] = [];
             $groups[$g][] = $s;
         }
@@ -39,6 +43,16 @@ class SettingController extends BaseAdminController
         if (!$stmt->fetchColumn()) {
             $stmt = $pdo->prepare("INSERT INTO sg_settings (`key`, `value`, `group`, `type`, `sort_order`, `is_public`) VALUES (:k, :v, 'general', 'text', 99, 1)");
             $stmt->execute([':k' => $key, ':v' => $defaultValue]);
+        }
+    }
+
+    private function ensureSetting(\PDO $pdo, string $key, string $defaultValue, string $group, string $type, int $sortOrder, int $isPublic = 1, ?string $options = null): void
+    {
+        $stmt = $pdo->prepare("SELECT COUNT(*) FROM sg_settings WHERE `key` = :k");
+        $stmt->execute([':k' => $key]);
+        if (!$stmt->fetchColumn()) {
+            $stmt = $pdo->prepare("INSERT INTO sg_settings (`key`, `value`, `group`, `type`, `sort_order`, `is_public`, `options`) VALUES (:k, :v, :g, :t, :s, :p, :o)");
+            $stmt->execute([':k' => $key, ':v' => $defaultValue, ':g' => $group, ':t' => $type, ':s' => $sortOrder, ':p' => $isPublic, ':o' => $options]);
         }
     }
 

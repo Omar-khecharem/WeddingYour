@@ -11,7 +11,6 @@ use App\Models\Banner;
 use App\Models\Deal;
 use App\Models\CategoryCard;
 use App\Models\GalleryItem;
-use App\Models\Outlet;
 use App\Models\Setting;
 
 class HomeController extends Controller
@@ -62,7 +61,6 @@ class HomeController extends Controller
         }
 
         $galleryItems = GalleryItem::getActive();
-        $outlets = Outlet::getActive();
         $whatsappNumber = Setting::get('whatsapp_number', '+919830136355');
 
         $subcategories = [];
@@ -88,7 +86,7 @@ class HomeController extends Controller
         return $this->view('home.index', compact(
             'categories', 'subcategories', 'recentProducts', 'featuredProducts', 'trendingProducts', 'reviews',
             'banners', 'deals', 'categoryCards', 'categoryCardProducts', 'defaultCardFallback',
-            'galleryItems', 'outlets',
+            'galleryItems',
             'whatsappNumber', 'heroTitle', 'heroSubtitle', 'heroDescription', 'heroButtonText', 'heroButtonLink',
             'homeRatings'
         ));

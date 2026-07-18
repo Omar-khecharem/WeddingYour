@@ -16,8 +16,8 @@ $subName = $product['subcategory_name'] ?? '';
     <nav class="flex items-center text-xs sm:text-sm text-premium-taupe mb-4 space-x-2">
       <a href="<?= url('') ?>" class="hover:text-premium-crimson">Home</a>
       <span>/</span>
-      <a href="<?= url('products?category=' . urlencode($catName)) ?>" class="hover:text-premium-crimson"><?= e($catName) ?: 'Products' ?></a>
-      <?php if ($subName): ?><span>/</span><a href="<?= url('products?subcategory=' . urlencode($subName)) ?>" class="hover:text-premium-crimson"><?= e($subName) ?></a><?php endif; ?>
+      <a href="<?= url('products?category=' . e($product['category_slug'] ?? '')) ?>" class="hover:text-premium-crimson"><?= e($catName) ?: 'Products' ?></a>
+      <?php if ($subName): ?><span>/</span><a href="<?= url('products?subcategory=' . e($product['subcategory_slug'] ?? '')) ?>" class="hover:text-premium-crimson"><?= e($subName) ?></a><?php endif; ?>
       <span>/</span>
       <span class="text-premium-charcoal font-medium"><?= e($product['name']) ?></span>
     </nav>

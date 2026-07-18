@@ -1,6 +1,9 @@
 <?php
 $users = $users ?? [];
 $pagination = $pagination ?? ['currentPage' => 1, 'totalPages' => 1, 'hasPrev' => false, 'hasNext' => false, 'prevPage' => 1, 'nextPage' => 1];
+$search = $search ?? '';
+$role = $role ?? '';
+$status = $status ?? '';
 ?>
 
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
@@ -10,6 +13,31 @@ $pagination = $pagination ?? ['currentPage' => 1, 'totalPages' => 1, 'hasPrev' =
                 </div>
                 <span class="text-sm text-gray-500 bg-white px-4 py-2 rounded-lg border border-gray-200"><?= $pagination['totalItems'] ?? count($users) ?> customers</span>
             </div>
+
+            <div class="bg-white rounded-xl border border-gray-200 mb-6">
+                <form method="GET" class="p-4 flex flex-col sm:flex-row gap-3">
+                    <div class="flex-1">
+                        <input type="text" name="search" value="<?= e($search) ?>" placeholder="Search by name, email or phone..." class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm text-gray-700 focus:ring-2 focus:ring-primary-red/20 focus:border-primary-red outline-none">
+                    </div>
+                    <select name="role" class="border border-gray-300 rounded-lg px-4 py-2.5 text-sm text-gray-700 focus:ring-2 focus:ring-primary-red/20 focus:border-primary-red outline-none">
+                        <option value="">All Roles</option>
+                        <option value="admin" <?= $role === 'admin' ? 'selected' : '' ?>>Admin</option>
+                        <option value="user" <?= $role === 'user' ? 'selected' : '' ?>>Customer</option>
+                    </select>
+                    <select name="status" class="border border-gray-300 rounded-lg px-4 py-2.5 text-sm text-gray-700 focus:ring-2 focus:ring-primary-red/20 focus:border-primary-red outline-none">
+                        <option value="">All Status</option>
+                        <option value="1" <?= $status === '1' ? 'selected' : '' ?>>Active</option>
+                        <option value="0" <?= $status === '0' ? 'selected' : '' ?>>Banned</option>
+                    </select>
+                    <button type="submit" class="bg-primary-red text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:opacity-90 transition-all">
+                        <i class="fa-solid fa-search mr-1.5"></i> Filter
+                    </button>
+                    <?php if ($search || $role || $status !== ''): ?>
+                    <a href="<?= url('admin/users') ?>" class="border border-gray-300 text-gray-600 px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-gray-50 transition-all">Clear</a>
+                    <?php endif; ?>
+                </form>
+            </div>
+
             <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm">
@@ -52,25 +80,19 @@ $pagination = $pagination ?? ['currentPage' => 1, 'totalPages' => 1, 'hasPrev' =
                                 <td class="px-5 py-3 text-gray-500"><?= e($user['email']) ?></td>
                                 <td class="px-5 py-3 text-gray-500"><?= e($user['phone'] ?? '-') ?></td>
                                 <td class="px-5 py-3">
-                                    <?php $role = $user['role'] ?? 'customer'; ?>
-                                    <?php if ($role === 'admin'): ?>
+                                    <?php $urole = $user['role'] ?? 'customer'; ?>
+                                    <?php if ($urole === 'admin'): ?>
                                     <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-700">Admin</span>
-                                    <?php elseif ($role === 'customer'): ?>
-                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700">Customer</span>
                                     <?php else: ?>
-                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600"><?= e($role) ?></span>
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700">Customer</span>
                                     <?php endif; ?>
                                 </td>
                                 <td class="px-5 py-3">
-                                    <?php $ustat = $user['status'] ?? 'active'; ?>
-                                    <?php if ($ustat === 'active'): ?>
+                                    <?php $ustat = $user['status'] ?? 1; ?>
+                                    <?php if ((int)$ustat === 1): ?>
                                     <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">Active</span>
-                                    <?php elseif ($ustat === 'inactive'): ?>
-                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-red-100 text-red-700">Inactive</span>
-                                    <?php elseif ($ustat === 'banned'): ?>
-                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600">Banned</span>
                                     <?php else: ?>
-                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600"><?= e($ustat) ?></span>
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-red-100 text-red-700">Banned</span>
                                     <?php endif; ?>
                                 </td>
                                 <td class="px-5 py-3 text-gray-500 font-medium"><?= $user['orders_count'] ?? 0 ?></td>
@@ -78,7 +100,7 @@ $pagination = $pagination ?? ['currentPage' => 1, 'totalPages' => 1, 'hasPrev' =
                                 <td class="px-5 py-3">
                                     <div class="flex items-center gap-1">
                                         <a href="<?= url('admin/users/' . e($user['id']) . '/edit') ?>" class="p-1.5 text-gray-400 hover:text-primary-red transition-colors" title="Edit"><i class="fa-solid fa-pen"></i></a>
-                                        <?php if (($user['status'] ?? '') !== 'banned'): ?>
+                                        <?php if ((int)($user['status'] ?? 1) === 1): ?>
                                         <a href="<?= url('admin/users/' . e($user['id']) . '/ban') ?>" class="p-1.5 text-gray-400 hover:text-red-600 transition-colors" title="Ban"><i class="fa-solid fa-ban"></i></a>
                                         <?php endif; ?>
                                     </div>
@@ -90,9 +112,17 @@ $pagination = $pagination ?? ['currentPage' => 1, 'totalPages' => 1, 'hasPrev' =
                     </table>
                 </div>
             </div>
-            <?= \App\Core\View::component('Pagination', [
+            <?php
+            $baseUrl = url('admin/users?');
+            $queryParams = [];
+            if ($search) $queryParams[] = 'search=' . urlencode($search);
+            if ($role) $queryParams[] = 'role=' . urlencode($role);
+            if ($status !== '') $queryParams[] = 'status=' . urlencode($status);
+            if (!empty($queryParams)) $baseUrl .= implode('&', $queryParams) . '&';
+            echo \App\Core\View::component('Pagination', [
                 'currentPage' => $pagination['currentPage'],
                 'totalPages' => $pagination['totalPages'],
-                'baseUrl' => url('admin/users?'),
-            ]) ?>
+                'baseUrl' => $baseUrl,
+            ]);
+            ?>
 <?php endSection() ?>

@@ -65,7 +65,6 @@ class SiteNavigation extends Component
         </div>
         <div class="flex items-center gap-6 overflow-x-auto py-2">
             <a href="' . url('') . '" class="active"><i class="fa-solid fa-house text-xs mr-1"></i> HOME</a>
-            <a href="' . url('outlets') . '"><i class="fa-solid fa-shop text-xs mr-1"></i> OUR OUTLETS</a>
             <a href="' . url('about') . '"><i class="fa-solid fa-address-card text-xs mr-1"></i> ABOUT US</a>
             <a href="' . url('contact') . '"><i class="fa-solid fa-address-book text-xs mr-1"></i> CONTACT US</a>
             <a href="' . url('blog') . '">BLOGS</a>

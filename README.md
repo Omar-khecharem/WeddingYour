@@ -12,10 +12,10 @@
     <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript"><img src="https://img.shields.io/badge/JavaScript-Vanilla%20ES6-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" alt="Vanilla JS"></a>
   </p>
   <p>
-    <img src="https://img.shields.io/github/repo-size/Omar-khecharem/WeddingYour?style=flat-square&label=repo%20size" alt="Repo Size">
-    <img src="https://img.shields.io/github/last-commit/Omar-khecharem/WeddingYour?style=flat-square" alt="Last Commit">
-    <img src="https://img.shields.io/github/issues/Omar-khecharem/WeddingYour?style=flat-square" alt="GitHub Issues">
-    <img src="https://img.shields.io/github/license/Omar-khecharem/WeddingYour?style=flat-square&color=red" alt="License">
+    <img src="https://img.shields.io/github/repo-size/Omar-khecharem/WeddingYourNewDesign?style=flat-square&label=repo%20size" alt="Repo Size">
+    <img src="https://img.shields.io/github/last-commit/Omar-khecharem/WeddingYourNewDesign?style=flat-square" alt="Last Commit">
+    <img src="https://img.shields.io/github/issues/Omar-khecharem/WeddingYourNewDesign?style=flat-square" alt="GitHub Issues">
+    <img src="https://img.shields.io/github/license/Omar-khecharem/WeddingYourNewDesign?style=flat-square&color=red" alt="License">
     <img src="https://img.shields.io/badge/PRs-welcome-brightgreen?style=flat-square" alt="PRs Welcome">
   </p>
 </div>
@@ -71,7 +71,7 @@ Built entirely from scratch without any external PHP framework, this platform de
 
 | Category | Features |
 |----------|----------|
-| **Homepage** | Dynamic hero with video/image banners • Category step-carousel (8 per slide) • Popular products with hover overlay • Flash sale banners • Video showcase • Recent products slider with dynamic ratings • Outlets drag-scroll • Coupon marquee bar • WhatsApp floating button |
+| **Homepage** | Dynamic hero with video/image banners • Category step-carousel (8 per slide) • Popular products with hover overlay • Flash sale banners • Video showcase • Recent products slider with dynamic ratings • Star ratings on all product cards • Coupon marquee bar • WhatsApp floating button |
 | **Product Catalog** | Filterable grid (category, subcategory, price range, rating, stock) • Sortable (price, name, popularity, discount) • AJAX instant search (300 ms debounce) • 4-column responsive layout • Per-page selector • Dynamic star ratings on every product card |
 | **Product Detail** | Vertical thumbnail gallery (desktop) / horizontal strip (mobile) • Price with discount badge • Specs table • Quantity selector • Pincode availability checker • Compare / Wishlist / Share • 3-tab layout (Description / Specs / Reviews) • Star-rating distribution with dynamic averages • Customer review submission form • Related products • JSON-LD structured data |
 | **Cart** | Full AJAX • Quantity +/- • Coupon codes • Real-time price summary |
@@ -82,7 +82,7 @@ Built entirely from scratch without any external PHP framework, this platform de
 | **User Account** | Dashboard • Profile editing • Order history with detail • Address book • Password change |
 | **Order Tracking** | Public tracking by order number |
 | **Newsletter** | AJAX email subscription |
-| **Outlets** | Physical store locator with Google Maps |
+
 
 ### 🔧 Admin Panel (Backend)
 
@@ -98,10 +98,9 @@ Built entirely from scratch without any external PHP framework, this platform de
 | **Pages** | CMS-like static page management (About, Contact, custom pages) |
 | **Blog** | Full blog post management with categories, featured image upload, SEO |
 | **Users** | Customer list with order history |
-| **Outlets** | Physical store CRUD with Google Maps |
 | **Deals** | Flash sale management |
-| **Settings** | Site name, logo, social links, header banners, contact info, WhatsApp |
-| **Logs** | System activity viewer |
+| **Settings** | Site name, logo, social links, header banners, contact info, WhatsApp, tax enable/disable toggle |
+| **Logs** | System activity viewer with auto-cleanup & configurable retention |
 | **Cache** | One-click view & data cache clearing |
 
 ### 📧 Automated Communications
@@ -193,7 +192,7 @@ WeddingYour/
 │   ├── Core/                   # Framework core (Router, DB, View, etc.)
 │   ├── Services/               # Business logic (Cart, Order, Invoice, etc.)
 │   ├── Middleware/             # Auth, CSRF middleware
-│   ├── Helpers/                # Utility helpers (Security, Session, Format)
+│   ├── Helpers/                # Utility helpers (Security, Session, Format, Image)
 │   └── Components/             # Reusable UI components
 ├── config/                     # Configuration files
 ├── database/                   # SQL migrations & seed data
@@ -223,7 +222,6 @@ WeddingYour/
 ├── 🛒 Orders         (5)  ─  sg_orders, sg_order_items, sg_order_status_history, sg_carts, sg_cart_items
 ├── 📣 Marketing      (6)  ─  sg_coupons, sg_wishlists, sg_compare, sg_reviews, sg_newsletter
 ├── 📄 Content        (6)  ─  sg_pages, sg_banners, sg_gallery, sg_deals, sg_category_cards, sg_settings
-├── 🏪 Outlets        (1)  ─  sg_outlets
 ├── ⚙️ System         (6)  ─  sg_sessions, sg_activity_logs, sg_email_queue, sg_countries, sg_currencies
 ├── 🔐 RBAC           (7)  ─  sg_roles, sg_permissions, sg_role_permissions, sg_user_roles
 └── 🔗 Relations      (4)  ─  Pivot tables for many-to-many
@@ -246,7 +244,7 @@ WeddingYour/
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/Omar-khecharem/WeddingYour.git
+git clone https://github.com/Omar-khecharem/WeddingYourNewDesign.git
 cd WeddingYour
 
 # 2. Create the database

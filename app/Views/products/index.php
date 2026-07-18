@@ -282,36 +282,7 @@ $end = min($page * $perPage, $total);
   </div>
 </div>
 
-<!-- Mobile filter button -->
-<button id="mobile-filter-toggle" class="fixed bottom-20 right-4 z-40 lg:hidden w-12 h-12 bg-premium-burgundy text-white rounded-full shadow-lg flex items-center justify-center">
-  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
-</button>
-
 <script>
-(function(){
-  var toggleBtn = document.getElementById('mobile-filter-toggle');
-  var sidebar = document.getElementById('filter-sidebar');
-  if (!toggleBtn || !sidebar) return;
-  var overlay = document.createElement('div');
-  overlay.className = 'fixed inset-0 bg-black/50 z-40 hidden';
-  document.body.appendChild(overlay);
-  function open() {
-    sidebar.classList.remove('hidden');
-    sidebar.classList.add('fixed', 'inset-0', 'z-50', 'p-6', 'bg-white', 'overflow-y-auto');
-    overlay.classList.remove('hidden');
-    document.body.style.overflow = 'hidden';
-  }
-  function close() {
-    sidebar.classList.add('hidden');
-    sidebar.classList.remove('fixed', 'inset-0', 'z-50', 'p-6', 'bg-white', 'overflow-y-auto');
-    overlay.classList.add('hidden');
-    document.body.style.overflow = '';
-  }
-  toggleBtn.addEventListener('click', open);
-  overlay.addEventListener('click', close);
-  document.addEventListener('keydown', function(e) { if (e.key === 'Escape') close(); });
-})();
-
 /* Category step carousel */
 (function() {
   var track = document.getElementById('catTrackProd');

@@ -1,9 +1,7 @@
 <?php
-$pdo = new PDO('mysql:host=localhost;dbname=shola_ghar', 'root', '');
+$pdo = new PDO('mysql:host=localhost;dbname=wedding_your', 'root', '');
 
 $files = [
-    __DIR__ . '/002_add_outlets_homepage_tables.sql',
-    __DIR__ . '/003_seed_settings_outlets.sql',
     __DIR__ . '/004_seed_menu_items.sql',
     __DIR__ . '/005_import_categories_to_menu.sql',
 ];

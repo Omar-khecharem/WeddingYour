@@ -7,7 +7,7 @@ if (empty($siteLogo) && file_exists(PUBLIC_DIR . DS . 'uploads' . DS . 'site_log
 $isAdmin = \App\Helpers\Session::has('user') && (\App\Helpers\Session::get('user')['role'] ?? '') === 'admin';
 ?>
 <!-- ============================================ -->
-<!-- FOOTER - PREMIUM DARK -->
+<!-- FOOTER - PREMIUM LIGHT -->
 <!-- ============================================ -->
 <footer class="footer-premium">
   <div class="max-w-[1200px] mx-auto px-6 py-16">
@@ -18,21 +18,21 @@ $isAdmin = \App\Helpers\Session::has('user') && (\App\Helpers\Session::get('user
       <!-- Column 1: Brand (spans 2 cols on lg) -->
       <div class="lg:col-span-2 space-y-5">
         <div class="flex items-center gap-4">
-          <div class="w-14 h-14 rounded-full overflow-hidden border border-premium-mink flex items-center justify-center bg-premium-charcoal flex-shrink-0">
+          <div class="w-14 h-14 rounded-full overflow-hidden border border-premium-warm-gray flex items-center justify-center bg-white flex-shrink-0">
             <?php if ($siteLogo): ?>
             <img src="<?= uploadUrl($siteLogo) ?>" alt="<?= e($footerName) ?>" class="w-full h-full object-contain">
             <?php else: ?>
-            <span class="font-playfair font-bold text-premium-champagne text-lg"><?= e(substr($footerName, 0, 2)) ?></span>
+            <span class="font-playfair font-bold text-premium-burgundy text-lg"><?= e(substr($footerName, 0, 2)) ?></span>
             <?php endif; ?>
           </div>
           <div>
-            <h2 class="font-playfair text-xl font-semibold text-premium-warm-gray"><?= e($footerName) ?></h2>
+            <h2 class="font-playfair text-xl font-semibold "><?= e($footerName) ?></h2>
             <?php if ($footerTagline): ?>
             <p class="text-[10px] text-premium-taupe font-medium tracking-wider uppercase mt-0.5"><?= e($footerTagline) ?></p>
             <?php endif; ?>
           </div>
         </div>
-        <p class="text-sm text-premium-taupe leading-relaxed">Your premier destination for authentic Bengali wedding accessories. Handcrafted with love by skilled artisans since generations.</p>
+        <p class="text-sm text-premium-mink leading-relaxed">Your premier destination for authentic Bengali wedding accessories. Handcrafted with love by skilled artisans since generations.</p>
         <div class="flex items-center gap-3 pt-1">
           <a href="<?= e(\App\Models\Setting::get('social_facebook', SOCIAL_FACEBOOK)) ?>" target="_blank" rel="noopener noreferrer" class="social-circle" title="Facebook">
             <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1V12h3v3h-3v6.95c4.56-.93 8-4.96 8-9.75z"/></svg>
@@ -50,11 +50,11 @@ $isAdmin = \App\Helpers\Session::has('user') && (\App\Helpers\Session::get('user
       <div>
         <h3>Quick Links</h3>
         <ul class="space-y-3 text-sm">
-          <li><a href="<?= url('') ?>" class="text-premium-taupe">Home</a></li>
-          <li><a href="<?= url('about') ?>" class="text-premium-taupe">About Us</a></li>
-          <li><a href="<?= url('products') ?>" class="text-premium-taupe">Shop</a></li>
-          <li><a href="<?= url('blog') ?>" class="text-premium-taupe">Blog</a></li>
-          <li><a href="<?= url('contact') ?>" class="text-premium-taupe">Contact</a></li>
+          <li><a href="<?= url('') ?>" class="text-premium-mink">Home</a></li>
+          <li><a href="<?= url('about') ?>" class="text-premium-mink">About Us</a></li>
+          <li><a href="<?= url('products') ?>" class="text-premium-mink">Shop</a></li>
+          <li><a href="<?= url('blog') ?>" class="text-premium-mink">Blog</a></li>
+          <li><a href="<?= url('contact') ?>" class="text-premium-mink">Contact</a></li>
         </ul>
       </div>
 
@@ -62,10 +62,10 @@ $isAdmin = \App\Helpers\Session::has('user') && (\App\Helpers\Session::get('user
       <div>
         <h3>Account</h3>
         <ul class="space-y-3 text-sm">
-          <li><a href="<?= url('account') ?>" class="text-premium-taupe">My Account</a></li>
-          <li><a href="<?= url('account/wishlist') ?>" class="text-premium-taupe">Wishlist</a></li>
-          <li><a href="<?= url('account/addresses') ?>" class="text-premium-taupe">Addresses</a></li>
-          <li><a href="<?= url('order/track') ?>" class="text-premium-taupe">Track Order</a></li>
+          <li><a href="<?= url('account') ?>" class="text-premium-mink">My Account</a></li>
+          <li><a href="<?= url('account/wishlist') ?>" class="text-premium-mink">Wishlist</a></li>
+          <li><a href="<?= url('account/addresses') ?>" class="text-premium-mink">Addresses</a></li>
+          <li><a href="<?= url('order/track') ?>" class="text-premium-mink">Track Order</a></li>
         </ul>
       </div>
 
@@ -73,10 +73,10 @@ $isAdmin = \App\Helpers\Session::has('user') && (\App\Helpers\Session::get('user
       <div>
         <h3>Policies</h3>
         <ul class="space-y-3 text-sm">
-          <li><a href="<?= url('page/privacy-policy') ?>" class="text-premium-taupe">Privacy Policy</a></li>
-          <li><a href="<?= url('page/terms-of-use') ?>" class="text-premium-taupe">Terms of Use</a></li>
-          <li><a href="<?= url('about') ?>" class="text-premium-taupe">About Us</a></li>
-          <li><a href="<?= url('contact') ?>" class="text-premium-taupe">Contact</a></li>
+          <li><a href="<?= url('privacy-policy') ?>" class="text-premium-mink">Privacy Policy</a></li>
+          <li><a href="<?= url('terms-of-use') ?>" class="text-premium-mink">Terms of Use</a></li>
+          <li><a href="<?= url('about') ?>" class="text-premium-mink">About Us</a></li>
+          <li><a href="<?= url('contact') ?>" class="text-premium-mink">Contact</a></li>
         </ul>
       </div>
 
@@ -90,7 +90,7 @@ $isAdmin = \App\Helpers\Session::has('user') && (\App\Helpers\Session::get('user
       <p class="text-xs text-premium-taupe">&copy; <?= $currentYear ?> <?= e($footerName) ?>. All rights reserved.</p>
       <div class="flex items-center gap-4">
         <span class="text-xs text-premium-mink font-medium tracking-wide uppercase">Secure payments</span>
-        <img src="<?= asset('images/payments.png') ?>" alt="Payment methods" class="h-6 opacity-60">
+        <img src="<?= asset('images/payments.png') ?>" alt="Payment methods" class="h-6 opacity-40">
       </div>
     </div>
 
@@ -315,7 +315,7 @@ function showToast(message, type) {
     type = type || 'info';
     var colors = { success: 'bg-green-500', error: 'bg-red-500', warning: 'bg-yellow-500', info: 'bg-blue-500' };
     var toast = document.createElement('div');
-    toast.className = 'fixed top-24 right-5 z-[9999] ' + (colors[type] || colors.info) + ' text-white px-5 py-3 rounded-lg shadow-lg animate-slideInRight';
+    toast.className = 'fixed bottom-5 right-5 z-[9999] ' + (colors[type] || colors.info) + ' text-white px-5 py-3 rounded-lg shadow-lg animate-slideInUp';
     toast.textContent = message;
     document.body.appendChild(toast);
     setTimeout(function() {

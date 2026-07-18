@@ -315,7 +315,8 @@ class CartService
         }
 
         // Calculate tax (GST)
-        $tax = ($subtotal - $discount) * (TAX_RATE / 100);
+        $taxEnabled = \App\Models\Setting::get('tax_enabled', '1');
+        $tax = $taxEnabled === '1' ? ($subtotal - $discount) * (TAX_RATE / 100) : 0;
 
         $total = $subtotal - $discount + $tax + $shipping;
 
@@ -405,10 +406,22 @@ class CartService
         $stmt->execute([':id' => $productId]);
         $result = $stmt->fetch();
         if ($result && !empty($result['image'])) {
-            $path = UPLOADS_DIR . DS . $result['image'];
-            if (file_exists($path)) {
-                return uploadUrl($result['image'], 'products');
+            $filename = str_replace('\\', '/', $result['image']);
+            if (str_starts_with($filename, 'products/')) {
+                $checkPath = UPLOADS_DIR . DS . str_replace('/', DS, $filename);
+                if (file_exists($checkPath)) {
+                    return uploadUrl($filename, 'products');
+                }
             }
+            $prodPath = PRODUCT_IMAGES_DIR . DS . $filename;
+            if (file_exists($prodPath)) {
+                return uploadUrl($filename, 'products');
+            }
+            $rootPath = UPLOADS_DIR . DS . $filename;
+            if (file_exists($rootPath)) {
+                return uploadUrl($filename);
+            }
+            return asset('images/placeholder.png');
         }
         return asset('images/placeholder.png');
     }

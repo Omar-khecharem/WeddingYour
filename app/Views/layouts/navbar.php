@@ -47,17 +47,12 @@ try {
         $categoriesMenu[] = $item;
     }
 } catch (\Exception $e) {}
-$outlets = [];
-try {
-    $pdo = \App\Core\Database::getInstance()->getConnection();
-    $outlets = $pdo->query("SELECT name, slug, address FROM sg_outlets WHERE is_active = 1 ORDER BY sort_order, name")->fetchAll(\PDO::FETCH_ASSOC);
-} catch (\Exception $e) {}
 ?>
 <div class="w-full font-sans antialiased">
 
   <!-- TOP BANNER - Scrolling marquee -->
   <?php if ($couponCode && $couponText): ?>
-  <div class="bg-premium-burgundy bg-opacity-5 text-premium-dark text-xs md:text-sm font-medium py-2.5 border-b border-premium-blush overflow-hidden">
+  <div class="bg-premium-burgundy bg-opacity-5 text-premium-charcoal text-xs md:text-sm font-medium py-2.5 border-b border-premium-warm-gray overflow-hidden">
     <div class="whitespace-nowrap marquee-top">
       <span class="inline-block px-4"><?= e($couponText) ?> <span class="bg-premium-champagne bg-opacity-20 text-premium-cabernet px-2.5 py-0.5 rounded font-mono font-bold"><?= e($couponCode) ?></span></span>
       <span class="inline-block px-4"><?= e($couponText) ?> <span class="bg-premium-champagne bg-opacity-20 text-premium-cabernet px-2.5 py-0.5 rounded font-mono font-bold"><?= e($couponCode) ?></span></span>
@@ -161,7 +156,7 @@ try {
   </header>
 
   <!-- DESKTOP NAVIGATION -->
-  <nav id="desktop-nav" class="w-full bg-premium-charcoal hidden lg:block relative">
+  <nav id="desktop-nav" class="w-full bg-white border-b border-premium-warm-gray hidden lg:block relative">
     <div class="max-w-[1440px] mx-auto flex items-center justify-between px-8">
 
       <!-- Browse Categories Dropdown -->
@@ -206,26 +201,6 @@ try {
       <!-- Page Links -->
       <div class="flex items-center gap-1">
         <a href="<?= url('') ?>" class="nav-link px-4 <?= ($_SERVER['REQUEST_URI'] ?? '/') === '/' ? 'active' : '' ?>">Home</a>
-        <div class="relative group/outlets z-40">
-          <span class="nav-link px-4 flex items-center gap-1.5 cursor-default">
-            Our Outlets
-            <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"></path>
-            </svg>
-          </span>
-          <?php if (!empty($outlets)): ?>
-          <div class="absolute left-0 top-full w-64 bg-white border border-premium-warm-gray shadow-xl opacity-0 invisible group-hover/outlets:opacity-100 group-hover/outlets:visible transition-all duration-200 rounded-b-lg overflow-hidden z-50">
-            <?php foreach ($outlets as $outlet): ?>
-            <a href="<?= url('outlets/' . e($outlet['slug'])) ?>" class="block px-5 py-3 text-sm font-medium text-premium-mink hover:bg-premium-ivory hover:text-premium-crimson transition-colors border-b border-premium-warm-gray last:border-b-0">
-              <?= e($outlet['name']) ?>
-              <?php if (!empty($outlet['address'])): ?>
-              <span class="block text-xs text-premium-taupe font-normal mt-0.5"><?= e(truncate($outlet['address'], 40)) ?></span>
-              <?php endif; ?>
-            </a>
-            <?php endforeach; ?>
-          </div>
-          <?php endif; ?>
-        </div>
         <a href="<?= url('about') ?>" class="nav-link px-4">About Us</a>
         <a href="<?= url('contact') ?>" class="nav-link px-4">Contact</a>
         <a href="<?= url('blog') ?>" class="nav-link px-4">Blog</a>
@@ -233,13 +208,13 @@ try {
 
       <!-- Social Icons -->
       <div class="flex items-center gap-2">
-        <a href="<?= e($facebookUrl) ?>" target="_blank" rel="noopener noreferrer" class="w-8 h-8 rounded-full flex items-center justify-center text-premium-stone hover:text-premium-champagne hover:bg-white/5 transition-all" title="Facebook">
+        <a href="<?= e($facebookUrl) ?>" target="_blank" rel="noopener noreferrer" class="w-8 h-8 rounded-full flex items-center justify-center text-premium-taupe hover:text-premium-burgundy hover:bg-premium-blush transition-all" title="Facebook">
           <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1V12h3v3h-3v6.95c4.56-.93 8-4.96 8-9.75z"/></svg>
         </a>
-        <a href="<?= e($instagramUrl) ?>" target="_blank" rel="noopener noreferrer" class="w-8 h-8 rounded-full flex items-center justify-center text-premium-stone hover:text-premium-champagne hover:bg-white/5 transition-all" title="Instagram">
+        <a href="<?= e($instagramUrl) ?>" target="_blank" rel="noopener noreferrer" class="w-8 h-8 rounded-full flex items-center justify-center text-premium-taupe hover:text-premium-burgundy hover:bg-premium-blush transition-all" title="Instagram">
           <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.051.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
         </a>
-        <a href="<?= e($youtubeUrl) ?>" target="_blank" rel="noopener noreferrer" class="w-8 h-8 rounded-full flex items-center justify-center text-premium-stone hover:text-premium-champagne hover:bg-white/5 transition-all" title="YouTube">
+        <a href="<?= e($youtubeUrl) ?>" target="_blank" rel="noopener noreferrer" class="w-8 h-8 rounded-full flex items-center justify-center text-premium-taupe hover:text-premium-burgundy hover:bg-premium-blush transition-all" title="YouTube">
           <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M23.498 6.163a3.003 3.003 0 00-2.11-2.11C19.517 3.545 12 3.545 12 3.545s-7.517 0-9.388.508a3.003 3.003 0 00-2.11 2.11C0 8.033 0 12 0 12s0 3.967.502 5.837a3.003 3.003 0 002.11 2.11c1.871.508 9.388.508 9.388.508s7.517 0 9.388-.508a3.003 3.003 0 002.11-2.11C24 15.967 24 12 24 12s0-3.967-.502-5.837zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
         </a>
       </div>
@@ -282,20 +257,6 @@ try {
           <?php endif; ?>
         </div>
         <?php endforeach; ?>
-
-        <?php if (!empty($outlets)): ?>
-        <div class="border-b border-premium-warm-gray">
-          <button onclick="this.nextElementSibling.classList.toggle('hidden');this.querySelector('svg').classList.toggle('rotate-90')" class="flex items-center justify-between w-full px-5 py-3 text-sm font-bold text-premium-charcoal hover:bg-premium-blush hover:text-premium-burgundy transition-colors">
-            <span>OUR OUTLETS</span>
-            <svg class="w-3.5 h-3.5 text-premium-taupe transition-transform" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
-          </button>
-          <div class="hidden bg-premium-ivory">
-            <?php foreach ($outlets as $outlet): ?>
-            <a href="<?= url('outlets/' . e($outlet['slug'])) ?>" class="block px-8 py-2.5 text-xs font-medium text-premium-mink hover:text-premium-burgundy hover:bg-white transition-colors"><?= e($outlet['name']) ?></a>
-            <?php endforeach; ?>
-          </div>
-        </div>
-        <?php endif; ?>
 
         <a href="<?= url('blog') ?>" class="flex items-center gap-3 px-5 py-3 text-sm font-bold text-premium-charcoal hover:bg-premium-blush hover:text-premium-burgundy transition-colors border-b border-premium-warm-gray">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>

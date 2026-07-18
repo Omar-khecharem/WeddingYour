@@ -33,7 +33,7 @@ class SiteFooter extends Component
 
     public static function css(): string
     {
-        return 'footer{background:#1a1a1a;color:#ccc;padding:60px 5% 30px;font-size:13.5px}.footer-col h3{color:white;font-size:15px;font-weight:700;text-transform:uppercase;margin-bottom:20px;padding-bottom:8px;position:relative}.footer-col h3::after{content:\'\';position:absolute;bottom:0;left:0;width:35px;height:2px;background:#b30d1b}.footer-col ul li{margin-bottom:12px}.footer-col ul li a{transition:all .3s}.footer-col ul li a:hover{color:white;padding-left:5px}.security-banner{background:#2b2b2b;border-left:4px solid #b30d1b;padding:15px 25px;border-radius:4px}.security-banner h4{color:white;font-size:14px;font-weight:700;margin-bottom:5px}.payment-methods img{height:22px;filter:grayscale(100%);opacity:.6;transition:all .3s}.payment-methods img:hover{filter:grayscale(0%);opacity:1}';
+        return 'footer{background:#1a1a1a;color:#e5e5e5;padding:60px 5% 30px;font-size:13.5px}.footer-col h3{color:white;font-size:15px;font-weight:700;text-transform:uppercase;margin-bottom:20px;padding-bottom:8px;position:relative}.footer-col h3::after{content:\'\';position:absolute;bottom:0;left:0;width:35px;height:2px;background:#b30d1b}.footer-col ul li{margin-bottom:12px}.footer-col ul li a{transition:all .3s}.footer-col ul li a:hover{color:white;padding-left:5px}.security-banner{background:#2b2b2b;border-left:4px solid #b30d1b;padding:15px 25px;border-radius:4px}.security-banner h4{color:white;font-size:14px;font-weight:700;margin-bottom:5px}.payment-methods img{height:22px;filter:grayscale(100%);opacity:.6;transition:all .3s}.payment-methods img:hover{filter:grayscale(0%);opacity:1}';
     }
 
     public function render(): string
@@ -75,7 +75,7 @@ class SiteFooter extends Component
         <h4><i class="fa-solid fa-shield-halved text-primary-red mr-2"></i> Security Warning / Disclaimer</h4>
         <p>Please note that ' . $name . ' representatives will never ask you for OTPs, credit/debit card numbers, PINs, or bank account credentials. Beware of spam phone calls or messages pretending to be our support team. Report any suspicious activities immediately.</p>
     </div>
-    <div class="max-w-[1200px] mx-auto pt-6 border-t border-gray-800 flex justify-between items-center flex-wrap gap-4 text-xs text-gray-500">
+    <div class="max-w-[1200px] mx-auto pt-6 border-t border-gray-800 flex justify-between items-center flex-wrap gap-4 text-xs text-gray-400">
         <p>&copy; ' . $year . ' ' . $name . '. Handcrafted in India. All Rights Reserved.</p>
         <div class="payment-methods flex gap-3">
             <img src="https://cdn-icons-png.flaticon.com/512/196/196070.png" alt="Visa"><img src="https://cdn-icons-png.flaticon.com/512/196/196081.png" alt="MasterCard"><img src="https://cdn-icons-png.flaticon.com/512/196/196091.png" alt="UPI"><img src="https://cdn-icons-png.flaticon.com/512/196/196076.png" alt="Net Banking">

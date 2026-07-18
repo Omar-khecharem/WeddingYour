@@ -158,21 +158,6 @@ Router::match(['GET', 'POST'], '/contact', function () {
     return \App\Core\View::render('pages.contact');
 })->name('contact');
 
-Router::get('/outlets', function () {
-    $outlets = \App\Models\Outlet::getActive();
-    return \App\Core\View::render('pages.outlets', ['outlets' => $outlets]);
-})->name('outlets');
-
-Router::get('/outlets/{slug}', function (array $params) {
-    $slug = $params['slug'] ?? '';
-    $outlet = \App\Models\Outlet::findBySlug($slug);
-    if (!$outlet) {
-        http_response_code(404);
-        return \App\Core\View::render('errors.404');
-    }
-    return \App\Core\View::render('pages.outlet', ['outlet' => $outlet]);
-})->name('outlet');
-
 Router::get('/gallery', function () {
     $galleryItems = \App\Models\GalleryItem::getActive(null, 30);
     return \App\Core\View::render('pages.gallery', ['galleryItems' => $galleryItems]);
@@ -226,7 +211,12 @@ Router::get('/privacy-policy', function () {
     if ($page) {
         return \App\Core\View::render('pages.page', ['page' => $page]);
     }
-    return \App\Core\View::render('pages.privacy-policy');
+    return \App\Core\View::render('pages.privacy-policy', [
+        'metaTitle' => 'Privacy Policy - WeddingYour',
+        'metaDescription' => 'Read WeddingYour\'s privacy policy to understand how we collect, use, and protect your personal information when you shop for Bengali wedding accessories.',
+        'metaKeywords' => 'privacy policy, weddingyour privacy, data protection, wedding website privacy, Bengali wedding accessories privacy',
+        'canonicalUrl' => url('privacy-policy'),
+    ]);
 })->name('privacy-policy');
 
 Router::get('/terms-of-use', function () {
@@ -237,22 +227,34 @@ Router::get('/terms-of-use', function () {
     if ($page) {
         return \App\Core\View::render('pages.page', ['page' => $page]);
     }
-    return \App\Core\View::render('pages.terms-of-use');
+    return \App\Core\View::render('pages.terms-of-use', [
+        'metaTitle' => 'Terms of Use - WeddingYour',
+        'metaDescription' => 'Review WeddingYour\'s terms of use governing your access to our website and purchase of Bengali wedding accessories, including shipping, returns, and policies.',
+        'metaKeywords' => 'terms of use, weddingyour terms, conditions, wedding website terms, Bengali wedding accessories terms',
+        'canonicalUrl' => url('terms-of-use'),
+    ]);
 })->name('terms-of-use');
 
 Router::get('/page/{slug}', function ($params) {
+    $slug = $params['slug'];
+
     $pdo = \App\Core\Database::getInstance()->getConnection();
     $stmt = $pdo->prepare("SELECT * FROM sg_pages WHERE slug = :slug AND status = 1 LIMIT 1");
-    $stmt->execute([':slug' => $params['slug']]);
+    $stmt->execute([':slug' => $slug]);
     $page = $stmt->fetch();
 
-    if (!$page) {
-        http_response_code(404);
-        require VIEWS_DIR . DS . 'errors' . DS . '404.php';
-        exit;
+    if ($page) {
+        return \App\Core\View::render('pages.page', ['page' => $page]);
     }
 
-    return \App\Core\View::render('pages.page', ['page' => $page]);
+    $staticViews = ['privacy-policy', 'terms-of-use', 'about', 'contact'];
+    if (in_array($slug, $staticViews)) {
+        return \App\Core\View::render('pages.' . $slug);
+    }
+
+    http_response_code(404);
+    require VIEWS_DIR . DS . 'errors' . DS . '404.php';
+    exit;
 })->name('page');
 
 // ---- Order tracking ----

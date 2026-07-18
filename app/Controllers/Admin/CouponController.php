@@ -13,7 +13,7 @@ class CouponController extends BaseAdminController
     {
         $this->setMeta('Coupons');
         $couponService = new CouponService();
-        $coupons = $couponService->getActiveCoupons();
+        $coupons = $couponService->getAllCoupons();
 
         $editCoupon = null;
         if ($request->query('action') === 'edit' && $request->query('id')) {
@@ -31,77 +31,98 @@ class CouponController extends BaseAdminController
 
     public function store(Request $request, Response $response): void
     {
-        $couponService = new CouponService();
-        $result = $couponService->create([
-            'code' => $request->input('code'),
-            'type' => $request->input('type'),
-            'value' => (float)$request->input('value'),
-            'min_order_amount' => $request->input('min_amount') ? (float)$request->input('min_amount') : null,
-            'max_discount' => null,
-            'usage_limit' => $request->input('usage_limit') ? (int)$request->input('usage_limit') : null,
-            'usage_per_user' => 1,
-            'is_active' => $request->input('status') === 'active' ? 1 : 0,
-            'starts_at' => $request->input('start_date') ?: null,
-            'expires_at' => $request->input('expiry_date') ?: null,
-            'description' => $request->input('description') ?: null,
-        ]);
+        try {
+            $couponService = new CouponService();
+            $result = $couponService->create([
+                'code' => $request->input('code'),
+                'type' => $request->input('type'),
+                'value' => (float)$request->input('value'),
+                'min_order_amount' => $request->input('min_amount') ? (float)$request->input('min_amount') : null,
+                'max_discount' => null,
+                'usage_limit' => $request->input('usage_limit') ? (int)$request->input('usage_limit') : null,
+                'usage_per_user' => 1,
+                'is_active' => $request->input('status') === 'active' ? 1 : 0,
+                'starts_at' => $request->input('start_date') ?: null,
+                'expires_at' => $request->input('expiry_date') ?: null,
+                'description' => $request->input('description') ?: null,
+            ]);
 
-        if ($result['success']) {
-            $this->flash('success', 'Coupon created successfully.');
-        } else {
-            $this->flash('error', $result['message'] ?? 'Failed to create coupon.');
+            if ($result['success']) {
+                $this->flash('success', 'Coupon created successfully.');
+                logActivity('coupon_created', "Coupon created: {$result['code']}");
+            } else {
+                $this->flash('error', $result['message'] ?? 'Failed to create coupon.');
+            }
+            $this->redirect(url('admin/coupons'));
+        } catch (\Exception $e) {
+            error_log('Coupon creation failed: ' . $e->getMessage());
+            $this->flash('error', 'An unexpected error occurred: ' . $e->getMessage());
+            $this->redirect(url('admin/coupons'));
         }
-        $this->redirect(url('admin/coupons'));
     }
 
     public function update(Request $request, Response $response, array $params = []): void
     {
-        $id = (int)($params['id'] ?? $request->input('id'));
-        if (!$id) {
-            $this->flash('error', 'Invalid coupon ID.');
+        try {
+            $id = (int)($params['id'] ?? $request->input('id'));
+            if (!$id) {
+                $this->flash('error', 'Invalid coupon ID.');
+                $this->redirect(url('admin/coupons'));
+                return;
+            }
+
+            $couponService = new CouponService();
+            $result = $couponService->update($id, [
+                'code' => $request->input('code'),
+                'type' => $request->input('type'),
+                'value' => (float)$request->input('value'),
+                'min_order_amount' => $request->input('min_amount') ? (float)$request->input('min_amount') : null,
+                'max_discount' => null,
+                'usage_limit' => $request->input('usage_limit') ? (int)$request->input('usage_limit') : null,
+                'is_active' => $request->input('status') === 'active' ? 1 : 0,
+                'starts_at' => $request->input('start_date') ?: null,
+                'expires_at' => $request->input('expiry_date') ?: null,
+                'description' => $request->input('description') ?: null,
+            ]);
+
+            if ($result) {
+                $this->flash('success', 'Coupon updated successfully.');
+                logActivity('coupon_updated', "Coupon #{$id} updated");
+            } else {
+                $this->flash('error', 'Failed to update coupon.');
+            }
             $this->redirect(url('admin/coupons'));
-            return;
+        } catch (\Exception $e) {
+            error_log('Coupon update failed: ' . $e->getMessage());
+            $this->flash('error', 'An unexpected error occurred: ' . $e->getMessage());
+            $this->redirect(url('admin/coupons'));
         }
-
-        $couponService = new CouponService();
-        $result = $couponService->update($id, [
-            'code' => $request->input('code'),
-            'type' => $request->input('type'),
-            'value' => (float)$request->input('value'),
-            'min_order_amount' => $request->input('min_amount') ? (float)$request->input('min_amount') : null,
-            'max_discount' => null,
-            'usage_limit' => $request->input('usage_limit') ? (int)$request->input('usage_limit') : null,
-            'is_active' => $request->input('status') === 'active' ? 1 : 0,
-            'starts_at' => $request->input('start_date') ?: null,
-            'expires_at' => $request->input('expiry_date') ?: null,
-            'description' => $request->input('description') ?: null,
-        ]);
-
-        if ($result['success']) {
-            $this->flash('success', 'Coupon updated successfully.');
-        } else {
-            $this->flash('error', $result['message'] ?? 'Failed to update coupon.');
-        }
-        $this->redirect(url('admin/coupons'));
     }
 
     public function destroy(Request $request, Response $response): void
     {
-        $id = (int)$request->input('id');
-        if (!$id) {
-            $this->flash('error', 'Invalid coupon ID.');
+        try {
+            $id = (int)$request->input('id');
+            if (!$id) {
+                $this->flash('error', 'Invalid coupon ID.');
+                $this->redirect(url('admin/coupons'));
+                return;
+            }
+
+            $couponService = new CouponService();
+            $success = $couponService->delete($id);
+
+            if ($success) {
+                $this->flash('success', 'Coupon deleted successfully.');
+                logActivity('coupon_deleted', "Coupon #{$id} deleted");
+            } else {
+                $this->flash('error', 'Failed to delete coupon.');
+            }
             $this->redirect(url('admin/coupons'));
-            return;
+        } catch (\Exception $e) {
+            error_log('Coupon deletion failed: ' . $e->getMessage());
+            $this->flash('error', 'An unexpected error occurred: ' . $e->getMessage());
+            $this->redirect(url('admin/coupons'));
         }
-
-        $couponService = new CouponService();
-        $success = $couponService->delete($id);
-
-        if ($success) {
-            $this->flash('success', 'Coupon deleted successfully.');
-        } else {
-            $this->flash('error', 'Failed to delete coupon.');
-        }
-        $this->redirect(url('admin/coupons'));
     }
 }
