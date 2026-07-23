@@ -41,16 +41,14 @@ abstract class Controller
         $this->viewData['instagramUrl'] = SOCIAL_INSTAGRAM;
         $this->viewData['youtubeUrl'] = SOCIAL_YOUTUBE;
 
-        // Cart count and total — read from DB (not session) for reliable guest cart
+        // Cart count — read from DB (not session) for reliable guest cart
         try {
             $cartService = new \App\Services\CartService();
             $this->viewData['cartCount'] = $cartService->getCount();
-            $cart = $cartService->getCart();
-            $this->viewData['cartTotal'] = $cart['total'] ?? 0;
         } catch (\Exception $e) {
             $this->viewData['cartCount'] = Session::get('cart.count', 0);
-            $this->viewData['cartTotal'] = Session::get('cart.total', 0);
         }
+        $this->viewData['cartTotal'] = Session::get('cart.total', 0);
         $this->viewData['wishlistCount'] = Session::get('wishlist.count', 0);
         // Compute compare count from DB
         try {
